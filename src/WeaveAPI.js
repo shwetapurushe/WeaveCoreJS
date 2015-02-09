@@ -1,7 +1,7 @@
 
 
 
-createjs.Ticker.setFPS(50);
+//createjs.Ticker.setFPS(50);
 //createjs.Ticker.
 
 // constructor:
@@ -31,14 +31,8 @@ createjs.Ticker.setFPS(50);
             value: 3
         });
     
-   /* WeaveAPI.__defineGetter__("SessionManager", function(){
-        return WeaveAPI._sessionManager;
-    });
-
-    WeaveAPI.__defineGetter__("StageUtils", function(){
-        return WeaveAPI._stageUtils;
-    });*/
-WeaveAPI.SessionManager = new weavecore.SessionManager();
+   
+    WeaveAPI.SessionManager = new weavecore.SessionManager();
 
             
 
