@@ -15,6 +15,7 @@ module.exports = function(grunt) {
                     'src/core/ILinkableObject.js',
                     'src/core/CallbackCollection.js',
                     'src/core/SessionManager.js',
+                    'src/primitive/WeaveTreeItem.js',
                     'src/WeaveAPI.js',
                     'src/core/StageUtils.js',
                     'src/core/LinkableVariable.js',
