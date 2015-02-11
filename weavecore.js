@@ -3166,7 +3166,7 @@ if (!this.weavecore)
      * Filters out null items.
      */
     WeaveTreeItem._filterItems = function(item, i, a) {
-        return item !== null;
+        return item !== null || item !== undefined;
     }
 
     //----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----
@@ -3384,8 +3384,8 @@ if (!this.weavecore)
             return this._cache[id];
 
         var str = this.getString(this._label, id);
-        if (!str && data !== null)
-            str = String(data);
+        if (!str && this.data !== null && this.data !== undefined)
+            str = String(this.data);
         return this.cache(id, str);
     });
     p.__defineSetter__("label", function(value) {
