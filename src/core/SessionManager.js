@@ -197,7 +197,7 @@ if (!this.weavecore)
         var treeItem = new weavecore.WeaveTreeItem();
         treeItem.label = objectName;
         treeItem.source = root;
-        treeItem.children = SessionManager.prototype._getTreeItemChildren;
+        treeItem.children = SessionManager.prototype._getTreeItemChildren.bind(this);
         treeItem.data = objectTypeFilter;
         return treeItem;
     }

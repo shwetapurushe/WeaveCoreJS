@@ -2557,7 +2557,7 @@ if (!this.weavecore)
         var treeItem = new weavecore.WeaveTreeItem();
         treeItem.label = objectName;
         treeItem.source = root;
-        treeItem.children = SessionManager.prototype._getTreeItemChildren;
+        treeItem.children = SessionManager.prototype._getTreeItemChildren.bind(this);
         treeItem.data = objectTypeFilter;
         return treeItem;
     }
@@ -3149,12 +3149,12 @@ if (!this.weavecore)
      */
     WeaveTreeItem._mapItems = function(item, i, a) {
         // If the item is a Class definition, create an instance of that Class.
-        if (item.constructor)
+        if (typeof(item) === 'function')
             return new item();
 
         // If the item is a String or an Object, we can pass it to the constructor.
-        if (typeof(item) === 'string' || (item !== null && tem !== undefined && item.constructor === Object)) {
-            var ItemClass = this || WeaveTreeItem;
+        if (typeof(item) === 'string' || (item !== null && item !== undefined && item.constructor.name === "Object")) {
+            var ItemClass = WeaveTreeItem;
             return new ItemClass(item);
         }
 
@@ -3407,7 +3407,7 @@ if (!this.weavecore)
         if (!items)
             return this.cache(id, null);
 
-        var result = items.map(WeaveTreeItem._mapItems, this.childItemClass).filter(WeaveTreeItem._filterItems);
+        var result = items.map(WeaveTreeItem._mapItems.bind(this), this.childItemClass).filter(WeaveTreeItem._filterItems.bind(this));
         return this.cache(id, result);
     });
 
@@ -3433,9 +3433,9 @@ if (!this.weavecore)
         });
 
     p.__defineSetter__("source", function(value) {
-            if (_source != value)
-                _counter = {};
-            _source = value;
+            if (this._source != value)
+                this._counter = {};
+           this._source = value;
         });
 
     weavecore.WeaveTreeItem = WeaveTreeItem;
