@@ -1,17 +1,42 @@
+/*
+    Weave (Web-based Analysis and Visualization Environment)
+    Copyright (C) 2008-2011 University of Massachusetts Lowell
+    This file is a part of Weave.
+    Weave is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License, Version 3,
+    as published by the Free Software Foundation.
+    Weave is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Weave.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 if (!this.weavecore)
     this.weavecore = {};
 
+/**
+ * Allows dynamically creating instances of objects implementing ILinkableObject at runtime.
+ * The session state is an Array of DynamicState objects.
+ * @see DynamicState
+ *
+ * @author adufilie
+ * @author sanjay1909
+ */
+
 (function() {
     function LinkableHashMap(typeRestriction){
+        if(typeRestriction === undefined) typeRestriction = null;
     
-    weavecore.CallbackCollection.call(this);
-    
-	this._typeRestriction; // restricts the type of object that can be stored
-	this._typeRestrictionClassName; // qualified class name of _typeRestriction
-	
-	if (typeRestriction !== null && typeRestriction !== undefined ){
-		this._typeRestriction = typeRestriction;
-		this._typeRestrictionClassName = typeRestriction.name;
+        weavecore.CallbackCollection.call(this);
+
+        this._typeRestriction; // restricts the type of object that can be stored
+        this._typeRestrictionClassName; // qualified class name of _typeRestriction
+
+        if (typeRestriction !== null && typeRestriction !== undefined ){
+            this._typeRestriction = typeRestriction;
+            this._typeRestrictionClassName = typeRestriction.name;
 	}
     
     Object.defineProperty(this,'_childListCallbacks',{value:WeaveAPI.SessionManager.registerLinkableChild(this, new weavecore.ChildListCallbackInterface())});
@@ -23,33 +48,55 @@ if (!this.weavecore)
     Object.defineProperty(this,'_previousNameMap',{value:{}});// maps a previously used name to a value of true.  used when generating unique names.
 }
     
-     LinkableHashMap.prototype = new weavecore.CallbackCollection();
+    LinkableHashMap.prototype = new weavecore.CallbackCollection();
     LinkableHashMap.prototype.constructor = LinkableHashMap;
     
-    LinkableHashMap.prototype.__defineGetter__("typeRestriction", function(){
+    var p = LinkableHashMap.prototype;
+
+    /**
+     * The child type restriction, or null if there is none.
+     */
+    p.__defineGetter__("typeRestriction", function(){
         return this._typeRestriction;
     });
 	
 	
-    
-    LinkableHashMap.prototype.__defineGetter__("childListCallbacks", function(){
+    /**
+     * This is an interface for adding and removing callbacks that will get triggered immediately
+     * when an object is added or removed.
+     * @return An interface for adding callbacks that get triggered when the list of child objects changes.
+     */
+    p.__defineGetter__("childListCallbacks", function(){
         return this._childListCallbacks;
     });
 	
 
-	
-	LinkableHashMap.prototype.getNames  = function(filter ){
+	/**
+     * This function returns an ordered list of names in the hash map.
+     * @param filter If specified, names of objects that are not of this type will be filtered out.
+     * @return A copy of the ordered list of names of objects contained in this LinkableHashMap.
+     */
+	p.getNames  = function(filter){
+        // set default value for parameter
+        if(filter === undefined) filter = null;
 		var result = [];
 		for (var i = 0; i < this._orderedNames.length; i++)
 		{
 			var name = this._orderedNames[i];
-			if (filter === null || filter === undefined || this._nameToObjectMap[name] instanceof filter )
+			if (filter === null || this._nameToObjectMap[name] instanceof filter )
 				result.push(name);
 		}
 		return result;
 	}
-	
-	LinkableHashMap.prototype.getObjects  = function(filter){
+
+    /**
+     * This function returns an ordered list of objects in the hash map.
+     * @param filter If specified, objects that are not of this type will be filtered out.
+     * @return An ordered Array of objects that correspond to the names returned by getNames(filter).
+     */
+	p.getObjects  = function(filter){
+        // set default value for parameter
+        if(filter === undefined) filter = null;
 		var result = [];
 		for (var i = 0; i < this._orderedNames.length; i++)
 		{
@@ -60,16 +107,32 @@ if (!this.weavecore)
 		}
 		return result;
 	}
-	
-	LinkableHashMap.prototype.getObject =  function(name){
+
+	/**
+     * This function gets the object associated with the specified name.
+     * @param name The identifying name to associate with an object.
+     * @return The object associated with the given name.
+     */
+	p.getObject =  function(name){
 		return this._nameToObjectMap[name];
 	}
 	
-	LinkableHashMap.prototype.getName = function(object){
+    /**
+     * This function gets the name of the specified object in the hash map.
+     * @param object An object contained in this LinkableHashMap.
+     * @return The name associated with the object, or null if the object was not found.
+     */
+	p.getName = function(object){
 		return this._objectToNameMap.get(object);
 	}
 	
-	LinkableHashMap.prototype.setNameOrder =  function(newOrder){
+    /**
+     * This will reorder the names returned by getNames().
+     * Any names appearing in newOrder that do not appear in getNames() will be ignored.
+     * Callbacks will be called if the new name order differs from the old order.
+     * @param newOrder The new desired ordering of names.
+     */
+	p.setNameOrder =  function(newOrder){
 		var changeDetected = false;
 		var name;
 		var i;
@@ -108,20 +171,34 @@ if (!this.weavecore)
 			this._childListCallbacks.runCallbacks(null, null, null);
 	}
 	
-	LinkableHashMap.prototype.requestObject = function(name, classDef, lockObject){
+    /**
+     * This function creates an object in the hash map if it doesn't already exist.
+     * If there is an existing object associated with the specified name, it will be kept if it
+     * is the specified type, or replaced with a new instance of the specified type if it is not.
+     * @param name The identifying name of a new or existing object.
+     * @param classDef The Class of the desired object type.
+     * @param lockObject If this is true, the object will be locked in place under the specified name.
+     * @return The object under the requested name of the requested type, or null if an error occurred.
+     */
+	p.requestObject = function(name, classDef, lockObject){
 		var className = classDef ? classDef.name : null;
 		var result = this._initObjectByClassName.call(this,name, className, lockObject);
 		return classDef ? result : null;
 	}
 	
-	LinkableHashMap.prototype.requestObjectCopy = function(name, objectToCopy){
+    /**
+     * This function will copy the session state of an ILinkableObject to a new object under the given name in this LinkableHashMap.
+     * @param newName A name for the object to be initialized in this LinkableHashMap.
+     * @param objectToCopy An object to copy the session state from.
+     * @return The new object of the same type, or null if an error occurred.
+     */
+	p.requestObjectCopy = function(name, objectToCopy){
 		if (objectToCopy === null || objectToCopy === undefined ){
 			this.removeObject(name);
 			return null;
 		}
 		
 		this.delayCallbacks(); // make sure callbacks only trigger once
-		//var className = getQualifiedClassName(objectToCopy);
 		var classDef = objectToCopy.constructor; //ClassUtils.getClassDefinition(className);
 		var sessionState = WeaveAPI.SessionManager.getSessionState(objectToCopy);
 		var object = requestObject(name, classDef, false);
@@ -132,8 +209,13 @@ if (!this.weavecore)
 		return object;
 	}
 	
-	
-	LinkableHashMap.prototype.renameObject = function(oldName, newName){
+	/**
+     * This function will rename an object by making a copy and removing the original.
+     * @param oldName The name of an object to replace.
+     * @param newName The new name to use for the copied object.
+     * @return The copied object associated with the new name, or the original object if newName is the same as oldName.
+     */
+	p.renameObject = function(oldName, newName){
 		if (oldName !== newName){
 			this.delayCallbacks();
 			
@@ -160,30 +242,24 @@ if (!this.weavecore)
 	 * @param lockObject If this is set to true, lockObject() will be called on the given name.
 	 * @return The object associated with the given name, or null if an error occurred.
 	 */
-	LinkableHashMap.prototype._initObjectByClassName = function(name, className, lockObject){
+    p._initObjectByClassName = function(name, className, lockObject){
 		if (className){
 			// if no name is specified, generate a unique one now.
 			if (!name)
 				name = generateUniqueName(className.split("::").pop());
-			if ( className !== "delete")
+			if ( className !== "delete") // to-do Add Support for class Utils - delete is temp solution
 			{
-				//try{
-					// If this name is not associated with an object of the specified type,
-					// associate the name with a new object of the specified type.
-					var classDef = eval('weavecore.'+className);//hardcoded weavecore. 
-					var object = this._nameToObjectMap[name];
-					if (!object || object.constructor !== classDef)
-						this._createAndSaveNewObject.call(this,name, classDef, lockObject);
-					else if (lockObject)
-						this.lockObject(name);
-              //  }
-				//catch (e){
-                    //console.log(e);
-//						enterDebugger();
-               // }
+                // If this name is not associated with an object of the specified type,
+                // associate the name with a new object of the specified type.
+                var classDef = eval('weavecore.'+className);//hardcoded weavecore.
+                var object = this._nameToObjectMap[name];
+                if (!object || object.constructor !== classDef)
+                    this._createAndSaveNewObject.call(this,name, classDef, lockObject);
+                else if (lockObject)
+                    this.lockObject(name);
+
 			}
-			else
-			{
+			else{
 				this.removeObject(name);
 			}
 		}
@@ -192,12 +268,13 @@ if (!this.weavecore)
 		}
 		return this._nameToObjectMap[name] ;
 	}
+
 	/**
 	 * (private)
 	 * @param name The identifying name to associate with a new object.
 	 * @param classDef The Class definition used to instantiate a new object.
 	 */
-	LinkableHashMap.prototype._createAndSaveNewObject = function(name, classDef, lockObject)
+	p._createAndSaveNewObject = function(name, classDef, lockObject)
 	{
 		if (this._nameIsLocked[name])
 			return;
@@ -222,21 +299,30 @@ if (!this.weavecore)
 		// make sure the callback variables signal that the object was added
 		this._childListCallbacks.runCallbacks(name, object, null);
 	}
+
 	/**
 	 * This function will lock an object in place for a given identifying name.
 	 * If there is no object using the specified name, this function will have no effect.
 	 * @param name The identifying name of an object to lock in place.
 	 */
-	LinkableHashMap.prototype.lockObject = function(name){
+	p.lockObject = function(name){
 		if (name !== null && name !== undefined && this._nameToObjectMap[name] !== null && this._nameToObjectMap[name] !== undefined)
 			this._nameIsLocked[name] = true;
 	}
 	
-	LinkableHashMap.prototype.objectIsLocked =  function(name){
+    /**
+     * This function will return true if the specified object was previously locked.
+     * @param name The name of an object.
+     */
+	p.objectIsLocked =  function(name){
 		return this._nameIsLocked[name] ? true : false;
 	}
 	
-	LinkableHashMap.prototype.removeObject =  function(name){
+    /**
+     * This function removes an object from the hash map.
+     * @param name The identifying name of an object previously saved with setObject().
+     */
+	p.removeObject =  function(name){
 		if (!name || this._nameIsLocked[name])
 			return;
 		
@@ -258,8 +344,11 @@ if (!this.weavecore)
 		WeaveAPI.SessionManager.disposeObject(object);
 	}
 
-	
-	LinkableHashMap.prototype.removeAllObjects =  function(){
+	/**
+     * This function attempts to removes all objects from this LinkableHashMap.
+     * Any objects that are locked will remain.
+     */
+	p.removeAllObjects =  function(){
 		this.delayCallbacks();
         var orderedNamesCopy = this._orderedNames.concat();
 		for (var i = 0; i < orderedNamesCopy.length; i++){
@@ -272,7 +361,7 @@ if (!this.weavecore)
 	 * This function removes all objects from this LinkableHashMap.
 	 * @inheritDoc
 	 */
-	LinkableHashMap.prototype.dispose =  function dispose(){
+	p.dispose =  function dispose(){
 	
 		CallbackCollection.prototype.dispose.call(this);
 		
@@ -289,7 +378,7 @@ if (!this.weavecore)
 	}
 
 	
-	LinkableHashMap.prototype.generateUniqueName =  function(baseName){
+	p.generateUniqueName =  function(baseName){
 		var count = 1;
 		var name = baseName;
 		while (this._previousNameMap[name] !== undefined)
@@ -298,9 +387,9 @@ if (!this.weavecore)
 	}
 
 	/**
-	 * @inheritDoc
+	 * Override @see LinkableVaribale
 	 */
-	LinkableHashMap.prototype.getSessionState =  function(){
+	p.getSessionState =  function(){
 		var result = new Array(this._orderedNames.length);
 		for (var i = 0; i < this._orderedNames.length; i++){
 			var name = this._orderedNames[i];
@@ -311,18 +400,19 @@ if (!this.weavecore)
 					WeaveAPI.SessionManager.getSessionState(object)
 				);
 		}
-		//trace(LinkableHashMap, "getSessionState LinkableHashMap " + ObjectUtil.toString(result));
 		return result;
 	}
-	
-	LinkableHashMap.prototype.setSessionState =  function(newStateArray, removeMissingDynamicObjects){
+
+	/**
+	 * Override @see LinkableVaribale
+	 */
+	p.setSessionState =  function(newStateArray, removeMissingDynamicObjects){
 		// special case - no change
 		if (newStateArray === null || newStateArray === undefined)
 			return;
 		
 		this.delayCallbacks();
-		
-		//trace(LinkableHashMap, "setSessionState "+setMissingValuesToNull, ObjectUtil.toString(newState.qualifiedClassNames), ObjectUtil.toString(newState));
+
 		// first pass: make sure the types match and sessioned properties are instantiated.
 		var i;
 		var objectName;
@@ -395,6 +485,4 @@ if (!this.weavecore)
 	}
     
     weavecore.LinkableHashMap = LinkableHashMap;
-   // WeaveAPI.root = new LinkableHashMap();
-    
 }());

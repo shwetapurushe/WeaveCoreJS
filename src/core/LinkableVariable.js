@@ -1,11 +1,30 @@
+/*
+    Weave (Web-based Analysis and Visualization Environment)
+    Copyright (C) 2008-2011 University of Massachusetts Lowell
+    This file is a part of Weave.
+    Weave is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License, Version 3,
+    as published by the Free Software Foundation.
+    Weave is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Weave.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 // namespace
-/*if (!this.weave)
-    this.weave = {};
-if (!this.weave.core)
-    this.weave.core = {};*/
 
 if (!this.weavecore)
     this.weavecore = {};
+
+/**
+ * LinkableVariable allows callbacks to be added that will be called when the value changes.
+ * A LinkableVariable has an optional type restriction on the values it holds.
+ *
+ * @author adufilie
+ * @author sanjay1909
+ */
 
 (function() {
     /**
@@ -21,10 +40,16 @@ if (!this.weavecore)
         if(sessionStateType === undefined)sessionStateType = null;
         if(verifier === undefined)verifier = null;
         if(defaultValueTriggersCallbacks === undefined)defaultValueTriggersCallbacks = true;
-        
-       // weave.core.CallbackCollection.call(this);
+
         weavecore.CallbackCollection.call(this);
 
+        /**
+		 * This function is used to prevent the session state from having unwanted values.
+		 * Function signature should be  function(value:*):Boolean
+         * @private
+         * @property _verifier
+         * @type function
+		 */
         this._verifier = verifier;
 
         /**
@@ -58,7 +83,7 @@ if (!this.weavecore)
             this._sessionStateType = sessionStateType;
             this._primitiveType = this._sessionStateType === "string" || this._sessionStateType === "number" || this._sessionStateType === "boolean";
         }
-        if (typeof defaultValue !== "undefined") {
+        if ( defaultValue !== undefined) {
             this.setSessionState(defaultValue);
 
             // If callbacks were triggered, make sure callbacks are triggered again one frame later when
@@ -68,122 +93,123 @@ if (!this.weavecore)
         }
     }
 
-        function _defaultValueTrigger() {
-            // unless callbacks were triggered again since the default value was set, trigger callbacks now
-            if (!this._wasDisposed && this._triggerCounter === weavecore.CallbackCollection.DEFAULT_TRIGGER_COUNT + 1)
-                this.triggerCallbacks();
+    function _defaultValueTrigger() {
+        // unless callbacks were triggered again since the default value was set, trigger callbacks now
+        if (!this._wasDisposed && this._triggerCounter === weavecore.CallbackCollection.DEFAULT_TRIGGER_COUNT + 1)
+            this.triggerCallbacks();
 
-        }
+    }
 
-
-        function verifyValue(value) {
-            return this._verifier === null || this._verifier === undefined || this._verifier(value);
-        }
+    /**
+     * This function will verify if a given value is a valid session state for this linkable variable.
+     * @param value The value to verify.
+     * @return A value of true if the value is accepted by this linkable variable.
+     */
+    function verifyValue(value) {
+        return this._verifier === null || this._verifier === undefined || this._verifier(value);
+    }
     
-     LinkableVariable.prototype = new weavecore.CallbackCollection();
+    LinkableVariable.prototype = new weavecore.CallbackCollection();
     LinkableVariable.prototype.constructor = LinkableVariable;
 
-        /**
-         * The type restriction passed in to the constructor.
-         */
-        LinkableVariable.prototype.getSessionStateType = function() {
-            return this._sessionStateType;
-        };
+    var p = LinkableVariable.prototype;
 
-        LinkableVariable.prototype.getSessionState = function() {
-            return this._sessionStateExternal;
-        };
+    /**
+     * The type restriction passed in to the constructor.
+     */
+    p.getSessionStateType = function() {
+        return this._sessionStateType;
+    };
 
-        LinkableVariable.prototype.setSessionState = function(value) {
-            if (this._locked)
-                return;
+    p.getSessionState = function() {
+        return this._sessionStateExternal;
+    };
 
-            // cast value now in case it is not the appropriate type
-            if (this._sessionStateType !== null && this._sessionStateType !== undefined)
-                value = value;
+    p.setSessionState = function(value) {
+        if (this._locked)
+            return;
 
-            // stop if verifier says it's not an accepted value
-            if (this._verifier !== null && this._verifier !== undefined && !this._verifier(value))
-                return;
+        // cast value now in case it is not the appropriate type
+        if (this._sessionStateType !== null && this._sessionStateType !== undefined)
+            value = value;
 
-            var wasCopied = false;
-            var type = null;
-            if (value !== null && value !== undefined) {
-                type = typeof(value);
+        // stop if verifier says it's not an accepted value
+        if (this._verifier !== null && this._verifier !== undefined && !this._verifier(value))
+            return;
 
-                if (type === 'object' && value.constructor !== Object && value.constructor !== Array) {
-                    // convert to dynamic Object prior to sessionStateEquals comparison
-                    value = Object.create(value);
-                    wasCopied = true;
-                }
+        var wasCopied = false;
+        var type = null;
+        if (value !== null && value !== undefined) {
+            type = typeof(value);
+
+            if (type === 'object' && value.constructor !== Object && value.constructor !== Array) {
+                // convert to dynamic Object prior to sessionStateEquals comparison
+                value = Object.create(value);
+                wasCopied = true;
             }
+        }
 
-            // If this is the first time we are calling setSessionState(), including
-            // from the constructor, don't bother checking sessionStateEquals().
-            // Otherwise, stop if the value did not change.
-            if (this._sessionStateWasSet && this.sessionStateEquals(value))
-                return;
+        // If this is the first time we are calling setSessionState(), including
+        // from the constructor, don't bother checking sessionStateEquals().
+        // Otherwise, stop if the value did not change.
+        if (this._sessionStateWasSet && this.sessionStateEquals(value))
+            return;
 
-            // If the value is a dynamic object, save a copy because we don't want
-            // two LinkableVariables to share the same object as their session state.
-            if (type === 'object') {
-                if (!wasCopied)
-                    value = Object.create(value);
+        // If the value is a dynamic object, save a copy because we don't want
+        // two LinkableVariables to share the same object as their session state.
+        if (type === 'object') {
+            if (!wasCopied)
+                value = Object.create(value);
 
-                // save external copy, accessible via getSessionState()
-                this._sessionStateExternal = value;
+            // save external copy, accessible via getSessionState()
+            this._sessionStateExternal = value;
 
-                // save internal copy
-                this._sessionStateInternal = Object.create(value);
-            } else {
-                // save primitive value
-                this._sessionStateExternal = this._sessionStateInternal = value;
-            }
+            // save internal copy
+            this._sessionStateInternal = Object.create(value);
+        } else {
+            // save primitive value
+            this._sessionStateExternal = this._sessionStateInternal = value;
+        }
 
-            // remember that we have set the session state at least once.
-            this._sessionStateWasSet = true;
+        // remember that we have set the session state at least once.
+        this._sessionStateWasSet = true;
 
+        this.triggerCallbacks();
+    };
+
+    /**
+     * This function is used in setSessionState() to determine if the value has changed or not.
+     * object that prototype this object may override this function.
+     */
+    p.sessionStateEquals = function(otherSessionState) {
+        if (this._primitiveType)
+            return this._sessionStateInternal === otherSessionState;
+
+        return weavecore.StandardLib.compare(this._sessionStateInternal, otherSessionState) === 0;
+    };
+
+
+    /**
+     * This function may be called to detect change to a non-primitive session state in case it has been modified externally.
+     */
+    p.detectChanges = function() {
+        if (!this.sessionStateEquals(this._sessionStateExternal))
             this.triggerCallbacks();
-        };
+    };
 
-        /**
-         * This function is used in setSessionState() to determine if the value has changed or not.
-         * Classes that extend this class may override this function.
-         */
-        LinkableVariable.prototype.sessionStateEquals = function(otherSessionState) {
-            if (this._primitiveType)
-                return this._sessionStateInternal === otherSessionState;
+    p.lock = function() {
+        this._locked = true;
+    };
 
-            return weavecore.StandardLib.compare(this._sessionStateInternal, otherSessionState) === 0;
-        };
+    p.__defineGetter__("locked ", function() {
+        return this._locked;
+    });
 
+    p.dispose = function() {
+        weavecore.CallbackCollection.prototype.dispose.call(this);
+        this.setSessionState(null);
+    };
 
-        /**
-         * This function may be called to detect change to a non-primitive session state in case it has been modified externally.
-         */
-        LinkableVariable.prototype.detectChanges = function() {
-            if (!this.sessionStateEquals(this._sessionStateExternal))
-                this.triggerCallbacks();
-        };
-
-        LinkableVariable.prototype.lock = function() {
-            this._locked = true;
-        };
-
-        LinkableVariable.prototype.__defineGetter__("locked ", function() {
-            return this._locked;
-        });
-
-        LinkableVariable.prototype.dispose = function() {
-            weavecore.CallbackCollection.prototype.dispose.call(this);
-            this.setSessionState(null);
-        };
-    
-
-    //LinkableVariable.prototype = new weave.core.CallbackCollection();
-    
-    
-  //  weave.core.LinkableVariable = LinkableVariable;
     weavecore.LinkableVariable = LinkableVariable;
 
 }());

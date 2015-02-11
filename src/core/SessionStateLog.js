@@ -1,8 +1,39 @@
+/*
+    Weave (Web-based Analysis and Visualization Environment)
+    Copyright (C) 2008-2011 University of Massachusetts Lowell
+    This file is a part of Weave.
+    Weave is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License, Version 3,
+    as published by the Free Software Foundation.
+    Weave is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Weave.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 if (!this.weavecore)
     this.weavecore = {};
 
+/**
+ * This class saves the session history of an ILinkableObject.
+ *
+ * @author adufilie
+ * @author sanjay1909
+ */
 (function() {
     
+    /**
+	 * This is an entry in the session history log.  It contains both undo and redo session state diffs.
+	 * The triggerDelay is the time it took for the user to make a change since the last synchronization.
+	 * This time difference does not include the time it took to set the session state.  This way, when
+	 * the session state is replayed at a reasonable speed regardless of the speed of the computer.
+	 * @param id
+	 * @param forward The diff for applying redo.
+	 * @param backward The diff for applying undo.
+	 * @param triggerDelay The length of time between the last synchronization and the diff.
+	 */
     function LogEntry(id, forward, backward, triggerDelay, diffDuration)
 	{
 		this.id = id;
@@ -24,6 +55,8 @@ if (!this.weavecore)
 		}
 		return array;
 	}
+
+
     function getTimer() {
 		var start = new Date().getTime();			
 		return start;
@@ -36,10 +69,7 @@ if (!this.weavecore)
         this._subject = subject; // the object we are monitoring
         this._syncDelay = syncDelay;// the number of milliseconds to wait before automatically synchronizing
         this._prevState = WeaveAPI.SessionManager.getSessionState(this._subject); // remember the initial state
-        this.enableHistoryRewrite = true;
-    
-    
-    
+
         /**
          * When this is set to true, changes in the session state of the subject will be automatically logged.
          */
@@ -52,9 +82,6 @@ if (!this.weavecore)
         cc.addImmediateCallback(this, this._immediateCallback.bind(this));
         cc.addGroupedCallback(this, this._groupedCallback.bind(this));
 
-
-
-
         this._undoHistory = []; // diffs that can be undone
         this._redoHistory = []; // diffs that can be redone
         this._nextId = 0; // gets incremented each time a new diff is created
@@ -66,15 +93,17 @@ if (!this.weavecore)
         this._saveTime = 0; // this is set to getTimer() + _syncDelay to determine when the next diff should be computed and logged
         this._savePending = false; // true when a diff should be computed
 	
-       Object.defineProperty(SessionStateLog,'debug',{value:true , writable:true});
-	
-}
+        Object.defineProperty(SessionStateLog,'debug',{value:true , writable:true});
+        Object.defineProperty(SessionStateLog,'enableHistoryRewrite',{value:true , writable:true});
+	}
+
+    var p =  SessionStateLog.prototype;
     
     
      /**
 	 * @inheritDoc
 	 */		
-	SessionStateLog.prototype.dispose =  function()
+	p.dispose =  function()
 	{
 		if (this._undoHistory === null || this._undoHistory === undefined)
 			console.log("SessionStateLog.dispose() called more than once");
@@ -88,7 +117,7 @@ if (!this.weavecore)
 	 * This function will save any pending diff in session state.
 	 * Use this function only when necessary (for example, when writing a collaboration service that must synchronize).
 	 */
-	SessionStateLog.prototype.synchronizeNow = function()
+	p.synchronizeNow = function()
 	{
 		this._saveDiff.call(this,true);
 	}
@@ -98,7 +127,7 @@ if (!this.weavecore)
 	/**
 	 * This gets called as an immediate callback of the subject.
 	 */		
-	SessionStateLog.prototype._immediateCallback = function()
+	p._immediateCallback = function()
 	{
 		if (!this.enableLogging.value)
 			return;
@@ -125,7 +154,7 @@ if (!this.weavecore)
     /**
 		 * This gets called as a grouped callback of the subject.
 		 */
-    SessionStateLog.prototype._groupedCallback = function()
+    p._groupedCallback = function()
     {
         if (!this.enableLogging.value)
             return;
@@ -148,7 +177,7 @@ if (!this.weavecore)
 	 * This will save a diff in the history, if there is any.
 	 * @param immediately Set to true if it should be saved immediately, or false if it can wait.
 	 */
-	SessionStateLog.prototype._saveDiff = function(immediately)
+	p._saveDiff = function(immediately)
 	{
         //console.log("save difference is called");
         if(immediately === undefined){
@@ -245,7 +274,7 @@ if (!this.weavecore)
 	 * This will undo a number of steps from the saved history.
 	 * @param numberOfSteps The number of steps to undo.
 	 */
-	SessionStateLog.prototype.undo = function(numberOfSteps){
+	p.undo = function(numberOfSteps){
         if(isNaN(numberOfSteps))
             numberOfSteps = 1;
 		this.applyDiffs.call(this,-numberOfSteps);
@@ -255,45 +284,45 @@ if (!this.weavecore)
 	 * This will redo a number of steps that have been previously undone.
 	 * @param numberOfSteps The number of steps to redo.
 	 */
-	SessionStateLog.prototype.redo = function(numberOfSteps){
+	p.redo = function(numberOfSteps){
         if(isNaN(numberOfSteps))
             numberOfSteps = 1;
 		this.applyDiffs.call(this,numberOfSteps);
 	}
     
     /**
-		 * This will clear all undo and redo history.
-		 * @param directional Zero will clear everything. Set this to -1 to clear all undos or 1 to clear all redos.
-		 */
-		SessionStateLog.prototype.clearHistory= function(directional)
-		{
-            if(directional === undefined) directional = 0;
-			var cc = WeaveAPI.SessionManager.getCallbackCollection(this);
-			cc.delayCallbacks();
-			
-			this.synchronizeNow();
-			
-			if (directional <= 0)
-			{
-				if (this._undoHistory.length > 0)
-					cc.triggerCallbacks();
-				this._undoHistory.length = 0;
-			}
-			if (directional >= 0)
-			{
-				if (this._redoHistory.length > 0)
-					cc.triggerCallbacks();
-				this._redoHistory.length = 0;
-			}
-			
-			cc.resumeCallbacks();
-		}
+     * This will clear all undo and redo history.
+     * @param directional Zero will clear everything. Set this to -1 to clear all undos or 1 to clear all redos.
+     */
+    p.clearHistory= function(directional)
+    {
+        if(directional === undefined) directional = 0;
+        var cc = WeaveAPI.SessionManager.getCallbackCollection(this);
+        cc.delayCallbacks();
+
+        this.synchronizeNow();
+
+        if (directional <= 0)
+        {
+            if (this._undoHistory.length > 0)
+                cc.triggerCallbacks();
+            this._undoHistory.length = 0;
+        }
+        if (directional >= 0)
+        {
+            if (this._redoHistory.length > 0)
+                cc.triggerCallbacks();
+            this._redoHistory.length = 0;
+        }
+
+        cc.resumeCallbacks();
+    }
 	
 	/**
 	 * This will apply a number of undo or redo steps.
 	 * @param delta The number of steps to undo (negative) or redo (positive).
 	 */
-	SessionStateLog.prototype.applyDiffs = function (delta)
+	p.applyDiffs = function(delta)
 	{
 		var stepsRemaining = Math.min(Math.abs(delta), delta < 0 ? this._undoHistory.length : this._redoHistory.length);
 		if (stepsRemaining > 0){
@@ -363,35 +392,28 @@ if (!this.weavecore)
 			}
             
             WeaveAPI.SessionManager.getCallbackCollection(this._subject).resumeCallbacks.call(this._subject);
-            //altered by sanjay - this is wrong - what i assumed
-            // as globalhashmap callback, will trigger sessionstatelog callback
-            // which in turn calls savediff
             
             this._undoActive = delta < 0 && this._savePending;
             this._redoActive = delta > 0 && this._savePending;
 			if (!this._savePending){
-                
 				this._prevState = WeaveAPI.SessionManager.getSessionState(this._subject);
-                //console.log("prev state is set");
             }
-           // console.log("sessionstatelog clabacks triggered");
 			var slcc = WeaveAPI.SessionManager.getCallbackCollection(this);
             slcc.triggerCallbacks.call(slcc);
-           // console.log("sessionstatelog clabacks triggered ------ done");
 		}
 	}
 	
 	/**
 	 * @TODO create an interface for the objects in this Array
 	 */
-	SessionStateLog.prototype.__defineGetter__("undoHistory",function(){
+	p.__defineGetter__("undoHistory",function(){
 		return this._undoHistory;
 	});
 	
 	/**
 	 * @TODO create an interface for the objects in this Array
 	 */
-	SessionStateLog.prototype.__defineGetter__("redoHistory", function(){
+	p.__defineGetter__("redoHistory", function(){
 		return this._redoHistory;
 	});
 
@@ -416,7 +438,7 @@ if (!this.weavecore)
 	 * This will generate an untyped session state object that contains the session history log.
 	 * @return An object containing the session history log.
 	 */		
-	SessionStateLog.prototype.getSessionState =  function(){
+	p.getSessionState =  function(){
 		var cc = WeaveAPI.SessionManager.getCallbackCollection(this);
 		cc.delayCallbacks();
 		this.synchronizeNow.call(this);
@@ -439,7 +461,7 @@ if (!this.weavecore)
 	 * This will load a session state log from an untyped session state object.
 	 * @param input The ByteArray containing the output from seralize().
 	 */
-	SessionStateLog.prototype.setSessionState =  function(state){
+	p.setSessionState =  function(state){
 		// make sure callbacks only run once while we set the session state
 		var cc = WeaveAPI.SessionManager.getCallbackCollection(this);
 		cc.delayCallbacks();
@@ -477,6 +499,5 @@ if (!this.weavecore)
 		}
 	}
      weavecore.SessionStateLog = SessionStateLog;
-   // weavecore.log =  new SessionStateLog(WeaveAPI.root);
     
 }());
