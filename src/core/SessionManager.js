@@ -291,7 +291,7 @@ if (!this.weavecore)
             return;
         }
 
-        // special cases:
+        // special cases: for Explicit and Composite Session Object
         if (linkableObject instanceof weavecore.ILinkableObject && linkableObject.setSessionState ){
             var lv = linkableObject;
             if (removeMissingDynamicObjects === false && newState && newState.constructor.name === 'Object'){
@@ -302,7 +302,7 @@ if (!this.weavecore)
             }
             return;
         }
-        // currently composite object not supported
+        // currently Implicit session state not supported
 
         if (newState === null || newState === undefined)
             return;
