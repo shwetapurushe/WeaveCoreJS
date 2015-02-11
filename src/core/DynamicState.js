@@ -104,7 +104,6 @@ if(!this.weavecore)
         return result;
     };
 
-    //weave.core.DynamicState = DynamicState;
     weavecore.DynamicState = DynamicState;
 
 }());

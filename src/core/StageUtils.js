@@ -18,6 +18,15 @@
 if (!this.weavecore)
     this.weavecore = {};
 
+/**
+ * This allows you to add callbacks that will be called when an event occurs on the stage.
+ * 
+ * WARNING: These callbacks will trigger on every mouse and keyboard event that occurs on the stage.
+ *          Developers should not add any callbacks that run computationally expensive code.
+ * 
+ * @author adufilie
+ * @author sanjay1909
+ */
 (function() {
     
       // Internal class constructor
@@ -36,10 +45,12 @@ if (!this.weavecore)
     EventCallbackCollection.prototype = new weavecore.CallbackCollection();
     EventCallbackCollection.prototype.constructor = EventCallbackCollection;
     
+    var p = EventCallbackCollection.prototype;
+    
     /**
 	 * This is the _preCallback
 	 */
-	EventCallbackCollection.prototype.setEvent = function setEvent(event)
+	p.setEvent = function setEvent(event)
 	{
 		this._eventManager.event = event;
 	}
@@ -49,7 +60,7 @@ if (!this.weavecore)
 	 * then restores the previous event value. This is necessary because it is possible for a popup
 	 * browser window to interrupt Flash with requests in the middle of an event.
 	 */
-	EventCallbackCollection.prototype.runEventCallbacks = function (event)
+	p.runEventCallbacks = function (event)
 	{
 		var previousEvent = this._eventManager.event; // remember previous value
 		this._runCallbacksImmediately(event); // make sure event is set before each immediate callback
@@ -59,8 +70,7 @@ if (!this.weavecore)
     /**
      * Call this when the stage is available to set up event listeners.
      */
-    EventCallbackCollection.prototype.listenToStage = function() {
-        console.log("listentostage")
+    p.listenToStage = function() {
         // do not create event listeners for these meta events
         //if (eventType == POINT_CLICK_EVENT || eventType == THROTTLED_MOUSE_MOVE_EVENT)
         //return;
@@ -82,8 +92,7 @@ if (!this.weavecore)
         });
     };
 
-    EventCallbackCollection.prototype._tickerListener = function(event) {
-       // console.log(event);
+    p._tickerListener = function(event) {
         this._eventManager.eventTime = new Date().getTime();
         if (this._eventType === "tick") {
             if (this._eventManager.userActivity > 0 && !this._eventManager.mouseButtonDown)
@@ -97,8 +106,6 @@ if (!this.weavecore)
             this.runEventCallbacks(event);
         
     };
-
-   
     
     weavecore.EventCallbackCollection = EventCallbackCollection;
     
@@ -135,30 +142,29 @@ function StageUtils() {
     this.maxComputationTimePerFrame_noActivity = 250;
     
 }
-    
-StageUtils.prototype.getMaxComputationTimePerFrame = function(){
+ 
+var p = StageUtils.prototype;
+p.getMaxComputationTimePerFrame = function(){
     return this.maxComputationTimePerFrame;
 };
     
-StageUtils.prototype.setMaxComputationTimePerFrame = function(value){
+p.setMaxComputationTimePerFrame = function(value){
    // this.eventManager.throttledMouseMoveInterval = value;
     this.maxComputationTimePerFrame = value;
 }
 
-StageUtils.prototype.getTaskPriorityTimeAllocation = function(priority){
+p.getTaskPriorityTimeAllocation = function(priority){
     return this._priorityAllocatedTimes[priority];
 };
     
-StageUtils.prototype.setTaskPriorityTimeAllocation = function(priority,milliseconds){
+p.setTaskPriorityTimeAllocation = function(priority,milliseconds){
      this._priorityAllocatedTimes[priority] = Math.max(milliseconds,5);
 };
 
 StageUtils._time;
 StageUtils._times = [];
-    
 
-
-StageUtils.prototype.callLater = function(relevantContext, method, parameters) {
+p.callLater = function(relevantContext, method, parameters) {
     if (method === null || method === undefined) {
         console.log('StageUtils.callLater(): received null "method" parameter');
         return;
@@ -171,7 +177,7 @@ StageUtils.prototype.callLater = function(relevantContext, method, parameters) {
     //_stackTraceMap[arguments] = new Error("This is the stack trace from when callLater() was called.").getStackTrace();
 };
 
-StageUtils.prototype._handleCallLater = function() {
+p._handleCallLater = function() {
     if (this.maxComputationTimePerFrame == 0)
         this.maxComputationTimePerFrame = 100;
 
@@ -361,7 +367,7 @@ StageUtils.prototype._handleCallLater = function() {
     
 };
 
-StageUtils.prototype.addEventCallback = function(eventType, relevantContext, callback, runCallbackNow) {
+p.addEventCallback = function(eventType, relevantContext, callback, runCallbackNow) {
     // set default parameter value
     if (runCallbackNow === null || runCallbackNow === undefined) {
         runCallbackNow = false;
@@ -414,8 +420,6 @@ StageUtils.prototype.addEventCallback = function(eventType, relevantContext, cal
         }
         this.event;
     }
-    
-    
     
     
     weavecore.EventManager = EventManager;

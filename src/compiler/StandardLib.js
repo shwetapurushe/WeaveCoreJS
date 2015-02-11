@@ -26,7 +26,6 @@ if(!this.weavecore)
  * @author sanbalag
  */
 (function() {
-    //"use strict";
     //constructor
 
     function StandardLib() {
@@ -115,6 +114,5 @@ if(!this.weavecore)
         return 0;
     }
 
-   // weave.compiler.StandardLib = StandardLib;
     weavecore.StandardLib = StandardLib;
 }());

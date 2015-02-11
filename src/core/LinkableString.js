@@ -17,23 +17,24 @@ if (!this.weavecore)
     this.weavecore = {};
 
 /**
- * This is a LinkableVariable which limits its session state to Boolean values.
+ * This is a LinkableVariable which limits its session state to string values.
  * @author adufilie
  * @author sanjay1909
  */
 (function() {
-    function LinkableBoolean(defaultValue,verifier, defaultValueTriggersCallbacks ){ 
+    function LinkableString(defaultValue,verifier, defaultValueTriggersCallbacks ){ 
         // set default values for Parameters
+        if(defaultValue === undefined) defaultValue = null;
         if(verifier === undefined) verifier = null;
         if(defaultValueTriggersCallbacks === undefined) defaultValueTriggersCallbacks = true;
         
-        weavecore.LinkableVariable.call(this,"boolean",verifier,defaultValue,defaultValueTriggersCallbacks );
+        weavecore.LinkableVariable.call(this,"string",verifier,defaultValue,defaultValueTriggersCallbacks );
     }
     
-    LinkableBoolean.prototype = new weavecore.LinkableVariable();
-    LinkableBoolean.prototype.constructor = LinkableBoolean;
+    LinkableString.prototype = new weavecore.LinkableVariable();
+    LinkableString.prototype.constructor = LinkableBoolean;
     
-    var p = LinkableBoolean.prototype;
+    var p = LinkableString.prototype;
     
     p.__defineGetter__("value", function(){
         return this._sessionStateExternal;
@@ -43,10 +44,9 @@ if (!this.weavecore)
     });
     
     p.setSessionState = function(val){
-        if(typeof(val) === "string"){
-            val = weavecore.ObjectUtil.stringCompare(val, "true", true) === 0;       
-        }
-        weavecore.LinkableVariable.prototype.setSessionState.call(this, val ? true : false);
+        if (val !== null)
+				val = String(val);
+        weavecore.LinkableVariable.prototype.setSessionState.call(this, val);
     }
     
     weavecore.LinkableBoolean = LinkableBoolean;
