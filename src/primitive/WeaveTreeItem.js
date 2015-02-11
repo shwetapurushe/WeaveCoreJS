@@ -138,7 +138,7 @@ if (!this.weavecore)
                     param = param.getSessionState();
                 if (param instanceof Array) {
                     var breakValue = recursionName.indexOf("or_") === 0;
-                    for each(param in param) {
+                    for(var param in param) {
                         param = this.getBoolean(param, "item_" + recursionName);
                         if (param ? breakValue : !breakValue)
                             break;
