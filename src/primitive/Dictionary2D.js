@@ -44,7 +44,7 @@ if (!this.weavecore)
     p.get = function(key1, key2) {
         var d2 = this.dictionary.get(key1);
         return d2 ? d2.get(key2) : undefined;
-    }
+    };
 
     /**
      * This will add or replace an entry in the dictionary.
@@ -57,8 +57,8 @@ if (!this.weavecore)
         if (d2 === null || d2 === undefined)
             d2 = new Map();
         this.dictionary.set(key1, d2)
-        this.d2.set(key2, value);
-    }
+        d2.set(key2, value);
+    };
 
     /**
      * This removes all values associated with the given primary key.
@@ -66,16 +66,18 @@ if (!this.weavecore)
      */
     p.removeAllPrimary = function(key1) {
         this.dictionary.delete(key1);
-    }
+    };
 
     /**
      * This removes all values associated with the given secondary key.
      * @param key2 The second dictionary key.
      */
     p.removeAllSecondary = function(key2) {
-        for (var key1 in this.dictionary)
+        for(var key1 of this.dictionary.keys()){
             this.dictionary.get(key1).delete(key2);
-    }
+        }
+
+    };
 
     /**
      * This removes a value associated with the given primary and secondary keys.
@@ -92,12 +94,14 @@ if (!this.weavecore)
         }
 
         // if entries remain in d2, keep it
-        for (var v2 in d2)
+        for(var v2 of d2.values())
             return value;
 
         // otherwise, remove it
         this.dictionary.delete(key1);
 
         return value;
-    }
-})());
+    };
+
+    weavecore.Dictionary2D = Dictionary2D;
+}());
