@@ -501,7 +501,7 @@ if (!this.weavecore)
 
             return undefined; // no diff
         }
-        else if (Array.isArray(oldState) && Array.isArray(newState))
+        else if (oldState.constructor === Array && newState.constructor === Array)
         {
             // If neither is a dynamic state array, don't compare them as such.
             if (!weavecore.DynamicState.isDynamicStateArray(oldState) && !weavecore.DynamicState.isDynamicStateArray(newState))

@@ -65,7 +65,7 @@ if(!this.weavecore)
         if (a instanceof Date && b instanceof Date)
             return weavecore.ObjectUtil.dateCompare(a, b);
 
-        if ((Array.isArray(a) && Array.isArray(b))) {
+        if (a.constructor === Array && b.constructor === Array)) {
             var an = a.length;
             var bn = b.length;
             if (an < bn)
