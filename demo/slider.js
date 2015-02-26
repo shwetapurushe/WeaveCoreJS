@@ -1,12 +1,12 @@
 /*
  jQuery UI Slider plugin wrapper
 */
-angular.module('ui.slider', []).value('uiSliderConfig',{}).directive('uiSlider', ['uiSliderConfig', '$timeout', function(uiSliderConfig, $timeout) {
+angular.module('ui.slider', []).value('uiSliderConfig', {}).directive('uiSlider', ['uiSliderConfig', '$timeout', function (uiSliderConfig, $timeout) {
     uiSliderConfig = uiSliderConfig || {};
     return {
         require: 'ngModel',
         compile: function () {
-            return function (scope, elm, attrs, ngModel) {
+            var preLink = function (scope, elm, attrs, ngModel) {
 
                 function parseNumber(n, decimals) {
                     return (decimals) ? parseFloat(n) : parseInt(n, 10);
@@ -23,7 +23,7 @@ angular.module('ui.slider', []).value('uiSliderConfig',{}).directive('uiSlider',
                 var properties = ['min', 'max', 'step'];
                 var useDecimals = (!angular.isUndefined(attrs.useDecimals)) ? true : false;
 
-                var init = function() {
+                var init = function () {
                     // When ngModel is assigned an array of values then range is expected to be true.
                     // Warn user and change range to true else an error occurs when trying to drag handle
                     if (angular.isArray(ngModel.$viewValue) && options.range !== true) {
@@ -35,38 +35,39 @@ angular.module('ui.slider', []).value('uiSliderConfig',{}).directive('uiSlider',
                     // This avoids init ordering issues where the slider's initial state (eg handle
                     // position) is calculated using widget defaults
                     // Note the properties take precedence over any duplicates in options
-                    angular.forEach(properties, function(property) {
+                    angular.forEach(properties, function (property) {
                         if (angular.isDefined(attrs[property])) {
                             options[property] = parseNumber(attrs[property], useDecimals);
                         }
                     });
 
-                    elm.slider(options);
+                    elm.labeledslider(options);
                     init = angular.noop;
                 };
 
                 // Find out if decimals are to be used for slider
-                angular.forEach(properties, function(property) {
+                angular.forEach(properties, function (property) {
                     // support {{}} and watch for updates
-                    attrs.$observe(property, function(newVal) {
+                    attrs.$observe(property, function (newVal) {
                         if (!!newVal) {
                             init();
                             options[property] = parseNumber(newVal, useDecimals);
-                            elm.slider('option', property, parseNumber(newVal, useDecimals));
+                            console.log('option ', property, ': ', parseNumber(newVal, useDecimals));
+                            elm.labeledslider('option', property, parseNumber(newVal, useDecimals));
                             ngModel.$render();
                         }
                     });
                 });
-                attrs.$observe('disabled', function(newVal) {
+                attrs.$observe('disabled', function (newVal) {
                     init();
-                    elm.slider('option', 'disabled', !!newVal);
+                    elm.labeledslider('option', 'disabled', !!newVal);
                 });
 
                 // Watch ui-slider (byVal) for changes and update
-                scope.$watch(attrs.uiSlider, function(newVal) {
+                scope.$watch(attrs.uiSlider, function (newVal) {
                     init();
-                    if(newVal !== undefined) {
-                      elm.slider('option', newVal);
+                    if (newVal !== undefined) {
+                        elm.labeledslider('option', newVal);
                     }
                 }, true);
 
@@ -74,21 +75,20 @@ angular.module('ui.slider', []).value('uiSliderConfig',{}).directive('uiSlider',
                 $timeout(init, 0, true);
 
                 // Update model value from slider
-                elm.bind('slide', function(event, ui) {
+                elm.bind('slide', function (event, ui) {
                     ngModel.$setViewValue(ui.values || ui.value);
                     scope.$apply();
                 });
 
                 // Update slider from model value
-                ngModel.$render = function() {
+                ngModel.$render = function () {
                     init();
                     var method = options.range === true ? 'values' : 'value';
 
                     if (!options.range && isNaN(ngModel.$viewValue) && !(ngModel.$viewValue instanceof Array)) {
                         ngModel.$viewValue = 0;
-                    }
-                    else if (options.range && !angular.isDefined(ngModel.$viewValue)) {
-                            ngModel.$viewValue = [0,0];
+                    } else if (options.range && !angular.isDefined(ngModel.$viewValue)) {
+                        ngModel.$viewValue = [0, 0];
                     }
 
                     // Do some sanity check of range values
@@ -119,22 +119,51 @@ angular.module('ui.slider', []).value('uiSliderConfig',{}).directive('uiSlider',
                         prevRangeValues.max = ngModel.$viewValue[1];
 
                     }
-                    elm.slider(method, ngModel.$viewValue);
+                    //updateTicks(scope, elm, attrs, ngModel);
+                    elm.labeledslider(method, ngModel.$viewValue);
+
                 };
 
-                scope.$watch(attrs.ngModel, function() {
+                scope.$watch(attrs.ngModel, function () {
                     if (options.range === true) {
                         ngModel.$render();
                     }
                 }, true);
 
                 function destroy() {
-                    elm.slider('destroy');
+                    elm.labeledslider('destroy');
                 }
-                scope.$on("$destroy", function() {
+                scope.$on("$destroy", function () {
                     destroy();
                 });
+            };
+
+            return {
+                pre: preLink,
+                // post: postLink
             };
         }
     };
 }]);
+
+function updateTicks(scope, element, attrs, ngModel) {
+    // Add tick marks if 'tick' and 'step' attributes have been setted on element.
+    // Support horizontal slider bar so far. 'tick' and 'step' attributes are required.
+    var options = angular.extend({}, scope.$eval(attrs.uiSlider));
+    var properties = ['max', 'step', 'tick'];
+    angular.forEach(properties, function (property) {
+        if (angular.isDefined(attrs[property])) {
+            options[property] = attrs[property];
+        }
+    });
+    if (angular.isDefined(options['tick']) && angular.isDefined(options['step'])) {
+        var total = parseInt(parseInt(options['max']) / parseInt(options['step']));
+        for (var i = total; i >= 0; i--) {
+            console.log(i);
+            var left = ((i / total) * 100) + '%';
+            $("<div/>").addClass("ui-slider-tick").appendTo(element).css({
+                left: left
+            });
+        };
+    }
+}

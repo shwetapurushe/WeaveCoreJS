@@ -14,7 +14,7 @@
 */
 
 // namespace
-if(!this.weavecore)
+if (!this.weavecore)
     this.weavecore = {};
 
 /**
@@ -25,7 +25,7 @@ if(!this.weavecore)
  * @author adufilie
  * @author sanbalag
  */
-(function() {
+(function () {
     //constructor
 
     function StandardLib() {
@@ -39,7 +39,7 @@ if(!this.weavecore)
      * @param b Second dynamic object or primitive value.
      * @return A value of zero if the two objects are equal, nonzero if not equal.
      */
-    StandardLib.compare = function(a, b) {
+    StandardLib.compare = function (a, b) {
         var c;
         var ObjectUtil = weavecore.ObjectUtil;
         if (a === b)
@@ -48,8 +48,8 @@ if(!this.weavecore)
             return 1;
         if (b === null || b === undefined)
             return -1;
-        var typeA = typeof(a);
-        var typeB = typeof(b);
+        var typeA = typeof (a);
+        var typeB = typeof (b);
         if (typeA !== typeB)
             return weavecore.ObjectUtil.stringCompare(typeA, typeB);
         if (typeA === 'boolean')
@@ -65,7 +65,7 @@ if(!this.weavecore)
         if (a instanceof Date && b instanceof Date)
             return weavecore.ObjectUtil.dateCompare(a, b);
 
-        if (a.constructor === Array && b.constructor === Array)) {
+        if (a.constructor === Array && b.constructor === Array) {
             var an = a.length;
             var bn = b.length;
             if (an < bn)

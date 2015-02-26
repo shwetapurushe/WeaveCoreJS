@@ -1,91 +1,96 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="sliderDemoApp" id="top">
-<head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<title>AngularUI - Slider demo</title>
-  	<link rel="stylesheet" href="jquery-ui/themes/smoothness/jquery-ui.css">
-	
-</head>
-<body ng-controller="sliderDemoCtrl">
 
-	
-	
-	
-    <div ui-slider="slider.options" min="0" max="{{log._undoHistory.length + log._redoHistory.length }}" step ="1" ng-model="sliderPosition"></div>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>AngularUI - Slider demo</title>
+    <link rel="stylesheet" href="bower_components/jquery-ui/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="labelledSlider/jquery.ui.labeledslider.css">
+
+</head>
+
+<body ng-controller="sliderDemoCtrl">
+    <div ui-slider="labeledslider.options" min="0" max="{{log._undoHistory.length + log._redoHistory.length}}" step="1" tick="1" ng-model="sliderPosition"></div>
     <br/>
     <br/>
-    <div><input type="text" ng-model="testNum.value" /></div>
-	
-	
-	<script type="text/javascript" src="jquery/dist/jquery.min.js"></script>
-  	<script type="text/javascript" src="jquery-ui/ui/minified/jquery-ui.min.js"></script>
-  	<script type="text/javascript" src="angular/angular.min.js"></script>	
-	<script type="text/javascript" src="slider.js"></script>
+    <div>
+        <input type="text" ng-model="testVar.value" />
+    </div>
+
+
+    <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="bower_components/jquery-ui/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="bower_components/angular/angular.min.js"></script>
+    <script type="text/javascript" src="labelledSlider/jquery.ui.labeledslider.js"></script>
+    <script type="text/javascript" src="slider.js"></script>
     <script type="text/javascript" src="../weavecore.js"></script>
-	<script>
-		var app = angular.module('sliderDemoApp', ['ui.slider']);
-		  
+    <script>
+        var app = angular.module('sliderDemoApp', ['ui.slider']);
+
         var sc;
-		
-		app.controller('sliderDemoCtrl', function($scope, $log) {
+
+        app.controller('sliderDemoCtrl', function ($scope, $log) {
             sc = $scope;
-            
-            $scope.safeApply = function(fn) {
-                  var phase = this.$root.$$phase;
-                  if(phase == '$apply' || phase == '$digest') {
-                    if(fn && (typeof(fn) === 'function')) {
-                      fn();
+
+            $scope.safeApply = function (fn) {
+                var phase = this.$root.$$phase;
+                if (phase == '$apply' || phase == '$digest') {
+                    if (fn && (typeof (fn) === 'function')) {
+                        fn();
                     }
-                  } else {
+                } else {
                     this.$apply(fn);
-                  }
-                };
-		
-			 // Slider options with event handlers
-			$scope.slider = {
-				'options': {
-					start: function (event, ui) { 
+                }
+            };
+
+            // Slider options with event handlers
+            $scope.labeledslider = {
+                'options': {
+                    start: function (event, ui) {
                         $log.info('Event: Slider start');
                     },
-    				stop: function (event, ui) { 
-                        $log.info('Event: Slider stop'); 
+                    stop: function (event, ui) {
+                        $log.info('Event: Slider stop');
                         handleSliderValueChange(ui);
                     }
-				}
-			}
-            
-            $scope.sliderPosition;
-            
-            WeaveAPI.root = new weavecore.LinkableHashMap();
-            $scope.log = new weavecore.SessionStateLog(WeaveAPI.root);
-            var cc = WeaveAPI.SessionManager.getCallbackCollection($scope.log);
-            cc.addGroupedCallback({},updateSliderValues);
-            
-            $scope.testNum = WeaveAPI.root.requestObject('testNum',weavecore.LinkableNumber,false);
-            $scope.testNum.value = 1;
-            
+                }
+            }
+
+            $scope.variable;
+            $scope.log = new weavecore.SessionStateLog(WeaveAPI.globalHashMap);
+
+
+            $scope.testVar = WeaveAPI.globalHashMap.requestObject('testVar', weavecore.LinkableNumber, false);
+
+            $scope.testVar.value = 0;
+
             $scope.log.clearHistory();
-            
-            function updateSliderValues(){
-                $scope.sliderPosition = $scope.log._undoHistory.length ;
-                console.log("Slider Position After Log Change", $scope.sliderPosition);
-            }
-            
-            function handleSliderValueChange(ui){
-                var delta = ui.value - $scope.log.undoHistory.length;
-				if (delta < 0)
-					$scope.log.undo(-delta);
-				else
-					$scope.log.redo(delta);
-                
+
+            var cc = WeaveAPI.SessionManager.getCallbackCollection($scope.log);
+            cc.addGroupedCallback({}, updateSliderValues, true);
+
+            function updateSliderValues() {
+                $scope.sliderPosition = $scope.log._undoHistory.length;
+                // since this function is called programatically in next frame in next frame , 
+                // and not called by UI event , we need to manually trigger digest cycle.
                 $scope.$apply();
-                
-                console.log("Handle Slider value Change", ui.value);
-                console.log("Slider Position", $scope.sliderPosition);
             }
-			
-		});
-	</script>
+
+
+            function handleSliderValueChange(ui) {
+                var delta = ui.value - $scope.log.undoHistory.length;
+                if (delta < 0)
+                    $scope.log.undo(-delta);
+                else
+                    $scope.log.redo(delta);
+
+                $scope.$apply();
+
+            }
+
+        });
+    </script>
 </body>
+
 </html>
