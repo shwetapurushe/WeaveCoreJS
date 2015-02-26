@@ -7,7 +7,19 @@
     <title>AngularUI - Slider demo</title>
     <link rel="stylesheet" href="bower_components/jquery-ui/themes/smoothness/jquery-ui.css">
     <link rel="stylesheet" href="labelledSlider/jquery.ui.labeledslider.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="bower_components/angular-bootstrap-nav-tree/dist/abn_tree.css">
 
+
+    <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="bower_components/jquery-ui/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="bower_components/angular/angular.min.js"></script>
+    <script type="text/javascript" src="bower_components/angular-animate/angular-animate.min.js"></script>
+
+    <script type="text/javascript" src="labelledSlider/jquery.ui.labeledslider.js"></script>
+    <script type="text/javascript" src="bower_components/angular-bootstrap-nav-tree/dist/abn_tree_directive.js"></script>
+    <script type="text/javascript" src="slider.js"></script>
+    <script type="text/javascript" src="../weavecore.js"></script>
 </head>
 
 <body ng-controller="sliderDemoCtrl">
@@ -15,23 +27,29 @@
     <br/>
     <br/>
     <div>
+        Sessioned Number :
         <input type="text" ng-model="testVar.value" />
     </div>
+    <!--<div style="width:250px;margin-left:100px;background:whitesmoke;border:1px solid lightgray;border-radius:5px;">
+    <abn-tree tree-data="my_data" tree-control="my_tree" on-select="my_tree_handler(branch)" expand-level="2"></abn-tree>
+</div>-->
 
 
-    <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
-    <script type="text/javascript" src="bower_components/jquery-ui/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="bower_components/angular/angular.min.js"></script>
-    <script type="text/javascript" src="labelledSlider/jquery.ui.labeledslider.js"></script>
-    <script type="text/javascript" src="slider.js"></script>
-    <script type="text/javascript" src="../weavecore.js"></script>
+
+
     <script>
-        var app = angular.module('sliderDemoApp', ['ui.slider']);
+        //(function () {
+        var app, deps;
+
+        deps = ['ui.slider', 'angularBootstrapNavTree'];
+
+        app = angular.module('sliderDemoApp', deps);
 
         var sc;
 
-        app.controller('sliderDemoCtrl', function ($scope, $log) {
+        app.controller('sliderDemoCtrl', function ($scope, $log, $timeout) {
             sc = $scope;
+
 
             $scope.safeApply = function (fn) {
                 var phase = this.$root.$$phase;
@@ -57,14 +75,9 @@
                 }
             }
 
-            $scope.variable;
             $scope.log = new weavecore.SessionStateLog(WeaveAPI.globalHashMap);
-
-
             $scope.testVar = WeaveAPI.globalHashMap.requestObject('testVar', weavecore.LinkableNumber, false);
-
             $scope.testVar.value = 0;
-
             $scope.log.clearHistory();
 
             var cc = WeaveAPI.SessionManager.getCallbackCollection($scope.log);
@@ -78,6 +91,7 @@
             }
 
 
+
             function handleSliderValueChange(ui) {
                 var delta = ui.value - $scope.log.undoHistory.length;
                 if (delta < 0)
@@ -89,7 +103,68 @@
 
             }
 
+
+            var treedata_geography = [
+                {
+                    label: 'North America',
+                    children: [
+                        {
+                            label: 'Canada',
+                            children: ['Toronto', 'Vancouver']
+          }, {
+                            label: 'USA',
+                            children: ['New York', 'Los Angeles']
+          }, {
+                            label: 'Mexico',
+                            children: ['Mexico City', 'Guadalajara']
+          }
+        ]
+      }, {
+                    label: 'South America',
+                    children: [
+                        {
+                            label: 'Venezuela',
+                            children: ['Caracas', 'Maracaibo']
+          }, {
+                            label: 'Brazil',
+                            children: ['Sao Paulo', 'Rio de Janeiro']
+          }, {
+                            label: 'Argentina',
+                            children: ['Buenos Aires', 'Cordoba']
+          }
+        ]
+      }
+    ];
+
+
+            var tree;
+            $scope.my_tree_handler = function (branch) {
+                var _ref;
+                $scope.output = "You selected: " + branch.label;
+                if ((_ref = branch.data) != null ? _ref.description : void 0) {
+                    return $scope.output += '(' + branch.data.description + ')';
+                }
+            };
+
+
+
+            WeaveAPI.SessionManager.addTreeCallback({}, updateSessionNavigator);
+            updateSessionNavigator();
+
+            $scope.my_tree = tree = new weavecore.WeaveTreeItem();
+
+
+
+            function updateSessionNavigator() {
+                $scope.my_data = [WeaveAPI.SessionManager.getSessionStateTree(WeaveAPI.globalHashMap, 'weave')];
+            }
+
+
+
+
+
         });
+        // }).call(this);
     </script>
 </body>
 
