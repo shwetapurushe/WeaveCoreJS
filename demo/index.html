@@ -10,16 +10,57 @@
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="bower_components/angular-bootstrap-nav-tree/dist/abn_tree.css">
 
+    <style>
+        .point {
+            fill: #c36f1c;
+            stroke: #afa2dc;
+        }
+
+        .selected {
+            fill: #afa2dc;
+            stroke: #2f225d;
+        }
+
+        .axis {
+            font: 10px sans-serif;
+        }
+
+        p {
+            font: 12px sans-serif;
+            margin: 0 0 2px 0;
+            padding: 0;
+        }
+
+        .clear-button {
+            font: 14px sans-serif;
+            cursor: pointer;
+        }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
+
+        .brush .extent {
+            stroke: #fff;
+            fill-opacity: .125;
+            shape-rendering: crispEdges;
+        }
+    </style>
+
 
     <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
     <script type="text/javascript" src="bower_components/jquery-ui/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="bower_components/angular/angular.min.js"></script>
-    <script type="text/javascript" src="bower_components/angular-animate/angular-animate.min.js"></script>
-
+    <script type="text/javascript" src="bower_components/angular/angular.js"></script>
     <script type="text/javascript" src="labelledSlider/jquery.ui.labeledslider.js"></script>
     <script type="text/javascript" src="bower_components/angular-bootstrap-nav-tree/dist/abn_tree_directive.js"></script>
     <script type="text/javascript" src="slider.js"></script>
+    <script type="text/javascript" src="bower_components/d3/d3.js"></script>
+
     <script type="text/javascript" src="../weavecore.js"></script>
+    <script type="text/javascript" src="app.js"></script>
 </head>
 
 <body ng-controller="sliderDemoCtrl">
@@ -30,142 +71,14 @@
         Sessioned Number :
         <input type="text" ng-model="testVar.value" />
     </div>
-    <!--<div style="width:250px;margin-left:100px;background:whitesmoke;border:1px solid lightgray;border-radius:5px;">
-    <abn-tree tree-data="my_data" tree-control="my_tree" on-select="my_tree_handler(branch)" expand-level="2"></abn-tree>
-</div>-->
-
-
-
-
-    <script>
-        //(function () {
-        var app, deps;
-
-        deps = ['ui.slider', 'angularBootstrapNavTree'];
-
-        app = angular.module('sliderDemoApp', deps);
-
-        var sc;
-
-        app.controller('sliderDemoCtrl', function ($scope, $log, $timeout) {
-            sc = $scope;
-
-
-            $scope.safeApply = function (fn) {
-                var phase = this.$root.$$phase;
-                if (phase == '$apply' || phase == '$digest') {
-                    if (fn && (typeof (fn) === 'function')) {
-                        fn();
-                    }
-                } else {
-                    this.$apply(fn);
-                }
-            };
-
-            // Slider options with event handlers
-            $scope.labeledslider = {
-                'options': {
-                    start: function (event, ui) {
-                        $log.info('Event: Slider start');
-                    },
-                    stop: function (event, ui) {
-                        $log.info('Event: Slider stop');
-                        handleSliderValueChange(ui);
-                    }
-                }
-            }
-
-            $scope.log = new weavecore.SessionStateLog(WeaveAPI.globalHashMap);
-            $scope.testVar = WeaveAPI.globalHashMap.requestObject('testVar', weavecore.LinkableNumber, false);
-            $scope.testVar.value = 0;
-            $scope.log.clearHistory();
-
-            var cc = WeaveAPI.SessionManager.getCallbackCollection($scope.log);
-            cc.addGroupedCallback({}, updateSliderValues, true);
-
-            function updateSliderValues() {
-                $scope.sliderPosition = $scope.log._undoHistory.length;
-                // since this function is called programatically in next frame in next frame , 
-                // and not called by UI event , we need to manually trigger digest cycle.
-                $scope.$apply();
-            }
-
-
-
-            function handleSliderValueChange(ui) {
-                var delta = ui.value - $scope.log.undoHistory.length;
-                if (delta < 0)
-                    $scope.log.undo(-delta);
-                else
-                    $scope.log.redo(delta);
-
-                $scope.$apply();
-
-            }
-
-
-            var treedata_geography = [
-                {
-                    label: 'North America',
-                    children: [
-                        {
-                            label: 'Canada',
-                            children: ['Toronto', 'Vancouver']
-          }, {
-                            label: 'USA',
-                            children: ['New York', 'Los Angeles']
-          }, {
-                            label: 'Mexico',
-                            children: ['Mexico City', 'Guadalajara']
-          }
-        ]
-      }, {
-                    label: 'South America',
-                    children: [
-                        {
-                            label: 'Venezuela',
-                            children: ['Caracas', 'Maracaibo']
-          }, {
-                            label: 'Brazil',
-                            children: ['Sao Paulo', 'Rio de Janeiro']
-          }, {
-                            label: 'Argentina',
-                            children: ['Buenos Aires', 'Cordoba']
-          }
-        ]
-      }
-    ];
-
-
-            var tree;
-            $scope.my_tree_handler = function (branch) {
-                var _ref;
-                $scope.output = "You selected: " + branch.label;
-                if ((_ref = branch.data) != null ? _ref.description : void 0) {
-                    return $scope.output += '(' + branch.data.description + ')';
-                }
-            };
-
-
-
-            WeaveAPI.SessionManager.addTreeCallback({}, updateSessionNavigator);
-            updateSessionNavigator();
-
-            $scope.my_tree = tree = new weavecore.WeaveTreeItem();
-
-
-
-            function updateSessionNavigator() {
-                $scope.my_data = [WeaveAPI.SessionManager.getSessionStateTree(WeaveAPI.globalHashMap, 'weave')];
-            }
+    <!--<div style="width:250px;margin-left:5px;background:whitesmoke;border:1px solid lightgray;border-radius:5px;">
+        <abn-tree tree-data="my_data" tree-control="my_tree" on-select="my_tree_handler(branch)" expand-level="1"></abn-tree>
+    </div>-->
 
 
 
 
 
-        });
-        // }).call(this);
-    </script>
 </body>
 
 </html>

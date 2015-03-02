@@ -3124,49 +3124,8 @@ if (!this.weavecore)
 /**
  * Facilitates the creation of dynamic trees.
  */
-(function() {
-    /**
-     * Initializes an Array of WeaveTreeItems using an Array of objects to pass to the constructor.
-     * Any Arrays passed in will be flattened.
-     * @param WeaveTreeItem_implementation The implementation of WeaveTreeItem to use.
-     * @param items Item descriptors.
-     */
-    WeaveTreeItem.createItems = function(WeaveTreeItem_implementation, items) {
-        // flatten
-        var n = 0;
-        while (n !== items.length) {
-            n = items.length;
-            items = [].concat.apply(null, items);
-        }
+(function () {
 
-        return items.map(_mapItems, WeaveTreeItem_implementation).filter(_filterItems);
-    };
-
-    /**
-     * Used for mapping an Array of params objects to an Array of WeaveTreeItem objects.
-     * The "this" argument is used to specify a particular WeaveTreeItem implementation.
-     */
-    WeaveTreeItem._mapItems = function(item, i, a) {
-        // If the item is a Class definition, create an instance of that Class.
-        if (typeof(item) === 'function')
-            return new item();
-
-        // If the item is a String or an Object, we can pass it to the constructor.
-        if (typeof(item) === 'string' || (item !== null && item !== undefined && item.constructor.name === "Object")) {
-            var ItemClass = WeaveTreeItem;
-            return new ItemClass(item);
-        }
-
-        // If the item is any other type, return the original item.
-        return item;
-    };
-
-    /**
-     * Filters out null items.
-     */
-    WeaveTreeItem._filterItems = function(item, i, a) {
-        return item !== null || item !== undefined;
-    }
 
     //----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----
 
@@ -3198,18 +3157,95 @@ if (!this.weavecore)
          */
         this._counter = {};
 
+
+        //----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----
+
+        /**
+         * This can be set to either a String or a Function.
+         * This property is checked by Flex's default data descriptor.
+         * If this property is not set, the <code>data</code> property will be used as the label.
+         */
+        Object.defineProperty(this, 'label', {
+            get: function () {
+                const id = 'label';
+                if (this.isCached(id))
+                    return this._cache[id];
+
+                var str = this.getString(this._label, id);
+                if (!str && this.data !== null && this.data !== undefined)
+                    str = String(this.data);
+                return this.cache(id, str);
+            },
+            set: function (value) {
+                this._counter['label'] = undefined;
+                this._label = value;
+            }
+        });
+
+
+
+
+        Object.defineProperty(this, 'children', {
+            /**
+             * Gets a filtered copy of the child menu items.
+             * When this property is accessed, refresh() will be called except if refresh() is already being called.
+             * This property is checked by Flex's default data descriptor.
+             */
+            get: function () {
+                const id = 'children';
+                if (this.isCached(id))
+                    return this._cache[id];
+
+                var items = this.getObject(this._children, id);
+                if (!items)
+                    return this.cache(id, null);
+
+                var result = items.map(WeaveTreeItem._mapItems.bind(this), this.childItemClass).filter(WeaveTreeItem._filterItems.bind(this));
+                return this.cache(id, result);
+            },
+            /**
+             * This can be set to either an Array or a Function that returns an Array.
+             * The function can be like function():void or function(item:WeaveTreeItem):void.
+             * The Array can contain either WeaveTreeItems or Objects, each of which will be passed to the WeaveTreeItem constructor.
+             */
+            set: function (value) {
+                this._counter['children'] = undefined;
+                this._children = value;
+            }
+        });
+
+
+        /**
+         * A pointer to the ILinkableObject that created this node.
+         * This is used to determine when to invalidate cached values.
+         */
+        Object.defineProperty(this, 'source', {
+            get: function () {
+                if (this._source && WeaveAPI.SessionManager.objectWasDisposed(this._source)) {
+                    this.source = null;
+                }
+                return this._source;
+            },
+            set: function (value) {
+                if (this._source != value)
+                    this._counter = {};
+                this._source = value;
+            }
+        });
+
         /**
          * This can be any data associated with this tree item.
          */
         this.data = null;
 
-        if (typeof(params) === 'string') {
+        if (typeof (params) === 'string') {
             this.label = params;
             this.data = params;
         } else
             for (var key in params)
                 this[key] = params[key];
     }
+
 
 
 
@@ -3223,7 +3259,7 @@ if (!this.weavecore)
      * @param recursionName A name used to keep track of recursion.
      * @return A Boolean value derived from the param, or the param itself if called recursively.
      */
-    p.getBoolean = function(param, recursionName) {
+    p.getBoolean = function (param, recursionName) {
         if (!this._recursion[recursionName]) {
             try {
                 this._recursion[recursionName] = true;
@@ -3232,13 +3268,13 @@ if (!this.weavecore)
                     param = !this.getBoolean(param['not'], "not_" + recursionName);
                 if (this.isSimpleObject(param, 'or'))
                     param = this.getBoolean(param['or'], "or_" + recursionName);
-                if (typeof(param) ===  "function")
+                if (typeof (param) === "function")
                     param = this.evalFunction(param);
                 if (param instanceof weavecore.LinkableVariable)
                     param = param.getSessionState();
                 if (param instanceof Array) {
                     var breakValue = recursionName.indexOf("or_") === 0;
-                    for(var param in param) {
+                    for (var param in param) {
                         param = this.getBoolean(param, "item_" + recursionName);
                         if (param ? breakValue : !breakValue)
                             break;
@@ -3255,7 +3291,7 @@ if (!this.weavecore)
     /**
      * Checks if an object has a single specified property.
      */
-    p.isSimpleObject = function(object, singlePropertyName) {
+    p.isSimpleObject = function (object, singlePropertyName) {
         if (!(object instanceof Object) || object.constructor !== Object)
             return false;
 
@@ -3278,12 +3314,12 @@ if (!this.weavecore)
      * @param recursionName A name used to keep track of recursion.
      * @return A String value derived from the param, or the param itself if called recursively.
      */
-    p.getString = function(param, recursionName) {
+    p.getString = function (param, recursionName) {
         if (!this._recursion[recursionName]) {
             try {
                 this._recursion[recursionName] = true;
 
-                if (typeof(param) === "function")
+                if (typeof (param) === "function")
                     param = this.evalFunction(param);
                 else
                     param = param || '';
@@ -3300,12 +3336,12 @@ if (!this.weavecore)
      * @param recursionName A name used to keep track of recursion.
      * @return An Object derived from the param, or the param itself if called recursively.
      */
-    p.getObject = function(param, recursionName) {
+    p.getObject = function (param, recursionName) {
         if (!this._recursion[recursionName]) {
             try {
                 this._recursion[recursionName] = true;
 
-                if (typeof(param) === "function")
+                if (typeof (param) === "function")
                     param = this.evalFunction(param);
             } finally {
                 this._recursion[recursionName] = false;
@@ -3318,7 +3354,7 @@ if (!this.weavecore)
      * First tries calling a function with no parameters.
      * If an ArgumentError is thrown, the function will called again, passing this WeaveTreeItem as the first parameter.
      */
-    p.evalFunction = function(func) {
+    p.evalFunction = function (func) {
         try {
             // first try calling the function with no parameters
             return func.call(this);
@@ -3344,7 +3380,7 @@ if (!this.weavecore)
      * @param id A string identifying a property.
      * @return true if the property value has been cached.
      */
-    p.isCached = function(id) {
+    p.isCached = function (id) {
         if (this._source && WeaveAPI.SessionManager.objectWasDisposed(this._source))
             source = null;
         return this._source && this._counter[id] === WeaveAPI.SessionManager.getCallbackCollection(this._source).triggerCounter;
@@ -3357,7 +3393,7 @@ if (!this.weavecore)
      * @param newValue Optional new value to cache for the property.
      * @return The new or existing value for the property.
      */
-    p.cache = function(id, newValue) {
+    p.cache = function (id, newValue) {
         if (arguments.length === 1)
             return this._cache[id];
 
@@ -3370,77 +3406,55 @@ if (!this.weavecore)
         return newValue;
     }
 
-    //----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----
 
     /**
-     * This can be set to either a String or a Function.
-     * This property is checked by Flex's default data descriptor.
-     * If this property is not set, the <code>data</code> property will be used as the label.
+     * Initializes an Array of WeaveTreeItems using an Array of objects to pass to the constructor.
+     * Any Arrays passed in will be flattened.
+     * @param WeaveTreeItem_implementation The implementation of WeaveTreeItem to use.
+     * @param items Item descriptors.
      */
-    p.__defineGetter__("label", function() {
-        const id = 'label';
-        if (this.isCached(id))
-            return this._cache[id];
+    WeaveTreeItem.createItems = function (WeaveTreeItem_implementation, items) {
+        // flatten
+        var n = 0;
+        while (n !== items.length) {
+            n = items.length;
+            items = [].concat.apply(null, items);
+        }
 
-        var str = this.getString(this._label, id);
-        if (!str && this.data !== null && this.data !== undefined)
-            str = String(this.data);
-        return this.cache(id, str);
-    });
-    p.__defineSetter__("label", function(value) {
-        this._counter['label'] = undefined;
-        this._label = value;
-    });
+        return items.map(_mapItems, WeaveTreeItem_implementation).filter(_filterItems);
+    };
 
     /**
-     * Gets a filtered copy of the child menu items.
-     * When this property is accessed, refresh() will be called except if refresh() is already being called.
-     * This property is checked by Flex's default data descriptor.
+     * Used for mapping an Array of params objects to an Array of WeaveTreeItem objects.
+     * The "this" argument is used to specify a particular WeaveTreeItem implementation.
      */
-    p.__defineGetter__("children", function() {
-        const id = 'children';
-        if (this.isCached(id))
-            return this._cache[id];
+    WeaveTreeItem._mapItems = function (item, i, a) {
+        // If the item is a Class definition, create an instance of that Class.
+        if (typeof (item) === 'function')
+            return new item();
 
-        var items = this.getObject(this._children, id);
-        if (!items)
-            return this.cache(id, null);
+        // If the item is a String or an Object, we can pass it to the constructor.
+        if (typeof (item) === 'string' || (item !== null && item !== undefined && item.constructor.name === "Object")) {
+            var ItemClass = WeaveTreeItem;
+            return new ItemClass(item);
+        }
 
-        var result = items.map(WeaveTreeItem._mapItems.bind(this), this.childItemClass).filter(WeaveTreeItem._filterItems.bind(this));
-        return this.cache(id, result);
-    });
+        // If the item is any other type, return the original item.
+        return item;
+    };
 
     /**
-     * This can be set to either an Array or a Function that returns an Array.
-     * The function can be like function():void or function(item:WeaveTreeItem):void.
-     * The Array can contain either WeaveTreeItems or Objects, each of which will be passed to the WeaveTreeItem constructor.
+     * Filters out null items.
      */
-    p.__defineSetter__("children", function(value) {
-        this._counter['children'] = undefined;
-        this._children = value;
-    });
+    WeaveTreeItem._filterItems = function (item, i, a) {
+        return item !== null || item !== undefined;
+    }
 
-    /**
-     * A pointer to the ILinkableObject that created this node.
-     * This is used to determine when to invalidate cached values.
-     */
-    p.__defineGetter__("source", function() {
-            if (this._source && WeaveAPI.SessionManager.objectWasDisposed(this._source)){
-                source = null;
-            }
-            return this._source;
-        });
 
-    p.__defineSetter__("source", function(value) {
-            if (this._source != value)
-                this._counter = {};
-           this._source = value;
-        });
 
     weavecore.WeaveTreeItem = WeaveTreeItem;
 
 }());
-
 /*
     Weave (Web-based Analysis and Visualization Environment)
     Copyright (C) 2008-2011 University of Massachusetts Lowell
