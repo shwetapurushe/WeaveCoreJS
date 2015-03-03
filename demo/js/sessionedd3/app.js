@@ -35,8 +35,7 @@
      }
 
      $scope.log = new weavecore.SessionStateLog(WeaveAPI.globalHashMap);
-     $scope.testVar = WeaveAPI.globalHashMap.requestObject('testVar', weavecore.LinkableNumber, false);
-     $scope.testVar.value = 0;
+
      var probeKeys = WeaveAPI.globalHashMap.requestObject('probeKeys', weavecore.LinkableVariable, false);
      probeKeys.setSessionState([]);
      var selectionKeys = WeaveAPI.globalHashMap.requestObject('selectionKeys', weavecore.LinkableVariable, false);

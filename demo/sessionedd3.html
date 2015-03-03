@@ -61,17 +61,14 @@
     <script type="text/javascript" src="bower_components/d3/d3.js"></script>
 
     <script type="text/javascript" src="../weavecore.js"></script>
-    <script type="text/javascript" src="js/app.js"></script>
+    <script type="text/javascript" src="js/sessionedd3/app.js"></script>
 </head>
 
 <body ng-controller="sliderDemoCtrl">
     <div ui-slider="labeledslider.options" min="0" max="{{log._undoHistory.length + log._redoHistory.length}}" step="1" tick="1" ng-model="sliderPosition"></div>
     <br/>
     <br/>
-    <div>
-        Sessioned Number :
-        <input type="text" ng-model="testVar.value" />
-    </div>
+
     <!--<div style="width:250px;margin-left:5px;background:whitesmoke;border:1px solid lightgray;border-radius:5px;">
         <abn-tree tree-data="my_data" tree-control="my_tree" on-select="my_tree_handler(branch)" expand-level="1"></abn-tree>
     </div>-->
