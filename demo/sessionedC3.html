@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sliderDemoApp" id="top">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="stylesheet" href="bower_components/jquery-ui/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="labelledSlider/jquery.ui.labeledslider.css">
+    <link rel="stylesheet" href="bower_components/c3/c3.css">
+
+
+    <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="bower_components/jquery-ui/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="bower_components/angular/angular.js"></script>
+    <script type="text/javascript" src="bower_components/d3/d3.js"></script>
+    <script type="text/javascript" src="bower_components/c3/c3.js"></script>
+    <script type="text/javascript" src="slider.js"></script>
+    <script type="text/javascript" src="labelledSlider/jquery.ui.labeledslider.js"></script>
+    <script type="text/javascript" src="../weavecore.js"></script>
+
+    <script type="text/javascript">
+        var app = angular.module('sliderDemoApp', ['ui.slider']);
+
+        var sc;
+        var testObj = {};
+        app.controller('sliderDemoCtrl', function ($scope, $log, $timeout) {
+            $scope.safeApply = function (fn) {
+                var phase = this.$root.$$phase;
+                if (phase == '$apply' || phase == '$digest') {
+                    if (fn && (typeof (fn) === 'function')) {
+                        fn();
+                    }
+                } else {
+                    this.$apply(fn);
+                }
+            };
+
+            // Slider options with event handlers
+            $scope.labeledslider = {
+                'options': {
+                    start: function (event, ui) {
+                        $log.info('Event: Slider start');
+                    },
+                    stop: function (event, ui) {
+                        $log.info('Event: Slider stop');
+                        handleSliderValueChange(ui);
+                    }
+                }
+            }
+
+            $scope.log = new weavecore.SessionStateLog(WeaveAPI.globalHashMap);
+
+            // set Probe and Selection keys
+            var probeKeys = WeaveAPI.globalHashMap.requestObject('probeKeys', weavecore.LinkableVariable, false);
+            probeKeys.setSessionState([]);
+            var selectionKeys = WeaveAPI.globalHashMap.requestObject('selectionKeys', weavecore.LinkableVariable, false);
+            selectionKeys.setSessionState([]);
+
+
+            var cc = WeaveAPI.SessionManager.getCallbackCollection($scope.log);
+            cc.addGroupedCallback({}, updateSliderValues, true);
+
+            function updateSliderValues() {
+                $scope.sliderPosition = $scope.log._undoHistory.length;
+                // since this function is called programatically in next frame in next frame ,
+                // and not called by UI event , we need to manually trigger digest cycle.
+                console.log('UpdateSliderValues called')
+                $scope.safeApply();
+            }
+
+
+
+            function handleSliderValueChange(ui) {
+                var delta = ui.value - $scope.log.undoHistory.length;
+                if (delta < 0)
+                    $scope.log.undo(-delta);
+                else
+                    $scope.log.redo(delta);
+                $scope.$apply();
+            }
+
+            var chart = testObj.chart = c3.generate({
+                bindto: '#chart',
+                xs: {
+                    setosa: 'setosa_x',
+                    versicolor: 'versicolor_x',
+                },
+                data: {
+                    columns: [
+            ["setosa_x", 3.5, 3.0, 3.2, 3.1, 3.6, 3.9, 3.4, 3.4, 2.9, 3.1, 3.7, 3.4, 3.0, 3.0, 4.0, 4.4, 3.9, 3.5, 3.8, 3.8, 3.4, 3.7, 3.6, 3.3, 3.4, 3.0, 3.4, 3.5, 3.4, 3.2, 3.1, 3.4, 4.1, 4.2, 3.1, 3.2, 3.5, 3.6, 3.0, 3.4, 3.5, 2.3, 3.2, 3.5, 3.8, 3.0, 3.8, 3.2, 3.7, 3.3],
+            ["versicolor_x", 3.2, 3.2, 3.1, 2.3, 2.8, 2.8, 3.3, 2.4, 2.9, 2.7, 2.0, 3.0, 2.2, 2.9, 2.9, 3.1, 3.0, 2.7, 2.2, 2.5, 3.2, 2.8, 2.5, 2.8, 2.9, 3.0, 2.8, 3.0, 2.9, 2.6, 2.4, 2.4, 2.7, 2.7, 3.0, 3.4, 3.1, 2.3, 3.0, 2.5, 2.6, 3.0, 2.6, 2.3, 2.7, 3.0, 2.9, 2.9, 2.5, 2.8],
+            ["setosa", 0.2, 0.2, 0.2, 0.2, 0.2, 0.4, 0.3, 0.2, 0.2, 0.1, 0.2, 0.2, 0.1, 0.1, 0.2, 0.4, 0.4, 0.3, 0.3, 0.3, 0.2, 0.4, 0.2, 0.5, 0.2, 0.2, 0.4, 0.2, 0.2, 0.2, 0.2, 0.4, 0.1, 0.2, 0.2, 0.2, 0.2, 0.1, 0.2, 0.2, 0.3, 0.3, 0.2, 0.6, 0.4, 0.3, 0.2, 0.2, 0.2, 0.2],
+            ["versicolor", 1.4, 1.5, 1.5, 1.3, 1.5, 1.3, 1.6, 1.0, 1.3, 1.4, 1.0, 1.5, 1.0, 1.4, 1.3, 1.4, 1.5, 1.0, 1.5, 1.1, 1.8, 1.3, 1.5, 1.2, 1.3, 1.4, 1.4, 1.7, 1.5, 1.0, 1.1, 1.0, 1.2, 1.6, 1.5, 1.6, 1.5, 1.3, 1.3, 1.3, 1.2, 1.4, 1.2, 1.0, 1.3, 1.2, 1.3, 1.3, 1.1, 1.3],
+        ],
+                    type: 'scatter'
+                },
+                axis: {
+                    x: {
+                        label: 'Sepal.Width',
+                        tick: {
+                            fit: false
+                        }
+                    },
+                    y: {
+                        label: 'Petal.Width'
+                    }
+                }
+
+            });
+
+
+
+
+            $scope.log.clearHistory();
+
+
+        });
+    </script>
+</head>
+
+<body ng-controller="sliderDemoCtrl">
+
+    <div ui-slider="labeledslider.options" min="0" max="{{log._undoHistory.length + log._redoHistory.length}}" step="1" tick="1" ng-model="sliderPosition"></div>
+    <br/>
+    <br/>
+
+    <div id="chart"></div>
+</body>
+
+</html>
