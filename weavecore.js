@@ -3026,7 +3026,7 @@ if (!this.weavecore)
         // special cases
         if (baseDiff === null || baseDiff === undefined || diffToAdd === null || diffToAdd === undefined || baseType !== diffType || baseType !== 'object') {
             if (diffType === 'object') // not a primitive, so make a copy
-                baseDiff = Object.create(diffToAdd);
+                baseDiff = Object.create(diffToAdd).__proto__; // temp solution need to find better solution as its array it will work fine
             else
                 baseDiff = diffToAdd;
         } else if (Array.isArray(baseDiff) && Array.isArray(diffToAdd)) {
@@ -3075,13 +3075,13 @@ if (!this.weavecore)
                         if (typeof typedState === 'string' || typedState instanceof String || typedState === null || typedState === undefined)
                             baseLookup[objectName] = typedState; // avoid unnecessary function call overhead
                         else
-                            baseLookup[objectName] = Object.create(typedState);
+                            baseLookup[objectName] = Object.create(typedState).__proto__; // Temp solution for Array Copy
                     } else if (!(typeof typedState === 'string' || typedState instanceof String || typedState === null || typedState === undefined)) // update dynamic state
                     {
                         var className = typedState[weavecore.DynamicState.CLASS_NAME];
                         // if new className is different and not null, start with a fresh typedState diff
                         if (className && className != oldTypedState[weavecore.DynamicState.CLASS_NAME]) {
-                            baseLookup[objectName] = Object.create(typedState);
+                            baseLookup[objectName] = Object.create(typedState).__proto__; // Temp solution for Array Copy;
                         } else // className hasn't changed, so combine the diffs
                         {
                             oldTypedState[weavecore.DynamicState.SESSION_STATE] = this.combineDiff(oldTypedState[weavecore.DynamicState.SESSION_STATE], typedState[weavecore.DynamicState.SESSION_STATE]);
@@ -3119,7 +3119,6 @@ if (!this.weavecore)
     weavecore.SessionManager = SessionManager;
 
 }());
-
 /*
     Weave (Web-based Analysis and Visualization Environment)
     Copyright (C) 2008-2011 University of Massachusetts Lowell
@@ -3477,6 +3476,7 @@ if (!this.weavecore)
     weavecore.WeaveTreeItem = WeaveTreeItem;
 
 }());
+
 /*
     Weave (Web-based Analysis and Visualization Environment)
     Copyright (C) 2008-2011 University of Massachusetts Lowell
@@ -3745,14 +3745,23 @@ if (!this.weavecore)
         // If the value is a dynamic object, save a copy because we don't want
         // two LinkableVariables to share the same object as their session state.
         if (type === 'object') {
-            if (!wasCopied)
-                value = Object.create(value);
+            if (!wasCopied) {
+                if (value.constructor === Array) // Temp solution for array copy
+                    value = Object.create(value).__proto__;
+                else
+                    value = Object.create(value);
+            }
+
 
             // save external copy, accessible via getSessionState()
             this._sessionStateExternal = value;
 
             // save internal copy
-            this._sessionStateInternal = Object.create(value);
+            if (value.constructor === Array) // Temp solution for array copy
+                this._sessionStateInternal = Object.create(value).__proto__;
+            else
+                this._sessionStateInternal = Object.create(value);
+
         } else {
             // save primitive value
             this._sessionStateExternal = this._sessionStateInternal = value;
@@ -3800,7 +3809,6 @@ if (!this.weavecore)
     weavecore.LinkableVariable = LinkableVariable;
 
 }());
-
 /*
     Weave (Web-based Analysis and Visualization Environment)
     Copyright (C) 2008-2011 University of Massachusetts Lowell
@@ -4568,6 +4576,7 @@ if (!this.weavecore)
             {
                 // If this name is not associated with an object of the specified type,
                 // associate the name with a new object of the specified type.
+                console.log(className);
                 var classDef = eval('weavecore.' + className); //hardcoded weavecore.
                 var object = this._nameToObjectMap[name];
                 if (!object || object.constructor !== classDef)
@@ -4799,7 +4808,6 @@ if (!this.weavecore)
 
     weavecore.LinkableHashMap = LinkableHashMap;
 }());
-
 createjs.Ticker.setFPS(50);
 //createjs.Ticker.
 
