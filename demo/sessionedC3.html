@@ -184,7 +184,7 @@
 
 
 
-            test.showTooltip = function (selectedData, element) {
+            test.showTooltip = function (selectedData) {
                 var $$ = scatterplot.internal, // get instance
                     config = $$.config;
                 var tWidth, tHeight, position;
@@ -194,26 +194,15 @@
                         return d && c3.chart.internal.fn.isValue(d.value);
                     }),
                     positionFunction = config.tooltip_position || c3_chart_internal_fn.tooltipPosition;
-                if (dataToShow.length === 0 || !config.tooltip_show) {
+                if (dataToShow.length === 0) {
                     return;
                 }
-                $$.tooltip.html(config.tooltip_contents.call($$, selectedData, $$.getXAxisTickFormat(), $$.getYFormat(forArc), $$.color)).style("display", "block");
 
-                // Get tooltip dimensions
-                tWidth = $$.tooltip.property('offsetWidth');
-                tHeight = $$.tooltip.property('offsetHeight');
-
-                position = positionFunction.call(this, dataToShow, tWidth, tHeight, element);
-                // Set tooltip
-                $$.tooltip
-                    .style("top", position.top + "px")
-                    .style("left", position.left + 'px');
             };
 
 
 
 
-            //  $scope.log.clearHistory();
 
 
         });
