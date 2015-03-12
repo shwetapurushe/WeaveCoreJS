@@ -45,7 +45,7 @@
      $scope.testVar = createNewSession("testNum") // this will cause issue as in session new object is created, tthe reference is changed
      $scope.testVar.value = 0;
 
-     // $scope.log.clearHistory();
+     $scope.log.clearHistory();
 
      var cc = WeaveAPI.SessionManager.getCallbackCollection($scope.log);
      cc.addGroupedCallback({}, updateSliderValues, true);
