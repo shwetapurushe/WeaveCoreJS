@@ -6,6 +6,13 @@
 
  var sc;
 
+ function createNewSession(name) {
+     var oo = WeaveAPI.globalHashMap.requestObject(name, weavecore.LinkableNumber, false);
+     oo.value = 0;
+
+     return oo;
+ }
+
  app.controller('sliderDemoCtrl', function ($scope, $log, $timeout) {
      sc = $scope;
 
@@ -35,10 +42,10 @@
      }
 
      $scope.log = new weavecore.SessionStateLog(WeaveAPI.globalHashMap);
-     $scope.testVar = WeaveAPI.globalHashMap.requestObject('testVar', weavecore.LinkableNumber, false);
+     $scope.testVar = createNewSession("testNum") // this will cause issue as in session new object is created, tthe reference is changed
      $scope.testVar.value = 0;
 
-     $scope.log.clearHistory();
+     // $scope.log.clearHistory();
 
      var cc = WeaveAPI.SessionManager.getCallbackCollection($scope.log);
      cc.addGroupedCallback({}, updateSliderValues, true);
@@ -109,6 +116,7 @@
              }
          };
      }
+
 
 
 

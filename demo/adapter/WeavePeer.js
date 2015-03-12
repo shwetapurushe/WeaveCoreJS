@@ -3,7 +3,7 @@ if (!this.weavePeer)
     this.weavePeer = {};
 
 
-weavePeer.log = new weavecore.SessionStateLog(WeaveAPI.globalHashMap);
+
 
 (function () {
     //static Declaration

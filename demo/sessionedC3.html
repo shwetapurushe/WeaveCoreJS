@@ -51,7 +51,7 @@
                 }
             }
 
-            $scope.log = weavePeer.log
+            $scope.log = new weavecore.SessionStateLog(WeaveAPI.globalHashMap);
             var cc = WeaveAPI.SessionManager.getCallbackCollection($scope.log);
             cc.addGroupedCallback({}, updateSliderValues, true);
 
@@ -79,15 +79,18 @@
             probeKeys.setSessionState([]);
             var selectionKeys = weavePeer.Interaction.selectionKeys;
             selectionKeys.setSessionState([]);
+
+            $scope.log.clearHistory();
+
             var weaveInteractionPeer = new weavePeer.Interaction();
 
 
             var scatterplot = test.scatter = c3.generate({
                 bindto: '#scatterplotdiv',
-                size: {
-                    width: 400,
-                    height: 400
-                },
+                /* size: {
+                     width: 400,
+                     height: 400
+                 },*/
                 data: {
                     x: 'data1',
                     y: 'data2',
@@ -108,10 +111,7 @@
 
             var barchart = c3.generate({
                 bindto: '#barchartdiv',
-                size: {
-                    width: 400,
-                    height: 400
-                },
+                /**/
                 data: {
                     x: 'data1',
                     y: 'data2',
@@ -135,7 +135,7 @@
                 }
             });
 
-            var linechart = c3.generate({
+            /* var linechart = c3.generate({
                 bindto: '#linechartdiv',
 
                 data: {
@@ -151,14 +151,14 @@
                     onselected: onUISelection,
                     onmouseover: onUIProbe
                 }
-            });
+            });*/
 
 
 
 
             weaveInteractionPeer.hooks.push(new c3Hook.Interaction(scatterplot));
             weaveInteractionPeer.hooks.push(new c3Hook.Interaction(barchart));
-            weaveInteractionPeer.hooks.push(new c3Hook.Interaction(linechart));
+            // weaveInteractionPeer.hooks.push(new c3Hook.Interaction(linechart));
 
             function onUISelection(d) {
 
@@ -184,31 +184,31 @@
 
 
 
-            /* testObj.showTooltip = function (selectedData, element) {
-                 var $$ = chart.internal, // get instance
-                     config = $$.config;
-                 var tWidth, tHeight, position;
-                 var c3_chart_internal_fn = c3.chart.internal.fn
-                 var forArc = $$.hasArcType(),
-                     dataToShow = selectedData.filter(function (d) {
-                         return d && isValue(d.value);
-                     }),
-                     positionFunction = config.tooltip_position || c3_chart_internal_fn.tooltipPosition;
-                 if (dataToShow.length === 0 || !config.tooltip_show) {
-                     return;
-                 }
-                 $$.tooltip.html(config.tooltip_contents.call($$, selectedData, $$.getXAxisTickFormat(), $$.getYFormat(forArc), $$.color)).style("display", "block");
+            test.showTooltip = function (selectedData, element) {
+                var $$ = scatterplot.internal, // get instance
+                    config = $$.config;
+                var tWidth, tHeight, position;
+                var c3_chart_internal_fn = c3.chart.internal.fn
+                var forArc = $$.hasArcType(),
+                    dataToShow = selectedData.filter(function (d) {
+                        return d && c3.chart.internal.fn.isValue(d.value);
+                    }),
+                    positionFunction = config.tooltip_position || c3_chart_internal_fn.tooltipPosition;
+                if (dataToShow.length === 0 || !config.tooltip_show) {
+                    return;
+                }
+                $$.tooltip.html(config.tooltip_contents.call($$, selectedData, $$.getXAxisTickFormat(), $$.getYFormat(forArc), $$.color)).style("display", "block");
 
-                 // Get tooltip dimensions
-                 tWidth = $$.tooltip.property('offsetWidth');
-                 tHeight = $$.tooltip.property('offsetHeight');
+                // Get tooltip dimensions
+                tWidth = $$.tooltip.property('offsetWidth');
+                tHeight = $$.tooltip.property('offsetHeight');
 
-                 position = positionFunction.call(this, dataToShow, tWidth, tHeight, element);
-                 // Set tooltip
-                 $$.tooltip
-                     .style("top", position.top + "px")
-                     .style("left", position.left + 'px');
-             };*/
+                position = positionFunction.call(this, dataToShow, tWidth, tHeight, element);
+                // Set tooltip
+                $$.tooltip
+                    .style("top", position.top + "px")
+                    .style("left", position.left + 'px');
+            };
 
 
 
@@ -225,10 +225,10 @@
     <div ui-slider="labeledslider.options" min="0" max="{{log._undoHistory.length + log._redoHistory.length}}" step="1" tick="1" ng-model="sliderPosition"></div>
 
 
-
-    <div id="scatterplotdiv" style="display: inline;"></div>
-    <div id="barchartdiv" style="display: inline;"></div>
-    <div id="linechartdiv"></div>
+    <!--style="display: inline;"-->
+    <div id="scatterplotdiv"></div>
+    <div id="barchartdiv"></div>
+    <!--<div id="linechartdiv"></div>-->
 </body>
 
 </html>
