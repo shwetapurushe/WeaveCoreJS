@@ -21,12 +21,12 @@ if (!this.weavecore)
 /**
  * LinkableVariable allows callbacks to be added that will be called when the value changes.
  * A LinkableVariable has an optional type restriction on the values it holds.
- * 
+ *
  * @author adufilie
  * @author sanjay1909
  */
 
-(function() {
+(function () {
     /**
      * If a defaultValue is specified, callbacks will be triggered in a later frame unless they have already been triggered before then.
      * This behavior is desirable because it allows the initial value to be handled by the same callbacks that handles new values.
@@ -37,19 +37,19 @@ if (!this.weavecore)
      */
 
     function LinkableVariable(sessionStateType, verifier, defaultValue, defaultValueTriggersCallbacks) {
-        if(sessionStateType === undefined)sessionStateType = null;
-        if(verifier === undefined)verifier = null;
-        if(defaultValueTriggersCallbacks === undefined)defaultValueTriggersCallbacks = true;
-        
+        if (sessionStateType === undefined) sessionStateType = null;
+        if (verifier === undefined) verifier = null;
+        if (defaultValueTriggersCallbacks === undefined) defaultValueTriggersCallbacks = true;
+
         weavecore.CallbackCollection.call(this);
 
         /**
-		 * This function is used to prevent the session state from having unwanted values.
-		 * Function signature should be  function(value:*):Boolean
+         * This function is used to prevent the session state from having unwanted values.
+         * Function signature should be  function(value:*):Boolean
          * @private
          * @property _verifier
          * @type function
-		 */
+         */
         this._verifier = verifier;
 
         /**
@@ -83,13 +83,13 @@ if (!this.weavecore)
             this._sessionStateType = sessionStateType;
             this._primitiveType = this._sessionStateType === "string" || this._sessionStateType === "number" || this._sessionStateType === "boolean";
         }
-        if ( defaultValue !== undefined) {
+        if (defaultValue !== undefined) {
             this.setSessionState(defaultValue);
 
             // If callbacks were triggered, make sure callbacks are triggered again one frame later when
             // it is possible for other classes to have a pointer to this object and retrieve the value.
             if (defaultValueTriggersCallbacks && this._triggerCounter > weavecore.CallbackCollection.DEFAULT_TRIGGER_COUNT)
-              weavecore.StageUtils.callLater(this, _defaultValueTrigger.bind(this));
+                weavecore.StageUtils.callLater(this, _defaultValueTrigger.bind(this));
         }
     }
 
@@ -108,24 +108,24 @@ if (!this.weavecore)
     function verifyValue(value) {
         return this._verifier === null || this._verifier === undefined || this._verifier(value);
     }
-    
+
     LinkableVariable.prototype = new weavecore.CallbackCollection();
     LinkableVariable.prototype.constructor = LinkableVariable;
-    
+
     var p = LinkableVariable.prototype;
 
     /**
      * The type restriction passed in to the constructor.
      */
-    p.getSessionStateType = function() {
+    p.getSessionStateType = function () {
         return this._sessionStateType;
     };
 
-    p.getSessionState = function() {
+    p.getSessionState = function () {
         return this._sessionStateExternal;
     };
 
-    p.setSessionState = function(value) {
+    p.setSessionState = function (value) {
         if (this._locked)
             return;
 
@@ -140,7 +140,7 @@ if (!this.weavecore)
         var wasCopied = false;
         var type = null;
         if (value !== null && value !== undefined) {
-            type = typeof(value);
+            type = typeof (value);
 
             if (type === 'object' && value.constructor !== Object && value.constructor !== Array) {
                 // convert to dynamic Object prior to sessionStateEquals comparison
@@ -158,14 +158,23 @@ if (!this.weavecore)
         // If the value is a dynamic object, save a copy because we don't want
         // two LinkableVariables to share the same object as their session state.
         if (type === 'object') {
-            if (!wasCopied)
-                value = Object.create(value);
+            if (!wasCopied) {
+                if (value.constructor === Array) // Temp solution for array copy
+                    value = Object.create(value).__proto__;
+                else
+                    value = Object.create(value);
+            }
+
 
             // save external copy, accessible via getSessionState()
             this._sessionStateExternal = value;
 
             // save internal copy
-            this._sessionStateInternal = Object.create(value);
+            if (value.constructor === Array) // Temp solution for array copy
+                this._sessionStateInternal = Object.create(value).__proto__;
+            else
+                this._sessionStateInternal = Object.create(value);
+
         } else {
             // save primitive value
             this._sessionStateExternal = this._sessionStateInternal = value;
@@ -181,7 +190,7 @@ if (!this.weavecore)
      * This function is used in setSessionState() to determine if the value has changed or not.
      * object that prototype this object may override this function.
      */
-    p.sessionStateEquals = function(otherSessionState) {
+    p.sessionStateEquals = function (otherSessionState) {
         if (this._primitiveType)
             return this._sessionStateInternal === otherSessionState;
 
@@ -192,20 +201,20 @@ if (!this.weavecore)
     /**
      * This function may be called to detect change to a non-primitive session state in case it has been modified externally.
      */
-    p.detectChanges = function() {
+    p.detectChanges = function () {
         if (!this.sessionStateEquals(this._sessionStateExternal))
             this.triggerCallbacks();
     };
 
-    p.lock = function() {
+    p.lock = function () {
         this._locked = true;
     };
 
-    p.__defineGetter__("locked ", function() {
+    p.__defineGetter__("locked ", function () {
         return this._locked;
     });
 
-    p.dispose = function() {
+    p.dispose = function () {
         weavecore.CallbackCollection.prototype.dispose.call(this);
         this.setSessionState(null);
     };

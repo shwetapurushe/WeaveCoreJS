@@ -17,12 +17,15 @@
     <script type="text/javascript" src="slider.js"></script>
     <script type="text/javascript" src="labelledSlider/jquery.ui.labeledslider.js"></script>
     <script type="text/javascript" src="../weavecore.js"></script>
+    <script type="text/javascript" src="adapter/WeaveAdapter.js"></script>
+    <script type="text/javascript" src="adapter/WeavePeer.js"></script>
+    <script type="text/javascript" src="adapter/C3Hook.js"></script>
 
     <script type="text/javascript">
         var app = angular.module('sliderDemoApp', ['ui.slider']);
 
         var sc;
-        var testObj = {};
+        var test = {};
         app.controller('sliderDemoCtrl', function ($scope, $log, $timeout) {
             $scope.safeApply = function (fn) {
                 var phase = this.$root.$$phase;
@@ -48,15 +51,7 @@
                 }
             }
 
-            $scope.log = new weavecore.SessionStateLog(WeaveAPI.globalHashMap);
-
-            // set Probe and Selection keys
-            var probeKeys = WeaveAPI.globalHashMap.requestObject('probeKeys', weavecore.LinkableVariable, false);
-            probeKeys.setSessionState([]);
-            var selectionKeys = WeaveAPI.globalHashMap.requestObject('selectionKeys', weavecore.LinkableVariable, false);
-            selectionKeys.setSessionState([]);
-
-
+            $scope.log = weavePeer.log
             var cc = WeaveAPI.SessionManager.getCallbackCollection($scope.log);
             cc.addGroupedCallback({}, updateSliderValues, true);
 
@@ -68,8 +63,6 @@
                 $scope.safeApply();
             }
 
-
-
             function handleSliderValueChange(ui) {
                 var delta = ui.value - $scope.log.undoHistory.length;
                 if (delta < 0)
@@ -79,39 +72,148 @@
                 $scope.$apply();
             }
 
-            var chart = testObj.chart = c3.generate({
-                bindto: '#chart',
-                xs: {
-                    setosa: 'setosa_x',
-                    versicolor: 'versicolor_x',
+
+
+            // get ref of Probe and Selection keys
+            var probeKeys = weavePeer.Interaction.probeKeys;
+            probeKeys.setSessionState([]);
+            var selectionKeys = weavePeer.Interaction.selectionKeys;
+            selectionKeys.setSessionState([]);
+            var weaveInteractionPeer = new weavePeer.Interaction();
+
+
+            var scatterplot = test.scatter = c3.generate({
+                bindto: '#scatterplotdiv',
+                size: {
+                    width: 400,
+                    height: 400
                 },
                 data: {
+                    x: 'data1',
+                    y: 'data2',
                     columns: [
-            ["setosa_x", 3.5, 3.0, 3.2, 3.1, 3.6, 3.9, 3.4, 3.4, 2.9, 3.1, 3.7, 3.4, 3.0, 3.0, 4.0, 4.4, 3.9, 3.5, 3.8, 3.8, 3.4, 3.7, 3.6, 3.3, 3.4, 3.0, 3.4, 3.5, 3.4, 3.2, 3.1, 3.4, 4.1, 4.2, 3.1, 3.2, 3.5, 3.6, 3.0, 3.4, 3.5, 2.3, 3.2, 3.5, 3.8, 3.0, 3.8, 3.2, 3.7, 3.3],
-            ["versicolor_x", 3.2, 3.2, 3.1, 2.3, 2.8, 2.8, 3.3, 2.4, 2.9, 2.7, 2.0, 3.0, 2.2, 2.9, 2.9, 3.1, 3.0, 2.7, 2.2, 2.5, 3.2, 2.8, 2.5, 2.8, 2.9, 3.0, 2.8, 3.0, 2.9, 2.6, 2.4, 2.4, 2.7, 2.7, 3.0, 3.4, 3.1, 2.3, 3.0, 2.5, 2.6, 3.0, 2.6, 2.3, 2.7, 3.0, 2.9, 2.9, 2.5, 2.8],
-            ["setosa", 0.2, 0.2, 0.2, 0.2, 0.2, 0.4, 0.3, 0.2, 0.2, 0.1, 0.2, 0.2, 0.1, 0.1, 0.2, 0.4, 0.4, 0.3, 0.3, 0.3, 0.2, 0.4, 0.2, 0.5, 0.2, 0.2, 0.4, 0.2, 0.2, 0.2, 0.2, 0.4, 0.1, 0.2, 0.2, 0.2, 0.2, 0.1, 0.2, 0.2, 0.3, 0.3, 0.2, 0.6, 0.4, 0.3, 0.2, 0.2, 0.2, 0.2],
-            ["versicolor", 1.4, 1.5, 1.5, 1.3, 1.5, 1.3, 1.6, 1.0, 1.3, 1.4, 1.0, 1.5, 1.0, 1.4, 1.3, 1.4, 1.5, 1.0, 1.5, 1.1, 1.8, 1.3, 1.5, 1.2, 1.3, 1.4, 1.4, 1.7, 1.5, 1.0, 1.1, 1.0, 1.2, 1.6, 1.5, 1.6, 1.5, 1.3, 1.3, 1.3, 1.2, 1.4, 1.2, 1.0, 1.3, 1.2, 1.3, 1.3, 1.1, 1.3],
+            ['data1', 30, 200, 100, 400, 150, 250],
+            ['data2', 50, 20, 10, 40, 15, 25]
         ],
-                    type: 'scatter'
-                },
-                axis: {
-                    x: {
-                        label: 'Sepal.Width',
-                        tick: {
-                            fit: false
-                        }
-                    },
-                    y: {
-                        label: 'Petal.Width'
-                    }
-                }
+                    type: 'scatter',
+                    selection: {
+                        enabled: true,
 
+                    },
+                    onselected: onUISelection,
+                    onmouseover: onUIProbe
+
+                }
+            });
+
+            var barchart = c3.generate({
+                bindto: '#barchartdiv',
+                size: {
+                    width: 400,
+                    height: 400
+                },
+                data: {
+                    x: 'data1',
+                    y: 'data2',
+                    columns: [
+            ['data1', 30, 200, 100, 400, 150, 250],
+            ['data2', 130, 100, 140, 200, 150, 50]
+        ],
+                    type: 'bar',
+                    selection: {
+                        enabled: true
+                    },
+                    onselected: onUISelection,
+                    onmouseover: onUIProbe
+                },
+                bar: {
+                    width: {
+                        ratio: 0.5 // this makes bar width 50% of length between ticks
+                    }
+                    // or
+                    //width: 100 // this makes bar width 100px
+                }
+            });
+
+            var linechart = c3.generate({
+                bindto: '#linechartdiv',
+
+                data: {
+                    x: 'data1',
+                    y: 'data2',
+                    columns: [
+             ['data1', 30, 200, 100, 400, 150, 250],
+            ['data2', 130, 100, 140, 200, 150, 50]
+        ],
+                    selection: {
+                        enabled: true
+                    },
+                    onselected: onUISelection,
+                    onmouseover: onUIProbe
+                }
             });
 
 
 
 
-            $scope.log.clearHistory();
+            weaveInteractionPeer.hooks.push(new c3Hook.Interaction(scatterplot));
+            weaveInteractionPeer.hooks.push(new c3Hook.Interaction(barchart));
+            weaveInteractionPeer.hooks.push(new c3Hook.Interaction(linechart));
+
+            function onUISelection(d) {
+
+                if (this.selected) {
+                    var keyObjects = this.selected();
+                    // console.log(keyObjects);
+                    var indexKeys = keyObjects.map(function (obj, num) {
+                        return obj.index
+                    });
+                    console.log(indexKeys);
+                    weaveInteractionPeer.activeHook = this;
+                    weaveInteractionPeer.doSelection(indexKeys);
+                } else console.log('Selction not supported for this chart in c3');
+            }
+
+            function onUIProbe(d) {
+                weaveInteractionPeer.activeHook = this;
+                //weaveInteractionPeer.doProbe(d.index);
+            }
+
+
+
+
+
+
+            /* testObj.showTooltip = function (selectedData, element) {
+                 var $$ = chart.internal, // get instance
+                     config = $$.config;
+                 var tWidth, tHeight, position;
+                 var c3_chart_internal_fn = c3.chart.internal.fn
+                 var forArc = $$.hasArcType(),
+                     dataToShow = selectedData.filter(function (d) {
+                         return d && isValue(d.value);
+                     }),
+                     positionFunction = config.tooltip_position || c3_chart_internal_fn.tooltipPosition;
+                 if (dataToShow.length === 0 || !config.tooltip_show) {
+                     return;
+                 }
+                 $$.tooltip.html(config.tooltip_contents.call($$, selectedData, $$.getXAxisTickFormat(), $$.getYFormat(forArc), $$.color)).style("display", "block");
+
+                 // Get tooltip dimensions
+                 tWidth = $$.tooltip.property('offsetWidth');
+                 tHeight = $$.tooltip.property('offsetHeight');
+
+                 position = positionFunction.call(this, dataToShow, tWidth, tHeight, element);
+                 // Set tooltip
+                 $$.tooltip
+                     .style("top", position.top + "px")
+                     .style("left", position.left + 'px');
+             };*/
+
+
+
+
+            //  $scope.log.clearHistory();
 
 
         });
@@ -121,10 +223,12 @@
 <body ng-controller="sliderDemoCtrl">
 
     <div ui-slider="labeledslider.options" min="0" max="{{log._undoHistory.length + log._redoHistory.length}}" step="1" tick="1" ng-model="sliderPosition"></div>
-    <br/>
-    <br/>
 
-    <div id="chart"></div>
+
+
+    <div id="scatterplotdiv" style="display: inline;"></div>
+    <div id="barchartdiv" style="display: inline;"></div>
+    <div id="linechartdiv"></div>
 </body>
 
 </html>

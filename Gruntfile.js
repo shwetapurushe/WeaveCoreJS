@@ -25,13 +25,17 @@ module.exports = function (grunt) {
                     'src/core/LinkableWatcher.js',
                     'src/core/LinkableHashMap.js',
 
+                    'src/data/keysetCallbackInterface',
+
                     'src/WeaveAPI.js',
+
                     'src/core/LinkableDynamicObject.js',
                     'src/core/StageUtils.js',
                     'src/core/ExternalSessionStateInterface',
+                    'src/core/SessionStateLog.js',
 
 
-                    'src/core/SessionStateLog.js'
+
 
                ],
                 dest: 'weavecore.js',
