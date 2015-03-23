@@ -22,6 +22,7 @@ if (!this.weavePeer)
         this.hooks = [];
         this.activeHook = null;
         Interaction.selectionKeys.addImmediateCallback({}, renderSelection.bind(this));
+        Interaction.probeKeys.addImmediateCallback({}, renderProbe.bind(this));
     }
 
 
@@ -39,6 +40,16 @@ if (!this.weavePeer)
         });
     }
 
+    function renderProbe() {
+        var key = Interaction.probeKeys.getSessionState();
+        this.hooks.forEach(function (hook, index) {
+            if (hook != this.activehook)
+                hook.doProbe(key);
+            else
+                this.activehook = null;
+        });
+    }
+
     var p = Interaction.prototype;
     /*
      *This function renders on the visualization library , which are hooked to it
@@ -46,6 +57,10 @@ if (!this.weavePeer)
      */
     p.doSelection = function (keys) {
         Interaction.selectionKeys.setSessionState(keys);
+    }
+
+    p.doProbe = function (key) {
+        Interaction.probeKeys.setSessionState(key);
     }
 
     weavePeer.Interaction = Interaction;
