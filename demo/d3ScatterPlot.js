@@ -14,9 +14,7 @@
          margin = config.margin;
          this._data = config.data;
          size = config.size;
-         this._initializeChart();
-         if (this._data)
-             this.renderChart(this._data);
+
 
          this._quadTree;
          this._brush;
@@ -32,17 +30,16 @@
          this._yAxis;
          this._cValue;
          this._point;
+         this._xColumnType;
+         this._yColumnType;
+
+         this._initializeChart();
+         if (this._data)
+             this.renderChart(this._data);
      }
 
      var size, margin;
-     /*var xValue, yValue, cValue;
-     var xScale, yScale;
-     var xAxis, yAxis;
-     var xMap, yMap;*/
 
-
-     //var container, interactions;
-     //var point;
 
      var p = d3Scatterplot.prototype;
 
@@ -57,32 +54,55 @@
          // setup x
          this._xValue = function (d, i) {
              if (typeof (d[this._columns.x]) === "string") {
-                 d[this._columns.x] = Number(d[this._columns.x]);
+                 if (isNaN(Number(d[this._columns.x]))) {
+                     this._xColumnType = "string";
+                     if (d.index === undefined) return i;
+                     else return d.index;
+                 } else {
+                     this._xColumnType = "number";
+                     d[this._columns.x] = Number(d[this._columns.x]);
+                 }
+
              }
              return d[this._columns.x];
          }; // data -> value
-         this._xScale = d3.scale.linear().range([0, size.width]); // value -> display
-         this._xMap = function (d) {
-             return this._xScale(this._xValue(d));
+         this._xScale = d3.scale.linear()
+             .range([0, size.width]); // value -> display
+
+         this._xMap = function (d, i) {
+             return this._xScale(this._xValue(d, i));
          }; // data -> display
+
          this._xAxis = d3.svg.axis()
              .scale(this._xScale)
              .orient("bottom");
 
+
+
          // setup y
          this._yValue = function (d) {
              if (typeof (d[this._columns.y]) === "string") {
-                 d[this._columns.y] = Number(d[this._columns.y]);
+                 if (isNaN(Number(d[this._columns.y]))) {
+                     this._yColumnType = "string";
+                     if (d.index === undefined) return i;
+                     else return d.index;
+                 } else {
+                     this._yColumnType = "number";
+                     d[this._columns.y] = Number(d[this._columns.y]);
+                 }
              }
              return d[this._columns.y];
          }; // data -> value
-         this._yScale = d3.scale.linear().range([size.height, 0]); // value -> display
-         this._yMap = function (d) {
-             return this._yScale(this._yValue(d));
+         this._yScale = d3.scale.linear()
+             .range([size.height, 0]); // value -> display
+         this._yMap = function (d, i) {
+             return this._yScale(this._yValue(d, i));
          }; // data -> display
          this._yAxis = d3.svg.axis()
              .scale(this._yScale)
              .orient("left");
+
+
 
          // setup fill color
          this._cValue = function (d) {
@@ -108,20 +128,22 @@
              .range(["#efe", "#060"]);*/
 
          this._brush = d3.svg.brush()
-             .x(d3.scale.identity().domain([0, size.width]))
-             .y(d3.scale.identity().domain([0, size.height]))
+             .x(d3.scale.identity().domain([0 - 5, size.width + 5]))
+             .y(d3.scale.identity().domain([0 - 5, size.height + 5]))
              .on("brush", this._brushed.bind(this));
      }
 
      // render Chart
 
+     function domainFn() {
 
+     }
 
+     // [d3.min(this._data, this._xValue.bind(this)) - 1, d3.max(this._data, this._xValue.bind(this)) + 1]
      p.renderChart = function (data) {
          this._data = data;
-         // don't want dots overlapping axis, so add in buffer to data domain
-         this._xScale.domain([d3.min(this._data, this._xValue.bind(this)) - 1, d3.max(this._data, this._xValue.bind(this)) + 1]);
-         this._yScale.domain([d3.min(this._data, this._yValue.bind(this)) - 1, d3.max(this._data, this._yValue.bind(this)) + 1]);
+         this._xScale.domain([d3.min(this._data, this._xValue.bind(this)), d3.max(this._data, this._xValue.bind(this))]);
+         this._yScale.domain([d3.min(this._data, this._yValue.bind(this)), d3.max(this._data, this._yValue.bind(this))]);
 
          this._quadTree = d3.geom.quadtree()
              .extent([[0, 0], [size.width, size.height]])
@@ -129,16 +151,37 @@
              .y(this._yMap.bind(this))
              (this._data);
 
+         this._xAxis.ticks(data.length);
+
+         if (this._xColumnType === "string") {
+             this._xAxis.tickFormat(function (i) {
+                 var labels = data.map(function (d, i) {
+                     return d[this._columns.x];
+                 }.bind(this));
+                 return labels[i];
+             }.bind(this));
+         }
          // x-axis
          this._svg.append("g")
              .attr("class", "x axis")
              .attr("transform", "translate(0," + size.height + ")")
              .call(this._xAxis)
-             .append("text")
-             .attr("x", size.width)
-             .attr("y", -6)
+             .selectAll("text")
              .style("text-anchor", "end")
-             .text(this._columns.x);
+             .attr("dx", "-.8em")
+             .attr("dy", ".15em")
+             .attr("transform", function (d) {
+                 return "rotate(-45)"
+             });
+
+         if (this._yColumnType === "string") {
+             this._yAxis.tickFormat(function (i) {
+                 var labels = data.map(function (d, i) {
+                     return d[this._columns.y];
+                 }.bind(this));
+                 return labels[i];
+             }.bind(this));
+         }
 
          // y-axis
          this._svg.append("g")
@@ -146,7 +189,8 @@
              .call(this._yAxis)
              .append("text")
              .attr("transform", "rotate(-90)")
-             .attr("y", margin.left)
+             .attr("y", 0 - margin.left)
+             .attr("x", 0 - size.height / 2)
              .attr("dy", "1em")
              .style("text-anchor", "middle")
              .text(this._columns.y);
@@ -208,41 +252,7 @@
          return nodes;
      }
 
-     p.nearest = function (x, y, best, node) {
-         var x1 = node.x1,
-             y1 = node.y1,
-             x2 = node.x2,
-             y2 = node.y2;
-         node.visited = true;
-         // exclude node if point is farther away than best distance in either axis
-         if (x < x1 - best.d || x > x2 + best.d || y < y1 - best.d || y > y2 + best.d) {
-             return best;
-         }
-         // test point if there is one, potentially updating best
-         var p = node.point;
-         if (p) {
-             p.scanned = true;
-             var dx = this._xScale(p[this._columns.x]) - x,
-                 dy = this._yScale(p[this._columns.y]) - y,
-                 d = Math.sqrt(dx * dx + dy * dy);
-             if (d < best.d) {
-                 best.d = d;
-                 best.p = p;
-             }
-         }
-         // check if kid is on the right or left, and top or bottom
-         // and then recurse on most likely kids first, so we quickly find a
-         // nearby point and then exclude many larger rectangles later
-         var kids = node.nodes;
-         var rl = (2 * x > x1 + x2),
-             bt = (2 * y > y1 + y2);
-         if (kids[bt * 2 + rl]) best = this.nearest.call(this, x, y, best, kids[bt * 2 + rl]);
-         if (kids[bt * 2 + (1 - rl)]) best = this.nearest.call(this, x, y, best, kids[bt * 2 + (1 - rl)]);
-         if (kids[(1 - bt) * 2 + rl]) best = this.nearest.call(this, x, y, best, kids[(1 - bt) * 2 + rl]);
-         if (kids[(1 - bt) * 2 + (1 - rl)]) best = this.nearest.call(this, x, y, best, kids[(1 - bt) * 2 + (1 - rl)]);
 
-         return best;
-     }
 
 
      // Find the nodes within the specified rectangle.
@@ -252,8 +262,8 @@
              var p = node.point;
              if (p) {
                  p.scanned = true;
-                 var colXVal = this._xScale(p[this._columns.x]);
-                 var colYVal = this._yScale(p[this._columns.y]);
+                 var colXVal = this._xScale(this._xValue(p), p.index);
+                 var colYVal = this._yScale(this._yValue(p), p.index);
                  p.selected = (colXVal >= x0) && (colXVal < x3) && (colYVal >= y0) && (colYVal < y3);
                  if (p.selected)
                      selectedDataKeys.push(p[this._columns.key]);
@@ -276,6 +286,41 @@
              }
          }
 
+     }
+     p.nearest = function (x, y, best, node) {
+         var x1 = node.x1,
+             y1 = node.y1,
+             x2 = node.x2,
+             y2 = node.y2;
+         node.visited = true;
+         // exclude node if point is farther away than best distance in either axis
+         if (x < x1 - best.d || x > x2 + best.d || y < y1 - best.d || y > y2 + best.d) {
+             return best;
+         }
+         // test point if there is one, potentially updating best
+         var p = node.point;
+         if (p) {
+             p.scanned = true;
+             var dx = this._xScale(this._xValue(p), p.index) - x,
+                 dy = this._yScale(this._yValue(p), p.index) - y,
+                 d = Math.sqrt(dx * dx + dy * dy);
+             if (d < best.d) {
+                 best.d = d;
+                 best.p = p;
+             }
+         }
+         // check if kid is on the right or left, and top or bottom
+         // and then recurse on most likely kids first, so we quickly find a
+         // nearby point and then exclude many larger rectangles later
+         var kids = node.nodes;
+         var rl = (2 * x > x1 + x2),
+             bt = (2 * y > y1 + y2);
+         if (kids[bt * 2 + rl]) best = this.nearest.call(this, x, y, best, kids[bt * 2 + rl]);
+         if (kids[bt * 2 + (1 - rl)]) best = this.nearest.call(this, x, y, best, kids[bt * 2 + (1 - rl)]);
+         if (kids[(1 - bt) * 2 + rl]) best = this.nearest.call(this, x, y, best, kids[(1 - bt) * 2 + rl]);
+         if (kids[(1 - bt) * 2 + (1 - rl)]) best = this.nearest.call(this, x, y, best, kids[(1 - bt) * 2 + (1 - rl)]);
+
+         return best;
      }
 
 
@@ -309,8 +354,8 @@
              }
          }
          /*this._kdRect.style('fill', function (d) {
-             return d.visited ? kdColor(d.depth) : 'none';
-         });*/
+    return d.visited ? kdColor(d.depth) : 'none';
+});*/
 
 
 
@@ -331,9 +376,9 @@
                  d.scanned = d.selected = false;
              });
          }
-         /* this._point.classed("scanned", function (d) {
+         this._point.classed("scanned", function (d) {
      return d.scanned;
- });*/
+ });
          this._point.classed("selected", function (d) {
              return d.selected;
          });
@@ -360,9 +405,9 @@
              });
          }
 
-         /*this._point.classed("scanned", function (d) {
+         this._point.classed("scanned", function (d) {
              return d.scanned;
-         });*/
+         });
          this._point.classed("selected", function (d) {
              return d.selected;
          });
