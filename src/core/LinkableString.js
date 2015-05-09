@@ -21,34 +21,36 @@ if (!this.weavecore)
  * @author adufilie
  * @author sanjay1909
  */
-(function() {
-    function LinkableString(defaultValue,verifier, defaultValueTriggersCallbacks ){ 
+(function () {
+    function LinkableString(defaultValue, verifier, defaultValueTriggersCallbacks) {
         // set default values for Parameters
-        if(defaultValue === undefined) defaultValue = null;
-        if(verifier === undefined) verifier = null;
-        if(defaultValueTriggersCallbacks === undefined) defaultValueTriggersCallbacks = true;
-        
-        weavecore.LinkableVariable.call(this,"string",verifier,defaultValue,defaultValueTriggersCallbacks );
+
+        if (defaultValue === undefined) defaultValue = null;
+        if (verifier === undefined) verifier = null;
+        if (defaultValueTriggersCallbacks === undefined) defaultValueTriggersCallbacks = true;
+
+
+        weavecore.LinkableVariable.call(this, "string", verifier, arguments.length ? defaultValue : undefined, defaultValueTriggersCallbacks);
     }
-    
+
     LinkableString.prototype = new weavecore.LinkableVariable();
-    LinkableString.prototype.constructor = LinkableBoolean;
-    
+    LinkableString.prototype.constructor = LinkableString;
+
     var p = LinkableString.prototype;
-    
-    p.__defineGetter__("value", function(){
+
+    p.__defineGetter__("value", function () {
         return this._sessionStateExternal;
     });
-    p.__defineSetter__("value", function(val){
-        this.setSessionState(val);        
+    p.__defineSetter__("value", function (val) {
+        this.setSessionState(val);
     });
-    
-    p.setSessionState = function(val){
+
+    p.setSessionState = function (val) {
         if (val !== null)
-				val = String(val);
+            val = String(val);
         weavecore.LinkableVariable.prototype.setSessionState.call(this, val);
     }
-    
-    weavecore.LinkableBoolean = LinkableBoolean;
-    
+
+    weavecore.LinkableString = LinkableString;
+
 }());

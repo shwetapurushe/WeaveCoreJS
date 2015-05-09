@@ -21,6 +21,7 @@ module.exports = function (grunt) {
                     'src/core/LinkableVariable.js',
                     'src/core/LinkableNumber.js',
                     'src/core/LinkableBoolean.js',
+                    'src/core/LinkableString.js',
                     'src/core/ChildListCallbackInterface.js',
                     'src/core/LinkableWatcher.js',
                     'src/core/LinkableHashMap.js',
