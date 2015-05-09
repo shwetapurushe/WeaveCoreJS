@@ -23,11 +23,11 @@
     "test",
     "tests"
   ],
-  "_release": "6a7886cc1b",
+  "_release": "3b1ecf387f",
   "_resolution": {
     "type": "branch",
     "branch": "master",
-    "commit": "6a7886cc1beebf039201e9526106da12ccbc4d19"
+    "commit": "3b1ecf387f03a269584cc099d87ac44b4ed08905"
   },
   "_source": "git://github.com/sanjay1909/WeaveCoreJS.git",
   "_target": "*",

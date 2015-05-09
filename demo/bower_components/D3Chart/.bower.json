@@ -19,11 +19,11 @@
     "test",
     "tests"
   ],
-  "_release": "432f6bb7b8",
+  "_release": "854f61dd7f",
   "_resolution": {
     "type": "branch",
     "branch": "master",
-    "commit": "432f6bb7b8476845182f38538d0fe33ebbe90871"
+    "commit": "854f61dd7f95a4e7231c846db9542afe3c865fc7"
   },
   "_source": "https://github.com/sanjay1909/D3Chart.git",
   "_target": "*",

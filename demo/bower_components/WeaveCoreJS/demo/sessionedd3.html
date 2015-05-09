@@ -5,77 +5,62 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <link rel="stylesheet" href="bower_components/jquery-ui/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="bower_components/D3Chart/d3Chart.min.css">
     <link rel="stylesheet" href="labelledSlider/jquery.ui.labeledslider.css">
-
     <style>
-        .point {
-            fill: #999;
-            stroke: #fff;
-        }
-
-        .point.scanned {
-            fill: orange;
-            fill-opacity: 1;
-            stroke: brown;
-        }
-
-        .point.selected {
-            fill: red;
-            fill-opacity: 1;
-        }
-
-        .node {
-            fill: none;
-            stroke: none;
-            shape-rendering: crispEdges;
-        }
-
-        .brush .extent {
-            stroke: #fff;
-            fill-opacity: .125;
-            shape-rendering: crispEdges;
-        }
-
-        .selected {
-            fill: #afa2dc;
-            stroke: #2f225d;
-        }
-
-        .axis {
-            font: 10px sans-serif;
-        }
-
-        p {
-            font: 12px sans-serif;
-            margin: 0 0 2px 0;
-            padding: 0;
-        }
-
-        .axis path,
-        .axis line {
-            fill: none;
-            stroke: #000;
-            shape-rendering: crispEdges;
+        svg {
+            border: 1px solid black;
+            border-radius: 25px;
         }
     </style>
+
+
     <script type="text/javascript" src="bower_components/d3/d3.js"></script>
     <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
     <script type="text/javascript" src="bower_components/jquery-ui/jquery-ui.min.js"></script>
     <script type="text/javascript" src="bower_components/angular/angular.js"></script>
+    <script type="text/javascript" src="bower_components/D3Chart/d3Chart.js"></script>
     <script type="text/javascript" src="slider.js"></script>
     <script type="text/javascript" src="labelledSlider/jquery.ui.labeledslider.js"></script>
     <script type="text/javascript" src="../weavecore.js"></script>
-    <script type="text/javascript" src="d3ScatterPlot.js"></script>
-    <script type="text/javascript" src="adapter/WeaveAdapter.js"></script>
-    <script type="text/javascript" src="adapter/WeavePeer.js"></script>
-    <script type="text/javascript" src="adapter/D3Hook.js"></script>
+    <script type="text/javascript" src="bower_components/VizAdapter/VizAdapter.js"></script>
 
 
+
+</head>
+
+<body ng-controller="sliderDemoCtrl">
+
+    <div ui-slider="labeledslider.options" min="0" max="{{log._undoHistory.length + log._redoHistory.length}}" step="1" tick="1" ng-model="sliderPosition"></div>
+
+    <br/>
+    <div>
+        <div style="float:left">
+            X-Axis:
+            <select id="xSel" onchange="updateXAxis()"> </select>
+        </div>
+
+        <div>
+            Y-Axis:
+            <select id="ySel" onchange="updateYAxis()"> </select>
+        </div>
+        Probing Linked
+    </div>
+
+    <div id="div1"></div>
+    <br/> Probing and Selection Linked
+    <div id="div2"></div>
     <script type="text/javascript">
         var app = angular.module('sliderDemoApp', ['ui.slider']);
 
         var sc;
         var testObj = {};
+
+        var xColName = WeaveAPI.globalHashMap.requestObject('xColumn', weavecore.LinkableString, false);
+        var yColName = WeaveAPI.globalHashMap.requestObject('yColumn', weavecore.LinkableString, false);
+
+        var weaveInteractionPeer = new peer.WeaveJSInterface();
+
         app.controller('sliderDemoCtrl', function ($scope, $log, $timeout) {
             $scope.safeApply = function (fn) {
                 var phase = this.$root.$$phase;
@@ -124,77 +109,54 @@
 
 
 
-            // get ref of Probe and Selection keys
-            var probeKeys = weavePeer.Interaction.probeKeys;
-            probeKeys.setSessionState([]);
-            var selectionKeys = weavePeer.Interaction.selectionKeys;
-            selectionKeys.setSessionState([]);
+
+            xColName.addImmediateCallback({}, updateXCol.bind(this));
+            yColName.addImmediateCallback({}, updateYCol.bind(this));
 
             $scope.log.clearHistory();
 
-            var weaveInteractionPeer = new weavePeer.Interaction();
 
-
-
-
-            var data = [];
-            for (var i = 0; i < 50; i++) {
-                data.push({
-                    index: i,
-                    key: i,
-                    x: Math.floor(Math.random() * 30),
-                    y: Math.floor(Math.random() * 50),
-                    a: Math.floor(Math.random() * 70),
-                    b: Math.floor(Math.random() * 80),
-                    color: Math.floor(Math.random() * 4),
-                    size: Math.floor(Math.random() * 2),
-                });
-            }
 
             var config = {
                 container: "div1",
                 margin: {
                     top: 20,
                     right: 20,
-                    bottom: 40,
-                    left: 40
+                    bottom: 120,
+                    left: 80
                 },
                 size: {
-                    width: 900,
-                    height: 300
+                    width: 800,
+                    height: 200
                 },
                 columns: {
-                    x: "a",
-                    y: "b",
-                    key: "key"
+                    x: "name",
+                    y: "protein",
+                    key: "name"
                 },
                 interactions: {
                     onProbe: {
                         showToolTip: true,
                         callback: onUIProbe
-                    },
-                    onSelect: {
-                        callback: onUISelection
                     }
                 }
             }
-
             var config2 = {
                 container: "div2",
                 margin: {
                     top: 20,
                     right: 20,
-                    bottom: 40,
-                    left: 40
+                    bottom: 120,
+                    left: 80
                 },
                 size: {
-                    width: 900,
-                    height: 300
+                    width: 800,
+                    height: 200
                 },
                 columns: {
-                    x: "x",
-                    y: "y",
-                    key: "key"
+                    x: "name",
+                    y: "fat",
+                    key: "name"
                 },
                 interactions: {
                     onProbe: {
@@ -218,37 +180,67 @@
             }
 
 
-            var chart = testObj.chart = new d3Helper.d3Scatterplot(config);
-            var chart2 = testObj.chart2 = new d3Helper.d3Scatterplot(config2);
+            var chart = testObj.chart = new d3Chart.Scatterplot(config);
+            var chart2 = testObj.chart2 = new d3Chart.Scatterplot(config2);
 
-            /*d3.csv("cereal.csv")
-                .get(function (error, rows) {
-                    chart.renderChart(rows);
-                    chart2.renderChart(rows);
-                });*/
+            d3.csv("cereal.csv", function (error, rows) {
+                var headerNames = d3.keys(rows[0]);
+                var xSelect = document.getElementById("xSel");
+                var ySelect = document.getElementById("ySel");
 
-            chart.renderChart(data);
-            chart2.renderChart(data);
+                for (var i = 0; i < headerNames.length; i++) {
+                    var opt = headerNames[i];
+                    var el = document.createElement("option");
+                    el.textContent = opt;
+                    el.value = opt;
+                    xSelect.appendChild(el);
+                    var el = document.createElement("option");
+                    el.textContent = opt;
+                    el.value = opt;
+                    ySelect.appendChild(el);
+                }
 
-            weaveInteractionPeer.hooks.push(new d3Hook.Interaction(chart));
-            weaveInteractionPeer.hooks.push(new d3Hook.Interaction(chart2));
 
+                console.log(headerNames);
 
+                xSelect.value = config.columns.x;
+                ySelect.value = config.columns.y;
+                chart.renderChart(rows);
+                chart2.renderChart(rows);
+            });
+
+            weaveInteractionPeer.hooks.push(new hook.D3Interface(chart));
+            weaveInteractionPeer.hooks.push(new hook.D3Interface(chart2));
 
             $scope.log.clearHistory();
 
 
         });
+
+        function updateXAxis() {
+            console.log('xaxis update');
+            var xSelect = document.getElementById("xSel");
+            console.log(xSelect.value);
+            xColName.value = xSelect.value;
+        }
+
+        function updateYAxis() {
+            console.log('yaxis update');
+            var ySelect = document.getElementById("ySel");
+            console.log(ySelect.value);
+            yColName.value = ySelect.value;
+        }
+
+        function updateXCol() {
+            console.log('xaxis update - session');
+            testObj.chart.setXAttribute(xColName.value);
+        }
+
+        function updateYCol() {
+            console.log('yaxis update - session');
+            testObj.chart.setYAttribute(yColName.value);
+        }
     </script>
-</head>
-
-<body ng-controller="sliderDemoCtrl">
-
-    <div ui-slider="labeledslider.options" min="0" max="{{log._undoHistory.length + log._redoHistory.length}}" step="1" tick="1" ng-model="sliderPosition"></div>
-
-    <br/>
-    <div id="div1"></div>
-    <div id="div2"></div>
 </body>
 
 </html>
