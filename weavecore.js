@@ -3953,11 +3953,6 @@ if (!this.weavecore)
 if (!this.weavecore)
     this.weavecore = {};
 
-<<<<<<< HEAD
-(function () {
-
-    function ChildListCallbackInterface() {
-=======
 /**
  * This is a LinkableVariable which limits its session state to string values.
  * @author adufilie
@@ -4014,10 +4009,9 @@ if (!this.weavecore)
 if (!this.weavecore)
     this.weavecore = {};
 
-(function() {
-    
-    function ChildListCallbackInterface(){
->>>>>>> master
+(function () {
+
+    function ChildListCallbackInterface() {
 
         // specify the preCallback function in super() so list callback
         // variables will be set before each change callback.
