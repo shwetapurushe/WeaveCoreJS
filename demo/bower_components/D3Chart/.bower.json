@@ -1,0 +1,31 @@
+{
+  "name": "D3Chart",
+  "homepage": "https://github.com/sanjay1909/D3Chart",
+  "authors": [
+    "Sanjay krishna anbalagan <sanjay1909@gmail.com>"
+  ],
+  "description": "Visualization charts built on D3",
+  "main": "d3Chart.js",
+  "keywords": [
+    "d3",
+    "charts",
+    "visualization"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "_release": "432f6bb7b8",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "432f6bb7b8476845182f38538d0fe33ebbe90871"
+  },
+  "_source": "https://github.com/sanjay1909/D3Chart.git",
+  "_target": "*",
+  "_originalSource": "https://github.com/sanjay1909/D3Chart.git"
+}
