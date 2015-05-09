@@ -12,6 +12,10 @@
             border: 1px solid black;
             border-radius: 25px;
         }
+
+        h4 {
+            text-align: center;
+        }
     </style>
 
 
@@ -33,22 +37,23 @@
 
     <div ui-slider="labeledslider.options" min="0" max="{{log._undoHistory.length + log._redoHistory.length}}" step="1" tick="1" ng-model="sliderPosition"></div>
 
-    <br/>
+
     <div>
         <div style="float:left">
             X-Axis:
             <select id="xSel" onchange="updateXAxis()"> </select>
         </div>
-
         <div>
             Y-Axis:
             <select id="ySel" onchange="updateYAxis()"> </select>
         </div>
-        Probing Linked
     </div>
+    <h4>Only Probing Linked</h4>
 
     <div id="div1"></div>
-    <br/> Probing and Selection Linked
+
+    <h4>Probing and Selection Linked</h4>
+
     <div id="div2"></div>
     <script type="text/javascript">
         var app = angular.module('sliderDemoApp', ['ui.slider']);
@@ -120,14 +125,14 @@
             var config = {
                 container: "div1",
                 margin: {
-                    top: 20,
+                    top: 16,
                     right: 20,
-                    bottom: 120,
+                    bottom: 110,
                     left: 80
                 },
                 size: {
-                    width: 800,
-                    height: 200
+                    width: 920,
+                    height: 120
                 },
                 columns: {
                     x: "name",
@@ -144,14 +149,14 @@
             var config2 = {
                 container: "div2",
                 margin: {
-                    top: 20,
+                    top: 16,
                     right: 20,
-                    bottom: 120,
+                    bottom: 110,
                     left: 80
                 },
                 size: {
-                    width: 800,
-                    height: 200
+                    width: 920,
+                    height: 120
                 },
                 columns: {
                     x: "name",
