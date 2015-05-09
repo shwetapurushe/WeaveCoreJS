@@ -17,10 +17,7 @@
   "license": "MIT",
   "ignore": [
     "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests"
+    "node_modules"
   ],
   "dependencies": {
     "jquery": "~2.1.3",
@@ -28,5 +25,8 @@
     "angular": "~1.3.14",
     "angular-bootstrap-nav-tree": "https://github.com/nickperkinslondon/angular-bootstrap-nav-tree.git",
     "c3": "~0.4.9"
+  },
+  "resolutions": {
+    "jquery-ui": "~1.11.4"
   }
 }
