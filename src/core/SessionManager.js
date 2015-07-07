@@ -366,7 +366,9 @@ if (!this.weavecore)
      * @see #disposeObject()
      */
     p.objectWasDisposed = function (object) {
-        if (object === null || object === undefined)
+        if (object === undefined)
+            return true; // added by sanjay:
+        if (object === null) //null means :Object parameter is null i.e Object has no parameters
             return false;
         if (object instanceof weavecore.ILinkableObject) {
             var cc = this.getCallbackCollection(object);
