@@ -290,12 +290,12 @@ if (!this.weavecore)
 
         if (directional <= 0) {
             if (this._undoHistory.length > 0)
-                cc.triggerCallbacks();
+                cc.triggerCallbacks("Log: Clear History Undo > 0");
             this._undoHistory.length = 0;
         }
         if (directional >= 0) {
             if (this._redoHistory.length > 0)
-                cc.triggerCallbacks();
+                cc.triggerCallbacks("Log: Clear History Redo > 0");
             this._redoHistory.length = 0;
         }
 
@@ -466,7 +466,7 @@ if (!this.weavecore)
             WeaveAPI.SessionManager.setSessionState(this._subject, this._prevState);
         } finally {
             this.enableLogging.resumeCallbacks();
-            cc.triggerCallbacks();
+            cc.triggerCallbacks("Log: Setsessionstate");
             cc.resumeCallbacks();
         }
     }

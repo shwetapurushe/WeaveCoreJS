@@ -79,6 +79,12 @@ if (!this.weavecore)
 
         this._locked = false;
 
+        Object.defineProperty(this, 'locked', {
+            get: function () {
+                return this._locked;
+            }
+        });
+
         if (sessionStateType !== Object) {
             this._sessionStateType = sessionStateType;
             this._primitiveType = this._sessionStateType === "string" || this._sessionStateType === "number" || this._sessionStateType === "boolean";
@@ -88,14 +94,14 @@ if (!this.weavecore)
 
             // If callbacks were triggered, make sure callbacks are triggered again one frame later when
             // it is possible for other classes to have a pointer to this object and retrieve the value.
-            if (defaultValueTriggersCallbacks && this._triggerCounter > weavecore.CallbackCollection.DEFAULT_TRIGGER_COUNT)
+            if (defaultValueTriggersCallbacks && this.prototype._triggerCounter > weavecore.CallbackCollection.DEFAULT_TRIGGER_COUNT)
                 weavecore.StageUtils.callLater(this, _defaultValueTrigger.bind(this));
         }
     }
 
     function _defaultValueTrigger() {
         // unless callbacks were triggered again since the default value was set, trigger callbacks now
-        if (!this._wasDisposed && this._triggerCounter === weavecore.CallbackCollection.DEFAULT_TRIGGER_COUNT + 1)
+        if (!this.prototype._wasDisposed && this.prototype._triggerCounter === weavecore.CallbackCollection.DEFAULT_TRIGGER_COUNT + 1)
             this.triggerCallbacks();
 
     }
@@ -111,6 +117,7 @@ if (!this.weavecore)
 
     LinkableVariable.prototype = new weavecore.CallbackCollection();
     LinkableVariable.prototype.constructor = LinkableVariable;
+    LinkableVariable.constructor = weavecore.CallbackCollection.constructor;
 
     var p = LinkableVariable.prototype;
 
@@ -210,9 +217,9 @@ if (!this.weavecore)
         this._locked = true;
     };
 
-    p.__defineGetter__("locked ", function () {
-        return this._locked;
-    });
+
+
+
 
     p.dispose = function () {
         weavecore.CallbackCollection.prototype.dispose.call(this);

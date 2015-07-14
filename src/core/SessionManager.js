@@ -95,10 +95,10 @@ if (!this.weavecore)
             // make child changes trigger parent callbacks
             var parentCC = this.getCallbackCollection(linkableParent);
             // set alwaysCallLast=true for triggering parent callbacks, so parent will be triggered after all the other child callbacks
-            this.getCallbackCollection(linkableChild).addImmediateCallback(linkableParent, parentCC.triggerCallbacks.bind(parentCC), false); // parent-child relationship
+            this.getCallbackCollection(linkableChild).addImmediateCallback(linkableParent, parentCC.triggerCallbacks.bind(parentCC, "Parent's -triggerCallback"), false, true); // parent-child relationship
         }
 
-        this._treeCallbacks.triggerCallbacks();
+        this._treeCallbacks.triggerCallbacks("Session Tree: Child Registered");
 
         return linkableChild;
     }
@@ -143,7 +143,7 @@ if (!this.weavecore)
             this.parentToChildMap(parent).delete(child);
         this.getCallbackCollection(child).removeCallback(this.getCallbackCollection(parent).triggerCallbacks.bind(parent));
 
-        this._treeCallbacks.triggerCallbacks();
+        this._treeCallbacks.triggerCallbacks("Session Tree: Child un-Registered");
     }
 
 
@@ -397,9 +397,9 @@ if (!this.weavecore)
                 //	{
                 //	object.dispose();
                 //	}
-                if (object.hasOwnProperty("dispose")) {
+                if (object.dispose && object.dispose.constructor === Function) {
                     // call dispose() anyway if it exists, because it is common to forget to implement IDisposableObject.
-                    object["dispose"]();
+                    object.dispose();
                 }
             } catch (e) {
                 console.log(e);
@@ -453,7 +453,7 @@ if (!this.weavecore)
                     this.disposeObject(child);
             }
 
-            this._treeCallbacks.triggerCallbacks();
+            this._treeCallbacks.triggerCallbacks("Session Tree: Object Disposed");
         }
     }
 

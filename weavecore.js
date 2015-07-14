@@ -1749,11 +1749,6 @@ if (!this.weavecore)
         //private properties
 
         /**
-         * Set this to true to enable stack traces for debugging.
-         */
-        CallbackCollection.debug = false;
-
-        /**
          * @interanl
          * @property _linkableObject
          * @type ILinkableObject
@@ -1831,6 +1826,26 @@ if (!this.weavecore)
          */
         this._runCallbacksCompleted;
 
+        /**
+         * This counter gets incremented at the time that callbacks are triggered and before they are actually called.
+         * It is necessary in some situations to check this counter to determine if cached data should be used.
+         */
+        Object.defineProperty(this, 'triggerCounter', {
+            get: function () {
+                return this._triggerCounter;
+            }
+        });
+
+        /**
+         * While this is true, it means the delay count is greater than zero and the effects of
+         * triggerCallbacks() are delayed until resumeCallbacks() is called to reduce the delay count.
+         */
+        Object.defineProperty(this, 'callbacksAreDelayed', {
+            get: function () {
+                return this._delayCount > 0;
+            }
+        });
+
     }
 
     CallbackCollection.prototype = new weavecore.ILinkableObject();
@@ -1862,8 +1877,8 @@ if (!this.weavecore)
         this.removeCallback(callbackFn);
 
         var entry = new CallbackEntry(contextObj, callbackFn);
-        if (alwaysCallLast)
-            entry.schedule = 1;
+        if (alwaysCallLast) // this will run the callback in second round of callback entries
+            entry.schedule = 1; //mostly parent.triggercallback are called last.
         this._callbackEntries.push(entry);
 
         if (runCallbackNow) {
@@ -1879,11 +1894,20 @@ if (!this.weavecore)
      * If the delay count is greater than zero, the callbacks will not be called immediately.
      */
     p.triggerCallbacks = function () {
-        if (CallbackCollection.debug)
-            this._lastTriggerStackTrace = new Error(CallbackCollection.STACK_TRACE_TRIGGER).stack();
+
+        if (CallbackCollection.debug) {
+            if (arguments)
+                console.log("triggerCallbacks", arguments);
+            else
+                console.log("triggerCallbacks", this);
+
+            this._lastTriggerStackTrace = new Error(CallbackCollection.STACK_TRACE_TRIGGER).stack;
+        }
+
         if (this._delayCount > 0) {
             // we still want to increase the counter even if callbacks are delayed
             this._triggerCounter++;
+            if (CallbackCollection.debug) console.log("triggerCallbacks: _runCallbacksIsPending ->true", this._delayCount, this._triggerCounter);
             this._runCallbacksIsPending = true;
             return;
         }
@@ -1897,6 +1921,9 @@ if (!this.weavecore)
      * @param preCallbackParams The arguments to pass to the preCallback function given in the constructor.
      */
     p._runCallbacksImmediately = function () {
+        if (CallbackCollection.debug) {
+            if (arguments.length > 1) console.log("_runCallbacksImmediately: ", arguments);
+        }
         var preCallbackParams = arguments;
         //increase the counter immediately
         this._triggerCounter++;
@@ -1927,6 +1954,9 @@ if (!this.weavecore)
                 else
                     shouldRemoveEntry = WeaveAPI.SessionManager.objectWasDisposed(entry.context);
                 if (shouldRemoveEntry) {
+                    if (CallbackCollection.debug) {
+                        if (arguments.length > 1) console.log("Entry is disposed");
+                    }
                     entry.dispose();
                     // remove the empty callback reference from the list
                     var removed = this._callbackEntries.splice(i--, 1); // decrease i because remaining entries have shifted
@@ -1937,10 +1967,11 @@ if (!this.weavecore)
                 // if _preCallback is specified, we don't want to limit recursion because that would cause a loss of information.
                 if (entry.recursionCount === 0 || (this._preCallback !== undefined && this._preCallback !== null)) {
                     entry.recursionCount++; // increase count to signal that we are currently running this callback.
-
                     if (this._preCallback !== undefined && this._preCallback !== null)
                         this._preCallback.apply(null, preCallbackParams);
-
+                    if (CallbackCollection.debug) {
+                        if (arguments.length > 1) console.log(["callback executed"]);
+                    }
                     entry.callback.call();
 
                     entry.recursionCount--; // decrease count because the callback finished.
@@ -1972,25 +2003,7 @@ if (!this.weavecore)
         }
     };
 
-    /**
-     * This counter gets incremented at the time that callbacks are triggered and before they are actually called.
-     * It is necessary in some situations to check this counter to determine if cached data should be used.
-     */
-    Object.defineProperty(this, 'triggerCounter', {
-        get: function () {
-            return this._triggerCounter;
-        }
-    });
 
-    /**
-     * While this is true, it means the delay count is greater than zero and the effects of
-     * triggerCallbacks() are delayed until resumeCallbacks() is called to reduce the delay count.
-     */
-    Object.defineProperty(this, 'callbacksAreDelayed', {
-        get: function () {
-            return this._delayCount > 0;
-        }
-    });
 
     /**
      * This will increase the delay count by 1.  To decrease the delay count, use resumeCallbacks().
@@ -2009,7 +2022,7 @@ if (!this.weavecore)
             this._delayCount--;
 
         if (this._delayCount === 0 && this._runCallbacksIsPending)
-            this.triggerCallbacks();
+            this.triggerCallbacks("resume Callbacks");
     };
 
     /**
@@ -2433,10 +2446,10 @@ if (!this.weavecore)
             // make child changes trigger parent callbacks
             var parentCC = this.getCallbackCollection(linkableParent);
             // set alwaysCallLast=true for triggering parent callbacks, so parent will be triggered after all the other child callbacks
-            this.getCallbackCollection(linkableChild).addImmediateCallback(linkableParent, parentCC.triggerCallbacks.bind(parentCC), false); // parent-child relationship
+            this.getCallbackCollection(linkableChild).addImmediateCallback(linkableParent, parentCC.triggerCallbacks.bind(parentCC, "Parent's -triggerCallback"), false, true); // parent-child relationship
         }
 
-        this._treeCallbacks.triggerCallbacks();
+        this._treeCallbacks.triggerCallbacks("Session Tree: Child Registered");
 
         return linkableChild;
     }
@@ -2481,7 +2494,7 @@ if (!this.weavecore)
             this.parentToChildMap(parent).delete(child);
         this.getCallbackCollection(child).removeCallback(this.getCallbackCollection(parent).triggerCallbacks.bind(parent));
 
-        this._treeCallbacks.triggerCallbacks();
+        this._treeCallbacks.triggerCallbacks("Session Tree: Child un-Registered");
     }
 
 
@@ -2735,9 +2748,9 @@ if (!this.weavecore)
                 //	{
                 //	object.dispose();
                 //	}
-                if (object.hasOwnProperty("dispose")) {
+                if (object.dispose && object.dispose.constructor === Function) {
                     // call dispose() anyway if it exists, because it is common to forget to implement IDisposableObject.
-                    object["dispose"]();
+                    object.dispose();
                 }
             } catch (e) {
                 console.log(e);
@@ -2791,7 +2804,7 @@ if (!this.weavecore)
                     this.disposeObject(child);
             }
 
-            this._treeCallbacks.triggerCallbacks();
+            this._treeCallbacks.triggerCallbacks("Session Tree: Object Disposed");
         }
     }
 
@@ -3593,14 +3606,14 @@ if (!this.weavecore)
 
             // If callbacks were triggered, make sure callbacks are triggered again one frame later when
             // it is possible for other classes to have a pointer to this object and retrieve the value.
-            if (defaultValueTriggersCallbacks && this._triggerCounter > weavecore.CallbackCollection.DEFAULT_TRIGGER_COUNT)
+            if (defaultValueTriggersCallbacks && this.prototype._triggerCounter > weavecore.CallbackCollection.DEFAULT_TRIGGER_COUNT)
                 weavecore.StageUtils.callLater(this, _defaultValueTrigger.bind(this));
         }
     }
 
     function _defaultValueTrigger() {
         // unless callbacks were triggered again since the default value was set, trigger callbacks now
-        if (!this._wasDisposed && this._triggerCounter === weavecore.CallbackCollection.DEFAULT_TRIGGER_COUNT + 1)
+        if (!this.prototype._wasDisposed && this.prototype._triggerCounter === weavecore.CallbackCollection.DEFAULT_TRIGGER_COUNT + 1)
             this.triggerCallbacks();
 
     }
@@ -3727,7 +3740,6 @@ if (!this.weavecore)
     weavecore.LinkableVariable = LinkableVariable;
 
 }());
-
 /*
     Weave (Web-based Analysis and Visualization Environment)
     Copyright (C) 2008-2011 University of Massachusetts Lowell
@@ -4662,7 +4674,7 @@ if (!this.weavecore)
      */
     p.dispose = function dispose() {
 
-        CallbackCollection.prototype.dispose.call(this);
+        weavecore.CallbackCollection.prototype.dispose.call(this);
 
         // first, remove all objects that aren't locked
         this.removeAllObjects();
@@ -4784,7 +4796,6 @@ if (!this.weavecore)
 
     weavecore.LinkableHashMap = LinkableHashMap;
 }());
-
 createjs.Ticker.setFPS(50);
 //createjs.Ticker.
 
@@ -5925,12 +5936,12 @@ if (!this.weavecore)
 
         if (directional <= 0) {
             if (this._undoHistory.length > 0)
-                cc.triggerCallbacks();
+                cc.triggerCallbacks("Log: Clear History Undo > 0");
             this._undoHistory.length = 0;
         }
         if (directional >= 0) {
             if (this._redoHistory.length > 0)
-                cc.triggerCallbacks();
+                cc.triggerCallbacks("Log: Clear History Redo > 0");
             this._redoHistory.length = 0;
         }
 
@@ -6101,7 +6112,7 @@ if (!this.weavecore)
             WeaveAPI.SessionManager.setSessionState(this._subject, this._prevState);
         } finally {
             this.enableLogging.resumeCallbacks();
-            cc.triggerCallbacks();
+            cc.triggerCallbacks("Log: Setsessionstate");
             cc.resumeCallbacks();
         }
     }

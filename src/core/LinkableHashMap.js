@@ -58,30 +58,33 @@ if (!this.weavecore)
         Object.defineProperty(this, '_previousNameMap', {
             value: {}
         }); // maps a previously used name to a value of true.  used when generating unique names.
+
+        /**
+         * The child type restriction, or null if there is none.
+         */
+        Object.defineProperty(this, 'typeRestriction', {
+            get: function () {
+                return this._typeRestriction;
+            }
+        });
+
+        /**
+         * This is an interface for adding and removing callbacks that will get triggered immediately
+         * when an object is added or removed.
+         * @return An interface for adding callbacks that get triggered when the list of child objects changes.
+         */
+        Object.defineProperty(this, 'childListCallbacks', {
+            get: function () {
+                return this._childListCallbacks;
+            }
+        });
     }
 
     LinkableHashMap.prototype = new weavecore.CallbackCollection();
     LinkableHashMap.prototype.constructor = LinkableHashMap;
+    LinkableHashMap.constructor = weavecore.CallbackCollection.constructor;
 
     var p = LinkableHashMap.prototype;
-
-    /**
-     * The child type restriction, or null if there is none.
-     */
-    p.__defineGetter__("typeRestriction", function () {
-        return this._typeRestriction;
-    });
-
-
-    /**
-     * This is an interface for adding and removing callbacks that will get triggered immediately
-     * when an object is added or removed.
-     * @return An interface for adding callbacks that get triggered when the list of child objects changes.
-     */
-    p.__defineGetter__("childListCallbacks", function () {
-        return this._childListCallbacks;
-    });
-
 
     /**
      * This function returns an ordered list of names in the hash map.
@@ -369,7 +372,7 @@ if (!this.weavecore)
      */
     p.dispose = function dispose() {
 
-        CallbackCollection.prototype.dispose.call(this);
+        weavecore.CallbackCollection.prototype.dispose.call(this);
 
         // first, remove all objects that aren't locked
         this.removeAllObjects();

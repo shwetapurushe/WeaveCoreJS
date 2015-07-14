@@ -31,19 +31,22 @@ if (!this.weavecore)
 
 
         weavecore.LinkableVariable.call(this, "string", verifier, arguments.length ? defaultValue : undefined, defaultValueTriggersCallbacks);
+
+        Object.defineProperty(this, 'value', {
+            get: function () {
+                return this._sessionStateExternal;
+            },
+            set: function (val) {
+                this.setSessionState(val);
+            }
+        });
     }
 
     LinkableString.prototype = new weavecore.LinkableVariable();
     LinkableString.prototype.constructor = LinkableString;
+    LinkableString.constructor = weavecore.LinkableVariable.constructor;
 
     var p = LinkableString.prototype;
-
-    p.__defineGetter__("value", function () {
-        return this._sessionStateExternal;
-    });
-    p.__defineSetter__("value", function (val) {
-        this.setSessionState(val);
-    });
 
     p.setSessionState = function (val) {
         if (val !== null)

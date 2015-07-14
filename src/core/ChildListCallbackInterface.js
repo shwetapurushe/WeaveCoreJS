@@ -16,13 +16,13 @@
 if (!this.weavecore)
     this.weavecore = {};
 
-(function() {
-    
-    function ChildListCallbackInterface(){
+(function () {
+
+    function ChildListCallbackInterface() {
 
         // specify the preCallback function in super() so list callback
         // variables will be set before each change callback.
-        weavecore.CallbackCollection.call(this,this._setCallbackVariables);
+        weavecore.CallbackCollection.call(this, this._setCallbackVariables);
 
         this._lastNameAdded = null; // returned by public getter
         this._lastObjectAdded = null; // returned by public getter
@@ -30,10 +30,11 @@ if (!this.weavecore)
         this._lastObjectRemoved = null; // returned by public getter
 
     }
-    
+
     ChildListCallbackInterface.prototype = new weavecore.CallbackCollection();
     ChildListCallbackInterface.prototype.constructor = ChildListCallbackInterface;
-        
+    ChildListCallbackInterface.constructor = weavecore.CallbackCollection.constructor;
+
     var p = ChildListCallbackInterface.prototype;
     /**
      * This function will set the list callback variables:
@@ -42,14 +43,14 @@ if (!this.weavecore)
      * @param objectAdded This is the object that was just added to the hash map.
      * @param objectRemoved This is the object that was just removed from the hash map.
      */
-     p._setCallbackVariables = function (name, objectAdded, objectRemoved){
-		this._lastNameAdded = objectAdded ? name : null;
-		this._lastObjectAdded = objectAdded;
-		this._lastNameRemoved = objectRemoved ? name : null;
-		this._lastObjectRemoved = objectRemoved;
-	}
-	
-	p.runCallbacks = function (name, objectAdded, objectRemoved){
+    p._setCallbackVariables = function (name, objectAdded, objectRemoved) {
+        this._lastNameAdded = objectAdded ? name : null;
+        this._lastObjectAdded = objectAdded;
+        this._lastNameRemoved = objectRemoved ? name : null;
+        this._lastObjectRemoved = objectRemoved;
+    }
+
+    p.runCallbacks = function (name, objectAdded, objectRemoved) {
         // remember previous values
         var _name = this._lastNameAdded || this._lastNameRemoved;
         var _added = this._lastObjectAdded;
@@ -58,37 +59,37 @@ if (!this.weavecore)
         this._runCallbacksImmediately(name, objectAdded, objectRemoved);
 
         // restore previous values (in case an external JavaScript popup caused us to interrupt something else)
-        this._setCallbackVariables.call(this,_name, _added, _removed);
+        this._setCallbackVariables.call(this, _name, _added, _removed);
     }
 
-	/**
+    /**
      * This is the name of the object that was added prior to running callbacks.
      */
-	p.__defineGetter__("lastNameAdded", function(){
+    p.__defineGetter__("lastNameAdded", function () {
         return this._lastNameAdded;
     });
-	
+
     /**
      * This is the object that was added prior to running callbacks.
      */
-	p.__defineGetter__("lastObjectAdded", function(){
+    p.__defineGetter__("lastObjectAdded", function () {
         return this._lastObjectAdded;
     });
-	
+
     /**
      * This is the name of the object that was removed prior to running callbacks.
      */
-	p.__defineGetter__("lastNameRemoved", function(){
+    p.__defineGetter__("lastNameRemoved", function () {
         return this._lastNameRemoved;
     });
-	
+
     /**
      * This is the object that was removed prior to running callbacks.
      */
-	p.__defineGetter__("lastObjectRemoved", function(){
+    p.__defineGetter__("lastObjectRemoved", function () {
         return this._lastObjectRemoved;
-	});
-    
+    });
+
     weavecore.ChildListCallbackInterface = ChildListCallbackInterface;
-    
+
 }());

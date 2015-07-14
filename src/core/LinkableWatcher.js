@@ -1,21 +1,3 @@
-/*
-    Weave (Web-based Analysis and Visualization Environment)
-    Copyright (C) 2008-2011 University of Massachusetts Lowell
-
-    This file is a part of Weave.
-
-    Weave is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, Version 3,
-    as published by the Free Software Foundation.
-
-    Weave is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Weave.  If not, see <http://www.gnu.org/licenses/>.
-*/
 // namespace
 
 if (!this.weavecore)
@@ -42,6 +24,8 @@ if (!this.weavecore)
         if (immediateCallback === undefined) immediateCallback = null;
         if (groupedCallback === undefined) groupedCallback = null;
 
+        weavecore.ILinkableObject.call(this);
+
         this._typeRestriction = typeRestriction;
 
         if (immediateCallback !== null)
@@ -54,56 +38,59 @@ if (!this.weavecore)
         this._foundTarget = true; // false when _target is not the desired target
         this._targetPath; // the path that is being watched
         this._pathDependencies = new Map(); // Maps an ILinkableDynamicObject to its previous internalObject.
-    }
 
+        Object.defineProperty(this, 'targetPath', {
+            /**
+             * This is the path that is currently being watched for linkable object targets.
+             */
+            get: function () {
+                return this._targetPath ? this._targetPath.concat() : null;
+            },
+            /**
+             * This will set a path which should be watched for new targets.
+             * Callbacks will be triggered immediately if the path changes or points to a new target.
+             */
+            set: function (path) {
+                // do not allow watching the globalHashMap
+                if (path && path.length === 0)
+                    path = null;
+                if (weavecore.StandardLib.compare(this._targetPath, path) !== 0) {
+                    var cc = WeaveAPI.SessionManager.getCallbackCollection(this);
+                    cc.delayCallbacks();
 
-    Object.defineProperty(this, 'targetPath', {
-        /**
-         * This is the path that is currently being watched for linkable object targets.
-         */
-        get: function () {
-            return this._targetPath ? this._targetPath.concat() : null;
-        },
-        /**
-         * This will set a path which should be watched for new targets.
-         * Callbacks will be triggered immediately if the path changes or points to a new target.
-         */
-        set: function (path) {
-            // do not allow watching the globalHashMap
-            if (path && path.length === 0)
-                path = null;
-            if (weavecore.StandardLib.compare(this._targetPath, path) !== 0) {
+                    this._resetPathDependencies();
+                    this._targetPath = path;
+                    this._handlePath();
+                    cc.triggerCallbacks();
+
+                    cc.resumeCallbacks();
+                }
+            },
+            configurable: true
+        });
+
+        Object.defineProperty(this, 'target', {
+            /**
+             * This is the linkable object currently being watched.
+             * Setting this will unset the targetPath.
+             */
+            get: function () {
+                return this._foundTarget ? this._target : null;
+            },
+            set: function (newTarget) {
                 var cc = WeaveAPI.SessionManager.getCallbackCollection(this);
                 cc.delayCallbacks();
-
-                this._resetPathDependencies();
-                this._targetPath = path;
-                this._handlePath();
-                cc.triggerCallbacks();
-
+                this.targetPath = null;
+                this.internalSetTarget(newTarget);
                 cc.resumeCallbacks();
-            }
-        },
-        configurable: true
-    });
+            },
+            configurable: true
+        });
+    }
 
-    Object.defineProperty(this, 'target', {
-        /**
-         * This is the linkable object currently being watched.
-         * Setting this will unset the targetPath.
-         */
-        get: function () {
-            return this._foundTarget ? this._target : null;
-        },
-        set: function (newTarget) {
-            var cc = WeaveAPI.SessionManager.getCallbackCollection(this);
-            cc.delayCallbacks();
-            this.targetPath = null;
-            this.internalSetTarget(newTarget);
-            cc.resumeCallbacks();
-        },
-        configurable: true
-    });
+    LinkableWatcher.prototype = new weavecore.ILinkableObject();
+    LinkableWatcher.prototype.constructor = LinkableWatcher;
+    LinkableWatcher.constructor = weavecore.ILinkableObject.constructor;
 
     var p = LinkableWatcher.prototype;
 
@@ -245,8 +232,8 @@ if (!this.weavecore)
 
 
     p.dispose = function () {
-        _targetPath = null;
-        _target = null;
+        this._targetPath = null;
+        this._target = null;
         // everything else will be cleaned up automatically
     }
 

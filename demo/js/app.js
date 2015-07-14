@@ -5,9 +5,17 @@
  app = angular.module('sliderDemoApp', deps);
 
  var sc;
+ var test = {};
+
+ test.grandParent = WeaveAPI.globalHashMap.requestObject("grandParent", weavecore.LinkableHashMap, false);
+ test.grandParent.addImmediateCallback(WeaveAPI.globalHashMap, function () {
+     console.log("Grandparent callback", test.test.grandParent.)
+ })
+ test.parent1 = test.grandParent.requestObject("parent1", weavecore.LinkableHashMap, false);
+ test.parent2 = test.grandParent.requestObject("parent2", weavecore.LinkableHashMap, false);
 
  function createNewSession(name) {
-     var oo = WeaveAPI.globalHashMap.requestObject(name, weavecore.LinkableNumber, false);
+     var oo = test.parent.requestObject(name, weavecore.LinkableNumber, false);
      oo.value = 0;
 
      return oo;

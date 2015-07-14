@@ -32,12 +32,9 @@ if (!this.weavecore)
 
     function CallbackCollection(preCallback) {
 
-        //private properties
+        weavecore.ILinkableObject.call(this);
 
-        /**
-         * Set this to true to enable stack traces for debugging.
-         */
-        CallbackCollection.debug = false;
+        //private properties
 
         /**
          * @interanl
@@ -117,10 +114,31 @@ if (!this.weavecore)
          */
         this._runCallbacksCompleted;
 
+        /**
+         * This counter gets incremented at the time that callbacks are triggered and before they are actually called.
+         * It is necessary in some situations to check this counter to determine if cached data should be used.
+         */
+        Object.defineProperty(this, 'triggerCounter', {
+            get: function () {
+                return this._triggerCounter;
+            }
+        });
+
+        /**
+         * While this is true, it means the delay count is greater than zero and the effects of
+         * triggerCallbacks() are delayed until resumeCallbacks() is called to reduce the delay count.
+         */
+        Object.defineProperty(this, 'callbacksAreDelayed', {
+            get: function () {
+                return this._delayCount > 0;
+            }
+        });
+
     }
 
     CallbackCollection.prototype = new weavecore.ILinkableObject();
     CallbackCollection.prototype.constructor = CallbackCollection;
+    CallbackCollection.constructor = weavecore.ILinkableObject.constructor;
 
     // Prototypes
     var p = CallbackCollection.prototype;
@@ -148,8 +166,8 @@ if (!this.weavecore)
         this.removeCallback(callbackFn);
 
         var entry = new CallbackEntry(contextObj, callbackFn);
-        if (alwaysCallLast)
-            entry.schedule = 1;
+        if (alwaysCallLast) // this will run the callback in second round of callback entries
+            entry.schedule = 1; //mostly parent.triggercallback are called last.
         this._callbackEntries.push(entry);
 
         if (runCallbackNow) {
@@ -165,11 +183,20 @@ if (!this.weavecore)
      * If the delay count is greater than zero, the callbacks will not be called immediately.
      */
     p.triggerCallbacks = function () {
-        if (CallbackCollection.debug)
-            this._lastTriggerStackTrace = new Error(CallbackCollection.STACK_TRACE_TRIGGER).stack();
+
+        if (CallbackCollection.debug) {
+            if (arguments)
+                console.log("triggerCallbacks", arguments);
+            else
+                console.log("triggerCallbacks", this);
+
+            this._lastTriggerStackTrace = new Error(CallbackCollection.STACK_TRACE_TRIGGER).stack;
+        }
+
         if (this._delayCount > 0) {
             // we still want to increase the counter even if callbacks are delayed
             this._triggerCounter++;
+            if (CallbackCollection.debug) console.log("triggerCallbacks: _runCallbacksIsPending ->true", this._delayCount, this._triggerCounter);
             this._runCallbacksIsPending = true;
             return;
         }
@@ -183,6 +210,9 @@ if (!this.weavecore)
      * @param preCallbackParams The arguments to pass to the preCallback function given in the constructor.
      */
     p._runCallbacksImmediately = function () {
+        if (CallbackCollection.debug) {
+            if (arguments.length > 1) console.log("_runCallbacksImmediately: ", arguments);
+        }
         var preCallbackParams = arguments;
         //increase the counter immediately
         this._triggerCounter++;
@@ -213,6 +243,9 @@ if (!this.weavecore)
                 else
                     shouldRemoveEntry = WeaveAPI.SessionManager.objectWasDisposed(entry.context);
                 if (shouldRemoveEntry) {
+                    if (CallbackCollection.debug) {
+                        if (arguments.length > 1) console.log("Entry is disposed");
+                    }
                     entry.dispose();
                     // remove the empty callback reference from the list
                     var removed = this._callbackEntries.splice(i--, 1); // decrease i because remaining entries have shifted
@@ -223,10 +256,11 @@ if (!this.weavecore)
                 // if _preCallback is specified, we don't want to limit recursion because that would cause a loss of information.
                 if (entry.recursionCount === 0 || (this._preCallback !== undefined && this._preCallback !== null)) {
                     entry.recursionCount++; // increase count to signal that we are currently running this callback.
-
                     if (this._preCallback !== undefined && this._preCallback !== null)
                         this._preCallback.apply(null, preCallbackParams);
-
+                    if (CallbackCollection.debug) {
+                        if (arguments.length > 1) console.log(["callback executed"]);
+                    }
                     entry.callback.call();
 
                     entry.recursionCount--; // decrease count because the callback finished.
@@ -258,25 +292,7 @@ if (!this.weavecore)
         }
     };
 
-    /**
-     * This counter gets incremented at the time that callbacks are triggered and before they are actually called.
-     * It is necessary in some situations to check this counter to determine if cached data should be used.
-     */
-    Object.defineProperty(this, 'triggerCounter', {
-        get: function () {
-            return this._triggerCounter;
-        }
-    });
 
-    /**
-     * While this is true, it means the delay count is greater than zero and the effects of
-     * triggerCallbacks() are delayed until resumeCallbacks() is called to reduce the delay count.
-     */
-    Object.defineProperty(this, 'callbacksAreDelayed', {
-        get: function () {
-            return this._delayCount > 0;
-        }
-    });
 
     /**
      * This will increase the delay count by 1.  To decrease the delay count, use resumeCallbacks().
@@ -295,7 +311,7 @@ if (!this.weavecore)
             this._delayCount--;
 
         if (this._delayCount === 0 && this._runCallbacksIsPending)
-            this.triggerCallbacks();
+            this.triggerCallbacks("resume Callbacks");
     };
 
     /**

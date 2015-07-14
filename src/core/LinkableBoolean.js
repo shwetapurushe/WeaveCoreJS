@@ -21,34 +21,38 @@ if (!this.weavecore)
  * @author adufilie
  * @author sanjay1909
  */
-(function() {
-    function LinkableBoolean(defaultValue,verifier, defaultValueTriggersCallbacks ){ 
+(function () {
+    function LinkableBoolean(defaultValue, verifier, defaultValueTriggersCallbacks) {
         // set default values for Parameters
-        if(verifier === undefined) verifier = null;
-        if(defaultValueTriggersCallbacks === undefined) defaultValueTriggersCallbacks = true;
-        
-        weavecore.LinkableVariable.call(this,"boolean",verifier,defaultValue,defaultValueTriggersCallbacks );
+        if (verifier === undefined) verifier = null;
+        if (defaultValueTriggersCallbacks === undefined) defaultValueTriggersCallbacks = true;
+
+        weavecore.LinkableVariable.call(this, "boolean", verifier, defaultValue, defaultValueTriggersCallbacks);
+
+        Object.defineProperty(this, 'value', {
+            get: function () {
+                return this._sessionStateExternal;
+            },
+            set: function (val) {
+                this.setSessionState(val);
+            }
+        });
     }
-    
+
     LinkableBoolean.prototype = new weavecore.LinkableVariable();
     LinkableBoolean.prototype.constructor = LinkableBoolean;
-    
+    LinkableBoolean.constructor = weavecore.LinkableVariable.constructor;
+
     var p = LinkableBoolean.prototype;
-    
-    p.__defineGetter__("value", function(){
-        return this._sessionStateExternal;
-    });
-    p.__defineSetter__("value", function(val){
-        this.setSessionState(val);        
-    });
-    
-    p.setSessionState = function(val){
-        if(typeof(val) === "string"){
-            val = weavecore.ObjectUtil.stringCompare(val, "true", true) === 0;       
+
+
+    p.setSessionState = function (val) {
+        if (typeof (val) === "string") {
+            val = weavecore.ObjectUtil.stringCompare(val, "true", true) === 0;
         }
         weavecore.LinkableVariable.prototype.setSessionState.call(this, val ? true : false);
     }
-    
+
     weavecore.LinkableBoolean = LinkableBoolean;
-    
+
 }());

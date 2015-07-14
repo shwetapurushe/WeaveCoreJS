@@ -36,15 +36,17 @@ if (!this.weavecore)
     function ExternalSessionStateInterface() {
         this._rootObject = WeaveAPI.globalHashMap;
         this._getObjectFromPathOrVariableName_error = null;
+
+        /**
+         * This object maps an expression name to the saved expression function.
+         */
+        Object.defineProperty(this, '_variables', {
+            value: {},
+            writable: false
+        });
     }
 
-    /**
-     * This object maps an expression name to the saved expression function.
-     */
-    Object.defineProperty(this, '_variables', {
-        value: {},
-        writable: false
-    });
+
 
     var p = ExternalSessionStateInterface.prototype;
 
