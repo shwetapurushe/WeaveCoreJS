@@ -1,24 +1,3 @@
-/*
-    Weave (Web-based Analysis and Visualization Environment)
-    Copyright (C) 2008-2011 University of Massachusetts Lowell
-
-    This file is a part of Weave.
-
-    Weave is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, Version 3,
-    as published by the Free Software Foundation.
-
-    Weave is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Weave.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-
-
 /**
  * This object links to an internal ILinkableObject.
  * The internal object can be either a local one or a global one identified by a global name.
@@ -42,136 +21,134 @@ if (!this.weavecore)
         // when this is true, the linked object cannot be changed
         this._locked = false;
 
-        weavecore.CallbackCollection.call(this, typeRestriction);
+        weavecore.LinkableWatcher.call(this, typeRestriction);
         if (typeRestriction)
             this._typeRestrictionClassName = typeRestriction.constructor.name;
-    }
 
-    // the callback collection for this object
-    // private const
-    Object.defineProperty(this, '_cc', {
-        value: WeaveAPI.SessionManager.registerDisposableChild(this, new weavecore.CallbackCollection()),
-        writable: false
-    })
+        // the callback collection for this object
+        // private const
+        Object.defineProperty(this, '_cc', {
+            value: WeaveAPI.SessionManager.registerDisposableChild(this, new weavecore.CallbackCollection()),
+            writable: false
+        })
 
-    Object.defineProperty(LinkableDynamicObject, 'ARRAY_CLASS_NAME', {
-        value: 'Array'
-    });
+        Object.defineProperty(LinkableDynamicObject, 'ARRAY_CLASS_NAME', {
+            value: 'Array'
+        });
 
-    /**
-     * @inheritDoc
-     */
-    Object.defineProperty(this, 'internalObject', {
-        get: function () {
-            return this.target;
-        }
-    })
-
-    // override public
-    Object.defineProperty(this, 'targetPath', {
-
-        set: function (path) {
-            if (this._locked)
-                return;
-            weavecore.LinkableWatcher.prototype.targetPath = path;
-        },
-        configurable: true
-    });
-
-    // override public
-    Object.defineProperty(this, 'target', {
-
-        set: function (newTarget) {
-            if (this._locked)
-                return;
-
-            if (!newTarget) {
-                weavecore.LinkableWatcher.prototype.target = null;
-                return;
+        /**
+         * @inheritDoc
+         */
+        Object.defineProperty(this, 'internalObject', {
+            get: function () {
+                return this.target;
             }
+        })
 
-            this._cc.delayCallbacks();
+        // override public
+        Object.defineProperty(this, 'targetPath', {
 
-            // if the target can be found by a path, use the path
-            var sm = WeaveAPI.SessionManager;
-            var path = sm.getPath(WeaveAPI.globalHashMap, newTarget);
-            if (path) {
-                this.targetPath = path;
-            } else {
-                // it's ok to assign a local object that we own or that doesn't have an owner yet
-                // otherwise, unset the target
-                var owner = sm.getLinkableOwner(newTarget);
-                if (owner === this || !owner)
-                    weavecore.LinkableWatcher.prototype.target = newTarget;
-                else
+            set: function (path) {
+                if (this._locked)
+                    return;
+                weavecore.LinkableWatcher.prototype.targetPath = path;
+            },
+            configurable: true
+        });
+
+        // override public
+        Object.defineProperty(this, 'target', {
+
+            set: function (newTarget) {
+                if (this._locked)
+                    return;
+
+                if (!newTarget) {
                     weavecore.LinkableWatcher.prototype.target = null;
+                    return;
+                }
+
+                this._cc.delayCallbacks();
+
+                // if the target can be found by a path, use the path
+                var sm = WeaveAPI.SessionManager;
+                var path = sm.getPath(WeaveAPI.globalHashMap, newTarget);
+                if (path) {
+                    this.targetPath = path;
+                } else {
+                    // it's ok to assign a local object that we own or that doesn't have an owner yet
+                    // otherwise, unset the target
+                    var owner = sm.getLinkableOwner(newTarget);
+                    if (owner === this || !owner)
+                        weavecore.LinkableWatcher.prototype.target = newTarget;
+                    else
+                        weavecore.LinkableWatcher.prototype.target = null;
+                }
+
+                this._cc.resumeCallbacks();
+            },
+            configurable: true
+        });
+
+
+        Object.defineProperty(this, 'globalName', {
+            /**
+             * This is the name of the linked global object, or null if the internal object is local.
+             */
+            get: function () {
+                if (this._targetPath && this._targetPath.length == 1)
+                    return this._targetPath[0];
+                return null;
+            },
+            /**
+             * This function will change the internalObject if the new globalName is different, unless this object is locked.
+             * If a new global name is given, the session state of the new global object will take precedence.
+             * @param newGlobalName This is the name of the global object to link to, or null to unlink from the current global object.
+             */
+            set: function (newGlobalName) {
+                if (this._locked)
+                    return;
+
+                // change empty string to null
+                if (!newGlobalName)
+                    newGlobalName = null;
+
+                var oldGlobalName = this.globalName;
+                if (oldGlobalName === newGlobalName)
+                    return;
+
+                this._cc.delayCallbacks();
+
+                if (newGlobalName === null || newGlobalName === undefined) {
+                    // unlink from global object and copy session state into a local object
+                    this.requestLocalObjectCopy(this.internalObject);
+                } else {
+                    // when switcing from a local object to a global one that doesn't exist yet, copy the local object
+                    if (this.target && !this.targetPath && !WeaveAPI.globalHashMap.getObject(newGlobalName))
+                        WeaveAPI.globalHashMap.requestObjectCopy(newGlobalName, this.internalObject);
+
+                    // link to new global name
+                    this.targetPath = [newGlobalName];
+                }
+
+                this._cc.resumeCallbacks();
+            }
+        });
+
+        /**
+         * @inheritDoc
+         */
+        Object.defineProperty(this, 'locked', {
+            get: function () {
+                return this.locked;
             }
 
-            this._cc.resumeCallbacks();
-        },
-        configurable: true
-    });
-
-
-    Object.defineProperty(this, 'globalName', {
-        /**
-         * This is the name of the linked global object, or null if the internal object is local.
-         */
-        get: function () {
-            if (this._targetPath && this._targetPath.length == 1)
-                return this._targetPath[0];
-            return null;
-        },
-        /**
-         * This function will change the internalObject if the new globalName is different, unless this object is locked.
-         * If a new global name is given, the session state of the new global object will take precedence.
-         * @param newGlobalName This is the name of the global object to link to, or null to unlink from the current global object.
-         */
-        set: function (newGlobalName) {
-            if (this._locked)
-                return;
-
-            // change empty string to null
-            if (!newGlobalName)
-                newGlobalName = null;
-
-            var oldGlobalName = this.globalName;
-            if (oldGlobalName === newGlobalName)
-                return;
-
-            this._cc.delayCallbacks();
-
-            if (newGlobalName === null || newGlobalName === undefined) {
-                // unlink from global object and copy session state into a local object
-                this.requestLocalObjectCopy(this.internalObject);
-            } else {
-                // when switcing from a local object to a global one that doesn't exist yet, copy the local object
-                if (this.target && !this.targetPath && !WeaveAPI.globalHashMap.getObject(newGlobalName))
-                    WeaveAPI.globalHashMap.requestObjectCopy(newGlobalName, this.internalObject);
-
-                // link to new global name
-                this.targetPath = [newGlobalName];
-            }
-
-            this._cc.resumeCallbacks();
-        }
-    });
-
-
-
-
-    /**
-     * @inheritDoc
-     */
-    Object.defineProperty(this, 'locked', {
-        get: function () {
-            return this.locked;
-        }
-
-    });
+        });
+    }
 
     LinkableDynamicObject.prototype = new weavecore.LinkableWatcher();
     LinkableDynamicObject.prototype.constructor = LinkableDynamicObject;
+    LinkableDynamicObject.constructor = weavecore.LinkableWatcher.constructor;
 
     var p = LinkableDynamicObject.prototype;
 
