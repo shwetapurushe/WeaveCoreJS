@@ -1,18 +1,3 @@
-/*
-    Weave (Web-based Analysis and Visualization Environment)
-    Copyright (C) 2008-2011 University of Massachusetts Lowell
-    This file is a part of Weave.
-    Weave is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, Version 3,
-    as published by the Free Software Foundation.
-    Weave is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-    You should have received a copy of the GNU General Public License
-    along with Weave.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
 if (!this.weavecore)
     this.weavecore = {};
 
@@ -29,11 +14,46 @@ if (!this.weavecore)
         this._lastNameRemoved = null; // returned by public getter
         this._lastObjectRemoved = null; // returned by public getter
 
+        /**
+         * This is the name of the object that was added prior to running callbacks.
+         */
+        Object.defineProperty(this, 'lastNameAdded', {
+            get: function () {
+                return this._lastNameAdded;
+            }
+        });
+
+        /**
+         * This is the object that was added prior to running callbacks.
+         */
+        Object.defineProperty(this, 'lastObjectAdded', {
+            get: function () {
+                return this._lastObjectAdded;
+            }
+        });
+
+        /**
+         * This is the name of the object that was removed prior to running callbacks.
+         */
+        Object.defineProperty(this, 'lastNameRemoved', {
+            get: function () {
+                return this._lastNameRemoved;
+            }
+        });
+
+        /**
+         * This is the object that was removed prior to running callbacks.
+         */
+        Object.defineProperty(this, 'lastObjectRemoved', {
+            get: function () {
+                return this._lastObjectRemoved;
+            }
+        });
+
     }
 
     ChildListCallbackInterface.prototype = new weavecore.CallbackCollection();
     ChildListCallbackInterface.prototype.constructor = ChildListCallbackInterface;
-    ChildListCallbackInterface.constructor = weavecore.CallbackCollection.constructor;
 
     var p = ChildListCallbackInterface.prototype;
     /**
@@ -62,33 +82,7 @@ if (!this.weavecore)
         this._setCallbackVariables.call(this, _name, _added, _removed);
     }
 
-    /**
-     * This is the name of the object that was added prior to running callbacks.
-     */
-    p.__defineGetter__("lastNameAdded", function () {
-        return this._lastNameAdded;
-    });
 
-    /**
-     * This is the object that was added prior to running callbacks.
-     */
-    p.__defineGetter__("lastObjectAdded", function () {
-        return this._lastObjectAdded;
-    });
-
-    /**
-     * This is the name of the object that was removed prior to running callbacks.
-     */
-    p.__defineGetter__("lastNameRemoved", function () {
-        return this._lastNameRemoved;
-    });
-
-    /**
-     * This is the object that was removed prior to running callbacks.
-     */
-    p.__defineGetter__("lastObjectRemoved", function () {
-        return this._lastObjectRemoved;
-    });
 
     weavecore.ChildListCallbackInterface = ChildListCallbackInterface;
 

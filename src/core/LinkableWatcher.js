@@ -90,7 +90,6 @@ if (!this.weavecore)
 
     LinkableWatcher.prototype = new weavecore.ILinkableObject();
     LinkableWatcher.prototype.constructor = LinkableWatcher;
-    LinkableWatcher.constructor = weavecore.ILinkableObject.constructor;
 
     var p = LinkableWatcher.prototype;
 

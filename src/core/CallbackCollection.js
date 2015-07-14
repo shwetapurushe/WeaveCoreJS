@@ -1,5 +1,3 @@
-// namespace
-
 if (!this.weavecore)
     this.weavecore = {};
 /**
@@ -138,7 +136,6 @@ if (!this.weavecore)
 
     CallbackCollection.prototype = new weavecore.ILinkableObject();
     CallbackCollection.prototype.constructor = CallbackCollection;
-    CallbackCollection.constructor = weavecore.ILinkableObject.constructor;
 
     // Prototypes
     var p = CallbackCollection.prototype;

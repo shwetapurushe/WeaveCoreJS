@@ -148,7 +148,6 @@ if (!this.weavecore)
 
     LinkableDynamicObject.prototype = new weavecore.LinkableWatcher();
     LinkableDynamicObject.prototype.constructor = LinkableDynamicObject;
-    LinkableDynamicObject.constructor = weavecore.LinkableWatcher.constructor;
 
     var p = LinkableDynamicObject.prototype;
 
