@@ -77,14 +77,14 @@ if (!this.weavecore)
 
             // If callbacks were triggered, make sure callbacks are triggered again one frame later when
             // it is possible for other classes to have a pointer to this object and retrieve the value.
-            if (defaultValueTriggersCallbacks && this.prototype._triggerCounter > weavecore.CallbackCollection.DEFAULT_TRIGGER_COUNT)
+            if (defaultValueTriggersCallbacks && this._triggerCounter > weavecore.CallbackCollection.DEFAULT_TRIGGER_COUNT)
                 weavecore.StageUtils.callLater(this, _defaultValueTrigger.bind(this));
         }
     }
 
     function _defaultValueTrigger() {
         // unless callbacks were triggered again since the default value was set, trigger callbacks now
-        if (!this.prototype._wasDisposed && this.prototype._triggerCounter === weavecore.CallbackCollection.DEFAULT_TRIGGER_COUNT + 1)
+        if (!this._wasDisposed && this._triggerCounter === weavecore.CallbackCollection.DEFAULT_TRIGGER_COUNT + 1)
             this.triggerCallbacks();
 
     }
