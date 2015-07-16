@@ -1568,23 +1568,7 @@ if (!this.weavecore)
 
     weavecore.StandardLib = StandardLib;
 }());
-/*
-    Weave (Web-based Analysis and Visualization Environment)
-    Copyright (C) 2008-2011 University of Massachusetts Lowell
-    This file is a part of Weave.
-    Weave is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, Version 3,
-    as published by the Free Software Foundation.
-    Weave is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-    You should have received a copy of the GNU General Public License
-    along with Weave.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-// namespace
-if(!this.weavecore)
+if (!this.weavecore)
     this.weavecore = {};
 /**
  * Dynamic state objects have three properties: objectName, className, sessionState
@@ -1592,7 +1576,7 @@ if(!this.weavecore)
  * @author adufilie
  * @author sanjay1909
  */
-(function() {
+(function () {
     // constructor
     function DynamicState() {
 
@@ -1603,22 +1587,22 @@ if(!this.weavecore)
      * The name of the property containing the name assigned to the object when the session state is generated.
      */
     Object.defineProperty(DynamicState, 'OBJECT_NAME', {
-            value: "objectName"
-        });
+        value: "objectName"
+    });
 
     /**
      * The name of the property containing the qualified class name of the original object providing the session state.
      */
     Object.defineProperty(DynamicState, 'CLASS_NAME', {
-            value: "className"
-        });
+        value: "className"
+    });
 
     /**
      * The name of the property containing the session state for an object of the type specified by className.
      */
     Object.defineProperty(DynamicState, 'SESSION_STATE', {
-            value: "sessionState"
-        });
+        value: "sessionState"
+    });
 
     //static Public Methods
     /**
@@ -1627,7 +1611,7 @@ if(!this.weavecore)
      * @param className The qualified class name of the original object providing the session state.
      * @param sessionState The session state for an object of the type specified by className.
      */
-    DynamicState.create = function(objectName, className, sessionState) {
+    DynamicState.create = function (objectName, className, sessionState) {
         var obj = {};
         // convert empty strings ("") to null
         obj[DynamicState.OBJECT_NAME] = objectName || null;
@@ -1642,7 +1626,7 @@ if(!this.weavecore)
      * @param object An object to check.
      * @return true if the object has all three properties and no extras.
      */
-    DynamicState.isDynamicState = function(object) {
+    DynamicState.isDynamicState = function (object) {
         var matchCount = 0;
         for (var name in object) {
             if (name === DynamicState.OBJECT_NAME || name === DynamicState.CLASS_NAME || name === DynamicState.SESSION_STATE)
@@ -1658,7 +1642,7 @@ if(!this.weavecore)
      * object that looks like a DynamicState and has no other non-String items.
      * @return A value of true if the Array looks like a dynamic session state or diff.
      */
-    DynamicState.isDynamicStateArray = function(state) {
+    DynamicState.isDynamicStateArray = function (state) {
         if (!Array.isArray(state))
             return false;
         var result = false;
@@ -1678,41 +1662,23 @@ if(!this.weavecore)
 
 }());
 
-/*
-    Weave (Web-based Analysis and Visualization Environment)
-    Copyright (C) 2008-2011 University of Massachusetts Lowell
-    This file is a part of Weave.
-    Weave is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, Version 3,
-    as published by the Free Software Foundation.
-    Weave is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-    You should have received a copy of the GNU General Public License
-    along with Weave.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-if(!this.weavecore)
+if (!this.weavecore)
     this.weavecore = {};
 
 /**
  * An object that implements this empty interface has an associated CallbackCollection and session state,
  * accessible through the global functions in the WeaveAPI Object. In order for an ILinkableObject to
  * be created dynamically at runtime, it must not require any constructor parameters.
- * 
+ *
  * @author adufilie
  * @author sanjay1909
  */
-(function(){
-    function ILinkableObject(){
-    }
-    
-    weavecore.ILinkableObject = ILinkableObject;
-    
-}());
+(function () {
+    function ILinkableObject() {}
 
-// namespace
+    weavecore.ILinkableObject = ILinkableObject;
+
+}());
 
 if (!this.weavecore)
     this.weavecore = {};
@@ -1745,6 +1711,8 @@ if (!this.weavecore)
      */
 
     function CallbackCollection(preCallback) {
+
+        weavecore.ILinkableObject.call(this);
 
         //private properties
 
@@ -2349,6 +2317,7 @@ if (!this.weavecore)
     weavecore.GroupedCallbackEntry = GroupedCallbackEntry;
 
 }());
+
 /*
     Weave (Web-based Analysis and Visualization Environment)
     Copyright (C) 2008-2011 University of Massachusetts Lowell
@@ -3050,6 +3019,7 @@ if (!this.weavecore)
     weavecore.SessionManager = SessionManager;
 
 }());
+
 /*
     Weave (Web-based Analysis and Visualization Environment)
     Copyright (C) 2008-2011 University of Massachusetts Lowell
@@ -3516,23 +3486,6 @@ if (!this.weavecore)
     weavecore.Dictionary2D = Dictionary2D;
 }());
 
-/*
-    Weave (Web-based Analysis and Visualization Environment)
-    Copyright (C) 2008-2011 University of Massachusetts Lowell
-    This file is a part of Weave.
-    Weave is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, Version 3,
-    as published by the Free Software Foundation.
-    Weave is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-    You should have received a copy of the GNU General Public License
-    along with Weave.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-// namespace
-
 if (!this.weavecore)
     this.weavecore = {};
 
@@ -3597,6 +3550,12 @@ if (!this.weavecore)
 
         this._locked = false;
 
+        Object.defineProperty(this, 'locked', {
+            get: function () {
+                return this._locked;
+            }
+        });
+
         if (sessionStateType !== Object) {
             this._sessionStateType = sessionStateType;
             this._primitiveType = this._sessionStateType === "string" || this._sessionStateType === "number" || this._sessionStateType === "boolean";
@@ -3606,14 +3565,14 @@ if (!this.weavecore)
 
             // If callbacks were triggered, make sure callbacks are triggered again one frame later when
             // it is possible for other classes to have a pointer to this object and retrieve the value.
-            if (defaultValueTriggersCallbacks && this.prototype._triggerCounter > weavecore.CallbackCollection.DEFAULT_TRIGGER_COUNT)
+            if (defaultValueTriggersCallbacks && this._triggerCounter > weavecore.CallbackCollection.DEFAULT_TRIGGER_COUNT)
                 weavecore.StageUtils.callLater(this, _defaultValueTrigger.bind(this));
         }
     }
 
     function _defaultValueTrigger() {
         // unless callbacks were triggered again since the default value was set, trigger callbacks now
-        if (!this.prototype._wasDisposed && this.prototype._triggerCounter === weavecore.CallbackCollection.DEFAULT_TRIGGER_COUNT + 1)
+        if (!this._wasDisposed && this._triggerCounter === weavecore.CallbackCollection.DEFAULT_TRIGGER_COUNT + 1)
             this.triggerCallbacks();
 
     }
@@ -3728,9 +3687,9 @@ if (!this.weavecore)
         this._locked = true;
     };
 
-    p.__defineGetter__("locked ", function () {
-        return this._locked;
-    });
+
+
+
 
     p.dispose = function () {
         weavecore.CallbackCollection.prototype.dispose.call(this);
@@ -3740,20 +3699,6 @@ if (!this.weavecore)
     weavecore.LinkableVariable = LinkableVariable;
 
 }());
-/*
-    Weave (Web-based Analysis and Visualization Environment)
-    Copyright (C) 2008-2011 University of Massachusetts Lowell
-    This file is a part of Weave.
-    Weave is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, Version 3,
-    as published by the Free Software Foundation.
-    Weave is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-    You should have received a copy of the GNU General Public License
-    along with Weave.  If not, see <http://www.gnu.org/licenses/>.
-*/
 
 if (!this.weavecore)
     this.weavecore = {};
@@ -3763,40 +3708,42 @@ if (!this.weavecore)
  * @author adufilie
  * @author sanjay1909
  */
-(function() {
-    function LinkableNumber(defaultValue,verifier, defaultValueTriggersCallbacks ){ 
-         // set default values for Parameters
-        if(defaultValue === undefined) defaultValue = NaN;
-        if(verifier === undefined) verifier = null;
-        if(defaultValueTriggersCallbacks === undefined) defaultValueTriggersCallbacks = true;
-        
+(function () {
+    function LinkableNumber(defaultValue, verifier, defaultValueTriggersCallbacks) {
+        // set default values for Parameters
+        if (defaultValue === undefined) defaultValue = NaN;
+        if (verifier === undefined) verifier = null;
+        if (defaultValueTriggersCallbacks === undefined) defaultValueTriggersCallbacks = true;
+
         // Note: Calling  weavecore.LinkableVariable.call() will set all the default values for member variables defined in the super class,
         // which means we can't set _sessionStateInternal = NaN here.
-        weavecore.LinkableVariable.call(this,"number",verifier,arguments.length ? defaultValue : undefined, defaultValueTriggersCallbacks );  
+        weavecore.LinkableVariable.call(this, "number", verifier, arguments.length ? defaultValue : undefined, defaultValueTriggersCallbacks);
+
+        Object.defineProperty(this, 'value', {
+            get: function () {
+                return this._sessionStateExternal;
+            },
+            set: function (val) {
+                this.setSessionState(val);
+            }
+        });
     }
-    
+
     LinkableNumber.prototype = new weavecore.LinkableVariable();
     LinkableNumber.prototype.constructor = LinkableNumber;
-    
+
     var p = LinkableNumber.prototype;
-    
-    p.__defineGetter__("value", function(){
-        return this._sessionStateExternal;
-    });
-    
-    p.__defineSetter__("value", function(val){
-        this.setSessionState(val);        
-    });
-    
-    p.setSessionState = function(val){
-        if(typeof(val) != "number"){
-            if(val === null || val === '' || val === undefined) val = NaN;
-            else val = Number(val);        
+
+
+    p.setSessionState = function (val) {
+        if (typeof (val) != "number") {
+            if (val === null || val === '' || val === undefined) val = NaN;
+            else val = Number(val);
         }
-        weavecore.LinkableVariable.prototype.setSessionState.call(this,val);
+        weavecore.LinkableVariable.prototype.setSessionState.call(this, val);
     }
-    
-    p.sessionStateEquals = function(otherSessionState){
+
+    p.sessionStateEquals = function (otherSessionState) {
         // We must check for null here because we can't set _sessionStateInternal = NaN in the constructor.
         if (this._sessionStateInternal === null || this._sessionStateInternal === undefined)
             this._sessionStateInternal = this._sessionStateExternal = NaN;
@@ -3804,25 +3751,10 @@ if (!this.weavecore)
             return true;
         return this._sessionStateInternal === otherSessionState;
     }
-     
-     weavecore.LinkableNumber = LinkableNumber;
-    
-}());
 
-/*
-    Weave (Web-based Analysis and Visualization Environment)
-    Copyright (C) 2008-2011 University of Massachusetts Lowell
-    This file is a part of Weave.
-    Weave is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, Version 3,
-    as published by the Free Software Foundation.
-    Weave is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-    You should have received a copy of the GNU General Public License
-    along with Weave.  If not, see <http://www.gnu.org/licenses/>.
-*/
+    weavecore.LinkableNumber = LinkableNumber;
+
+}());
 
 if (!this.weavecore)
     this.weavecore = {};
@@ -3832,52 +3764,40 @@ if (!this.weavecore)
  * @author adufilie
  * @author sanjay1909
  */
-(function() {
-    function LinkableBoolean(defaultValue,verifier, defaultValueTriggersCallbacks ){ 
+(function () {
+    function LinkableBoolean(defaultValue, verifier, defaultValueTriggersCallbacks) {
         // set default values for Parameters
-        if(verifier === undefined) verifier = null;
-        if(defaultValueTriggersCallbacks === undefined) defaultValueTriggersCallbacks = true;
-        
-        weavecore.LinkableVariable.call(this,"boolean",verifier,defaultValue,defaultValueTriggersCallbacks );
+        if (verifier === undefined) verifier = null;
+        if (defaultValueTriggersCallbacks === undefined) defaultValueTriggersCallbacks = true;
+
+        weavecore.LinkableVariable.call(this, "boolean", verifier, defaultValue, defaultValueTriggersCallbacks);
+
+        Object.defineProperty(this, 'value', {
+            get: function () {
+                return this._sessionStateExternal;
+            },
+            set: function (val) {
+                this.setSessionState(val);
+            }
+        });
     }
-    
+
     LinkableBoolean.prototype = new weavecore.LinkableVariable();
     LinkableBoolean.prototype.constructor = LinkableBoolean;
-    
+
     var p = LinkableBoolean.prototype;
-    
-    p.__defineGetter__("value", function(){
-        return this._sessionStateExternal;
-    });
-    p.__defineSetter__("value", function(val){
-        this.setSessionState(val);        
-    });
-    
-    p.setSessionState = function(val){
-        if(typeof(val) === "string"){
-            val = weavecore.ObjectUtil.stringCompare(val, "true", true) === 0;       
+
+
+    p.setSessionState = function (val) {
+        if (typeof (val) === "string") {
+            val = weavecore.ObjectUtil.stringCompare(val, "true", true) === 0;
         }
         weavecore.LinkableVariable.prototype.setSessionState.call(this, val ? true : false);
     }
-    
-    weavecore.LinkableBoolean = LinkableBoolean;
-    
-}());
 
-/*
-    Weave (Web-based Analysis and Visualization Environment)
-    Copyright (C) 2008-2011 University of Massachusetts Lowell
-    This file is a part of Weave.
-    Weave is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, Version 3,
-    as published by the Free Software Foundation.
-    Weave is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-    You should have received a copy of the GNU General Public License
-    along with Weave.  If not, see <http://www.gnu.org/licenses/>.
-*/
+    weavecore.LinkableBoolean = LinkableBoolean;
+
+}());
 
 if (!this.weavecore)
     this.weavecore = {};
@@ -3897,19 +3817,21 @@ if (!this.weavecore)
 
 
         weavecore.LinkableVariable.call(this, "string", verifier, arguments.length ? defaultValue : undefined, defaultValueTriggersCallbacks);
+
+        Object.defineProperty(this, 'value', {
+            get: function () {
+                return this._sessionStateExternal;
+            },
+            set: function (val) {
+                this.setSessionState(val);
+            }
+        });
     }
 
     LinkableString.prototype = new weavecore.LinkableVariable();
     LinkableString.prototype.constructor = LinkableString;
 
     var p = LinkableString.prototype;
-
-    p.__defineGetter__("value", function () {
-        return this._sessionStateExternal;
-    });
-    p.__defineSetter__("value", function (val) {
-        this.setSessionState(val);
-    });
 
     p.setSessionState = function (val) {
         if (val !== null)
@@ -3921,42 +3843,63 @@ if (!this.weavecore)
 
 }());
 
-/*
-    Weave (Web-based Analysis and Visualization Environment)
-    Copyright (C) 2008-2011 University of Massachusetts Lowell
-    This file is a part of Weave.
-    Weave is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, Version 3,
-    as published by the Free Software Foundation.
-    Weave is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-    You should have received a copy of the GNU General Public License
-    along with Weave.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
 if (!this.weavecore)
     this.weavecore = {};
 
-(function() {
-    
-    function ChildListCallbackInterface(){
+(function () {
+
+    function ChildListCallbackInterface() {
 
         // specify the preCallback function in super() so list callback
         // variables will be set before each change callback.
-        weavecore.CallbackCollection.call(this,this._setCallbackVariables);
+        weavecore.CallbackCollection.call(this, this._setCallbackVariables);
 
         this._lastNameAdded = null; // returned by public getter
         this._lastObjectAdded = null; // returned by public getter
         this._lastNameRemoved = null; // returned by public getter
         this._lastObjectRemoved = null; // returned by public getter
 
+        /**
+         * This is the name of the object that was added prior to running callbacks.
+         */
+        Object.defineProperty(this, 'lastNameAdded', {
+            get: function () {
+                return this._lastNameAdded;
+            }
+        });
+
+        /**
+         * This is the object that was added prior to running callbacks.
+         */
+        Object.defineProperty(this, 'lastObjectAdded', {
+            get: function () {
+                return this._lastObjectAdded;
+            }
+        });
+
+        /**
+         * This is the name of the object that was removed prior to running callbacks.
+         */
+        Object.defineProperty(this, 'lastNameRemoved', {
+            get: function () {
+                return this._lastNameRemoved;
+            }
+        });
+
+        /**
+         * This is the object that was removed prior to running callbacks.
+         */
+        Object.defineProperty(this, 'lastObjectRemoved', {
+            get: function () {
+                return this._lastObjectRemoved;
+            }
+        });
+
     }
-    
+
     ChildListCallbackInterface.prototype = new weavecore.CallbackCollection();
     ChildListCallbackInterface.prototype.constructor = ChildListCallbackInterface;
-        
+
     var p = ChildListCallbackInterface.prototype;
     /**
      * This function will set the list callback variables:
@@ -3965,14 +3908,14 @@ if (!this.weavecore)
      * @param objectAdded This is the object that was just added to the hash map.
      * @param objectRemoved This is the object that was just removed from the hash map.
      */
-     p._setCallbackVariables = function (name, objectAdded, objectRemoved){
-		this._lastNameAdded = objectAdded ? name : null;
-		this._lastObjectAdded = objectAdded;
-		this._lastNameRemoved = objectRemoved ? name : null;
-		this._lastObjectRemoved = objectRemoved;
-	}
-	
-	p.runCallbacks = function (name, objectAdded, objectRemoved){
+    p._setCallbackVariables = function (name, objectAdded, objectRemoved) {
+        this._lastNameAdded = objectAdded ? name : null;
+        this._lastObjectAdded = objectAdded;
+        this._lastNameRemoved = objectRemoved ? name : null;
+        this._lastObjectRemoved = objectRemoved;
+    }
+
+    p.runCallbacks = function (name, objectAdded, objectRemoved) {
         // remember previous values
         var _name = this._lastNameAdded || this._lastNameRemoved;
         var _added = this._lastObjectAdded;
@@ -3981,59 +3924,15 @@ if (!this.weavecore)
         this._runCallbacksImmediately(name, objectAdded, objectRemoved);
 
         // restore previous values (in case an external JavaScript popup caused us to interrupt something else)
-        this._setCallbackVariables.call(this,_name, _added, _removed);
+        this._setCallbackVariables.call(this, _name, _added, _removed);
     }
 
-	/**
-     * This is the name of the object that was added prior to running callbacks.
-     */
-	p.__defineGetter__("lastNameAdded", function(){
-        return this._lastNameAdded;
-    });
-	
-    /**
-     * This is the object that was added prior to running callbacks.
-     */
-	p.__defineGetter__("lastObjectAdded", function(){
-        return this._lastObjectAdded;
-    });
-	
-    /**
-     * This is the name of the object that was removed prior to running callbacks.
-     */
-	p.__defineGetter__("lastNameRemoved", function(){
-        return this._lastNameRemoved;
-    });
-	
-    /**
-     * This is the object that was removed prior to running callbacks.
-     */
-	p.__defineGetter__("lastObjectRemoved", function(){
-        return this._lastObjectRemoved;
-	});
-    
+
+
     weavecore.ChildListCallbackInterface = ChildListCallbackInterface;
-    
+
 }());
 
-/*
-    Weave (Web-based Analysis and Visualization Environment)
-    Copyright (C) 2008-2011 University of Massachusetts Lowell
-
-    This file is a part of Weave.
-
-    Weave is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, Version 3,
-    as published by the Free Software Foundation.
-
-    Weave is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Weave.  If not, see <http://www.gnu.org/licenses/>.
-*/
 // namespace
 
 if (!this.weavecore)
@@ -4060,6 +3959,8 @@ if (!this.weavecore)
         if (immediateCallback === undefined) immediateCallback = null;
         if (groupedCallback === undefined) groupedCallback = null;
 
+        weavecore.ILinkableObject.call(this);
+
         this._typeRestriction = typeRestriction;
 
         if (immediateCallback !== null)
@@ -4072,56 +3973,58 @@ if (!this.weavecore)
         this._foundTarget = true; // false when _target is not the desired target
         this._targetPath; // the path that is being watched
         this._pathDependencies = new Map(); // Maps an ILinkableDynamicObject to its previous internalObject.
-    }
 
+        Object.defineProperty(this, 'targetPath', {
+            /**
+             * This is the path that is currently being watched for linkable object targets.
+             */
+            get: function () {
+                return this._targetPath ? this._targetPath.concat() : null;
+            },
+            /**
+             * This will set a path which should be watched for new targets.
+             * Callbacks will be triggered immediately if the path changes or points to a new target.
+             */
+            set: function (path) {
+                // do not allow watching the globalHashMap
+                if (path && path.length === 0)
+                    path = null;
+                if (weavecore.StandardLib.compare(this._targetPath, path) !== 0) {
+                    var cc = WeaveAPI.SessionManager.getCallbackCollection(this);
+                    cc.delayCallbacks();
 
-    Object.defineProperty(this, 'targetPath', {
-        /**
-         * This is the path that is currently being watched for linkable object targets.
-         */
-        get: function () {
-            return this._targetPath ? this._targetPath.concat() : null;
-        },
-        /**
-         * This will set a path which should be watched for new targets.
-         * Callbacks will be triggered immediately if the path changes or points to a new target.
-         */
-        set: function (path) {
-            // do not allow watching the globalHashMap
-            if (path && path.length === 0)
-                path = null;
-            if (weavecore.StandardLib.compare(this._targetPath, path) !== 0) {
+                    this._resetPathDependencies();
+                    this._targetPath = path;
+                    this._handlePath();
+                    cc.triggerCallbacks();
+
+                    cc.resumeCallbacks();
+                }
+            },
+            configurable: true
+        });
+
+        Object.defineProperty(this, 'target', {
+            /**
+             * This is the linkable object currently being watched.
+             * Setting this will unset the targetPath.
+             */
+            get: function () {
+                return this._foundTarget ? this._target : null;
+            },
+            set: function (newTarget) {
                 var cc = WeaveAPI.SessionManager.getCallbackCollection(this);
                 cc.delayCallbacks();
-
-                this._resetPathDependencies();
-                this._targetPath = path;
-                this._handlePath();
-                cc.triggerCallbacks();
-
+                this.targetPath = null;
+                this.internalSetTarget(newTarget);
                 cc.resumeCallbacks();
-            }
-        },
-        configurable: true
-    });
+            },
+            configurable: true
+        });
+    }
 
-    Object.defineProperty(this, 'target', {
-        /**
-         * This is the linkable object currently being watched.
-         * Setting this will unset the targetPath.
-         */
-        get: function () {
-            return this._foundTarget ? this._target : null;
-        },
-        set: function (newTarget) {
-            var cc = WeaveAPI.SessionManager.getCallbackCollection(this);
-            cc.delayCallbacks();
-            this.targetPath = null;
-            this.internalSetTarget(newTarget);
-            cc.resumeCallbacks();
-        },
-        configurable: true
-    });
+    LinkableWatcher.prototype = new weavecore.ILinkableObject();
+    LinkableWatcher.prototype.constructor = LinkableWatcher;
 
     var p = LinkableWatcher.prototype;
 
@@ -4263,8 +4166,8 @@ if (!this.weavecore)
 
 
     p.dispose = function () {
-        _targetPath = null;
-        _target = null;
+        this._targetPath = null;
+        this._target = null;
         // everything else will be cleaned up automatically
     }
 
@@ -4303,20 +4206,6 @@ if (!this.weavecore)
 			// a.getState(null): "b value"
 		*/
 }());
-/*
-    Weave (Web-based Analysis and Visualization Environment)
-    Copyright (C) 2008-2011 University of Massachusetts Lowell
-    This file is a part of Weave.
-    Weave is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, Version 3,
-    as published by the Free Software Foundation.
-    Weave is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-    You should have received a copy of the GNU General Public License
-    along with Weave.  If not, see <http://www.gnu.org/licenses/>.
-*/
 
 if (!this.weavecore)
     this.weavecore = {};
@@ -4363,30 +4252,32 @@ if (!this.weavecore)
         Object.defineProperty(this, '_previousNameMap', {
             value: {}
         }); // maps a previously used name to a value of true.  used when generating unique names.
+
+        /**
+         * The child type restriction, or null if there is none.
+         */
+        Object.defineProperty(this, 'typeRestriction', {
+            get: function () {
+                return this._typeRestriction;
+            }
+        });
+
+        /**
+         * This is an interface for adding and removing callbacks that will get triggered immediately
+         * when an object is added or removed.
+         * @return An interface for adding callbacks that get triggered when the list of child objects changes.
+         */
+        Object.defineProperty(this, 'childListCallbacks', {
+            get: function () {
+                return this._childListCallbacks;
+            }
+        });
     }
 
     LinkableHashMap.prototype = new weavecore.CallbackCollection();
     LinkableHashMap.prototype.constructor = LinkableHashMap;
 
     var p = LinkableHashMap.prototype;
-
-    /**
-     * The child type restriction, or null if there is none.
-     */
-    p.__defineGetter__("typeRestriction", function () {
-        return this._typeRestriction;
-    });
-
-
-    /**
-     * This is an interface for adding and removing callbacks that will get triggered immediately
-     * when an object is added or removed.
-     * @return An interface for adding callbacks that get triggered when the list of child objects changes.
-     */
-    p.__defineGetter__("childListCallbacks", function () {
-        return this._childListCallbacks;
-    });
-
 
     /**
      * This function returns an ordered list of names in the hash map.
@@ -4796,6 +4687,7 @@ if (!this.weavecore)
 
     weavecore.LinkableHashMap = LinkableHashMap;
 }());
+
 createjs.Ticker.setFPS(50);
 //createjs.Ticker.
 
@@ -4835,27 +4727,6 @@ Object.defineProperty(this.WeaveAPI, 'TASK_PRIORITY_LOW', {
  });*/
 WeaveAPI.SessionManager = new weavecore.SessionManager();
 WeaveAPI.globalHashMap = new weavecore.LinkableHashMap();
-/*
-    Weave (Web-based Analysis and Visualization Environment)
-    Copyright (C) 2008-2011 University of Massachusetts Lowell
-
-    This file is a part of Weave.
-
-    Weave is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, Version 3,
-    as published by the Free Software Foundation.
-
-    Weave is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Weave.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-
-
 /**
  * This object links to an internal ILinkableObject.
  * The internal object can be either a local one or a global one identified by a global name.
@@ -4879,133 +4750,130 @@ if (!this.weavecore)
         // when this is true, the linked object cannot be changed
         this._locked = false;
 
-        weavecore.CallbackCollection.call(this, typeRestriction);
+        weavecore.LinkableWatcher.call(this, typeRestriction);
         if (typeRestriction)
             this._typeRestrictionClassName = typeRestriction.constructor.name;
-    }
 
-    // the callback collection for this object
-    // private const
-    Object.defineProperty(this, '_cc', {
-        value: WeaveAPI.SessionManager.registerDisposableChild(this, new weavecore.CallbackCollection()),
-        writable: false
-    })
+        // the callback collection for this object
+        // private const
+        Object.defineProperty(this, '_cc', {
+            value: WeaveAPI.SessionManager.registerDisposableChild(this, new weavecore.CallbackCollection()),
+            writable: false
+        })
 
-    Object.defineProperty(LinkableDynamicObject, 'ARRAY_CLASS_NAME', {
-        value: 'Array'
-    });
+        Object.defineProperty(LinkableDynamicObject, 'ARRAY_CLASS_NAME', {
+            value: 'Array'
+        });
 
-    /**
-     * @inheritDoc
-     */
-    Object.defineProperty(this, 'internalObject', {
-        get: function () {
-            return this.target;
-        }
-    })
-
-    // override public
-    Object.defineProperty(this, 'targetPath', {
-
-        set: function (path) {
-            if (this._locked)
-                return;
-            weavecore.LinkableWatcher.prototype.targetPath = path;
-        },
-        configurable: true
-    });
-
-    // override public
-    Object.defineProperty(this, 'target', {
-
-        set: function (newTarget) {
-            if (this._locked)
-                return;
-
-            if (!newTarget) {
-                weavecore.LinkableWatcher.prototype.target = null;
-                return;
+        /**
+         * @inheritDoc
+         */
+        Object.defineProperty(this, 'internalObject', {
+            get: function () {
+                return this.target;
             }
+        })
 
-            this._cc.delayCallbacks();
+        // override public
+        Object.defineProperty(this, 'targetPath', {
 
-            // if the target can be found by a path, use the path
-            var sm = WeaveAPI.SessionManager;
-            var path = sm.getPath(WeaveAPI.globalHashMap, newTarget);
-            if (path) {
-                this.targetPath = path;
-            } else {
-                // it's ok to assign a local object that we own or that doesn't have an owner yet
-                // otherwise, unset the target
-                var owner = sm.getLinkableOwner(newTarget);
-                if (owner === this || !owner)
-                    weavecore.LinkableWatcher.prototype.target = newTarget;
-                else
+            set: function (path) {
+                if (this._locked)
+                    return;
+                weavecore.LinkableWatcher.prototype.targetPath = path;
+            },
+            configurable: true
+        });
+
+        // override public
+        Object.defineProperty(this, 'target', {
+
+            set: function (newTarget) {
+                if (this._locked)
+                    return;
+
+                if (!newTarget) {
                     weavecore.LinkableWatcher.prototype.target = null;
+                    return;
+                }
+
+                this._cc.delayCallbacks();
+
+                // if the target can be found by a path, use the path
+                var sm = WeaveAPI.SessionManager;
+                var path = sm.getPath(WeaveAPI.globalHashMap, newTarget);
+                if (path) {
+                    this.targetPath = path;
+                } else {
+                    // it's ok to assign a local object that we own or that doesn't have an owner yet
+                    // otherwise, unset the target
+                    var owner = sm.getLinkableOwner(newTarget);
+                    if (owner === this || !owner)
+                        weavecore.LinkableWatcher.prototype.target = newTarget;
+                    else
+                        weavecore.LinkableWatcher.prototype.target = null;
+                }
+
+                this._cc.resumeCallbacks();
+            },
+            configurable: true
+        });
+
+
+        Object.defineProperty(this, 'globalName', {
+            /**
+             * This is the name of the linked global object, or null if the internal object is local.
+             */
+            get: function () {
+                if (this._targetPath && this._targetPath.length == 1)
+                    return this._targetPath[0];
+                return null;
+            },
+            /**
+             * This function will change the internalObject if the new globalName is different, unless this object is locked.
+             * If a new global name is given, the session state of the new global object will take precedence.
+             * @param newGlobalName This is the name of the global object to link to, or null to unlink from the current global object.
+             */
+            set: function (newGlobalName) {
+                if (this._locked)
+                    return;
+
+                // change empty string to null
+                if (!newGlobalName)
+                    newGlobalName = null;
+
+                var oldGlobalName = this.globalName;
+                if (oldGlobalName === newGlobalName)
+                    return;
+
+                this._cc.delayCallbacks();
+
+                if (newGlobalName === null || newGlobalName === undefined) {
+                    // unlink from global object and copy session state into a local object
+                    this.requestLocalObjectCopy(this.internalObject);
+                } else {
+                    // when switcing from a local object to a global one that doesn't exist yet, copy the local object
+                    if (this.target && !this.targetPath && !WeaveAPI.globalHashMap.getObject(newGlobalName))
+                        WeaveAPI.globalHashMap.requestObjectCopy(newGlobalName, this.internalObject);
+
+                    // link to new global name
+                    this.targetPath = [newGlobalName];
+                }
+
+                this._cc.resumeCallbacks();
+            }
+        });
+
+        /**
+         * @inheritDoc
+         */
+        Object.defineProperty(this, 'locked', {
+            get: function () {
+                return this.locked;
             }
 
-            this._cc.resumeCallbacks();
-        },
-        configurable: true
-    });
-
-
-    Object.defineProperty(this, 'globalName', {
-        /**
-         * This is the name of the linked global object, or null if the internal object is local.
-         */
-        get: function () {
-            if (this._targetPath && this._targetPath.length == 1)
-                return this._targetPath[0];
-            return null;
-        },
-        /**
-         * This function will change the internalObject if the new globalName is different, unless this object is locked.
-         * If a new global name is given, the session state of the new global object will take precedence.
-         * @param newGlobalName This is the name of the global object to link to, or null to unlink from the current global object.
-         */
-        set: function (newGlobalName) {
-            if (this._locked)
-                return;
-
-            // change empty string to null
-            if (!newGlobalName)
-                newGlobalName = null;
-
-            var oldGlobalName = this.globalName;
-            if (oldGlobalName === newGlobalName)
-                return;
-
-            this._cc.delayCallbacks();
-
-            if (newGlobalName === null || newGlobalName === undefined) {
-                // unlink from global object and copy session state into a local object
-                this.requestLocalObjectCopy(this.internalObject);
-            } else {
-                // when switcing from a local object to a global one that doesn't exist yet, copy the local object
-                if (this.target && !this.targetPath && !WeaveAPI.globalHashMap.getObject(newGlobalName))
-                    WeaveAPI.globalHashMap.requestObjectCopy(newGlobalName, this.internalObject);
-
-                // link to new global name
-                this.targetPath = [newGlobalName];
-            }
-
-            this._cc.resumeCallbacks();
-        }
-    });
-
-
-
-
-    /**
-     * @inheritDoc
-     */
-    Object.defineProperty(this, 'locked', {
-        get: function () {
-            return this.locked;
-        }
-
-    });
+        });
+    }
 
     LinkableDynamicObject.prototype = new weavecore.LinkableWatcher();
     LinkableDynamicObject.prototype.constructor = LinkableDynamicObject;
@@ -5214,6 +5082,7 @@ if (!this.weavecore)
 
 
 }());
+
 /*
     Weave (Web-based Analysis and Visualization Environment)
     Copyright (C) 2008-2011 University of Massachusetts Lowell
