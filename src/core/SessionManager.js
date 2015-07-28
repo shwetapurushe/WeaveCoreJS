@@ -303,7 +303,9 @@ if (!this.weavecore)
             }
             return;
         }
-        if (linkableObject instanceof ILinkableCompositeObject) {
+        //linkableHashmap is handled, In As3 version it implements ILinkableCompositeObject
+        // in jS we couldnt do that, thats why linkableObject.setSessionState is used
+        if (linkableObject instanceof weavecore.ILinkableCompositeObject || linkableObject.setSessionState) {
             if (newState.constructor.name === "String")
                 newState = [newState];
 
@@ -399,7 +401,10 @@ if (!this.weavecore)
         // special cases (explicit session state)
         if (linkableObject instanceof weavecore.LinkableVariable) {
             result = linkableObject.getSessionState();
-        } else if (linkableObject instanceof ILinkableCompositeObject) {
+        }
+        //linkableHashmap is handled, In As3 version it implements ILinkableCompositeObject
+        // in jS we couldnt do that, thats why linkableObject.setSessionState is used
+        else if (linkableObject instanceof weavecore.ILinkableCompositeObject || linkableObject.getSessionState) {
             result = linkableObject.getSessionState();
         } else {
             // implicit session state
@@ -429,7 +434,7 @@ if (!this.weavecore)
                 // first pass: set result[name] to the ILinkableObject
                 if (property != null && !this._getSessionStateIgnoreList[property]) {
                     // skip this property if it should not appear in the session state under the parent.
-                    if (this.childToParentDictionaryMap[property] === undefined || !this.childToParentDictionaryMap[property][linkableObject])
+                    if (this.childToParentMap[property] === undefined || !this.childToParentMap[property][linkableObject])
                         continue;
                     // avoid infinite recursion in implicit session states
                     this._getSessionStateIgnoreList[property] = true;
@@ -454,7 +459,7 @@ if (!this.weavecore)
                     var value = this.getSessionState(resultProperties[i]);
                     property = resultProperties[i];
                     // do not include objects that have a null implicit session state (no child objects)
-                    if (value === null && !(property instanceof ILinkableVariable) && !(property instanceof ILinkableCompositeObject) && !(property.getSessionState))
+                    if (value === null && !(property instanceof weavecore.LinkableVariable) && !(property instanceof weavecore.ILinkableCompositeObject) && !(property.getSessionState))
                         continue;
                     result[resultNames[i]] = value;
 
@@ -514,7 +519,7 @@ if (!this.weavecore)
                 var property = linkableObject[propName];
                 if (property === null || property === undefined)
                     return false;
-                if (this.childToParentDictionaryMap[property] === undefined || !this.childToParentDictionaryMap[property][linkableObject])
+                if (this.childToParentMap[property] === undefined || !this.childToParentMap[property][linkableObject])
                     return false
 
                 return true;
