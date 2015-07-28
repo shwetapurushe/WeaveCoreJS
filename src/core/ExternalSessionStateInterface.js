@@ -150,7 +150,7 @@ if (!this.weavecore)
         return false;
     }
 
-    p.removeObject(objectPath) {
+    p.removeObject = function (objectPath) {
         if (!objectPath || !objectPath.length) {
             console.log("Cannot remove root object");
             return false;

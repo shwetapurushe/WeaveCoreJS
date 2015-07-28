@@ -37,7 +37,7 @@ if (!this.weavecore)
          * This can be used as a buffer prior to calling flushKeys().
          * @see #flushKeys()
          */
-        this.keysRemoved: Array = [];
+        this.keysRemoved = [];
 
         // specify the preCallback function in super() so list callback
         // variables will be set before each change callback.
