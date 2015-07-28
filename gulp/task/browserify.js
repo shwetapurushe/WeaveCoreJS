@@ -4,7 +4,7 @@
 
    This task is set up to generate multiple separate bundles, from
    different sources, and to use Watchify when run from the default task.
-
+   https://github.com/greypants/gulp-starter
    See browserify.bundleConfigs in gulp/config.js
 */
 
