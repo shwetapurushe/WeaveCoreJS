@@ -85,7 +85,7 @@ if (!this.weavecore)
                 return object.getNames();
             if (object instanceof weavecore.LinkableDynamicObject)
                 return [null];
-            return WeaveAPI.SessionManager.getLinkablePropertyNames(object);
+            return WeaveAPI.SessionManager.getLinkablePropertyNames(object, true);
         }
 
         console.log("No ILinkableObject for which to get child names at path {0}", objectPath);

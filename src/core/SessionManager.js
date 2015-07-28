@@ -14,15 +14,26 @@ if (!this.weavecore)
         this.ownerToChildMap = new Map();
         this.childToOwnerMap = new Map();
 
+        this.debug = false;
+
         this.linkableObjectToCallbackCollectionMap = new Map();
         this.debugBusyTasks = false;
 
+        //const properties - writable default to false.
         Object.defineProperty(this, "_disposedObjectsMap", {
             value: new Map()
         });
         Object.defineProperty(this, "_treeCallbacks", {
             value: new weavecore.CallbackCollection()
         });
+        Object.defineProperty(this, "_classNameToSessionedPropertyNames", {
+            value: {}
+        });
+        // keeps track of which objects are currently being traversed
+        Object.defineProperty(this, "_getSessionStateIgnoreList", {
+            value: new Map()
+        });
+
     }
 
     var p = SessionManager.prototype;
@@ -272,26 +283,97 @@ if (!this.weavecore)
      */
     p.setSessionState = function (linkableObject, newState, removeMissingDynamicObjects) {
         if (removeMissingDynamicObjects === undefined) removeMissingDynamicObjects = true;
-        if (linkableObject === null || linkableObject === undefined) {
+        if (linkableObject === null) {
             console.log("SessionManager.setSessionState(): linkableObject cannot be null.");
             return;
         }
 
+        if (linkableObject === undefined) {
+            console.log("SessionManager.setSessionState(): linkableObject cannot be undefined.");
+            return;
+        }
+
         // special cases: for Explicit and Composite Session Object
-        if (linkableObject instanceof weavecore.ILinkableObject && linkableObject.setSessionState) {
+        if (linkableObject instanceof weavecore.LinkableVariable) {
             var lv = linkableObject;
             if (removeMissingDynamicObjects === false && newState && newState.constructor.name === 'Object') {
-                lv.setSessionState.call(lv, this._applyDiff.call(this, Object.create(lv.getSessionState.call(lv)), newState));
+                lv.setSessionState.call(lv, this._applyDiff.call(this, Object.create(lv.getSessionState(lv)), newState));
             } else {
                 lv.setSessionState.call(lv, newState);
             }
             return;
         }
-        // currently Implicit session state not supported
+        if (linkableObject instanceof ILinkableCompositeObject) {
+            if (newState.constructor.name === "String")
+                newState = [newState];
+
+            if (newState !== null && !(newState instanceof Array)) {
+                var array = [];
+                for (var key in newState)
+                    array.push(weavecore.DynamicState.create(key, null, newState[key]));
+                newState = array;
+            }
+
+            linkableObject.setSessionState(newState, removeMissingDynamicObjects);
+            return;
+        }
 
         if (newState === null || newState === undefined)
             return;
 
+        // delay callbacks before setting session state
+        var objectCC = this.getCallbackCollection(linkableObject);
+        objectCC.delayCallbacks();
+
+        var name;
+
+        // cache property names if necessary
+        var className = (linkableObject.constructor.name);
+        if (!this._classNameToSessionedPropertyNames[className])
+            this._cacheClassInfo(linkableObject, className);
+
+        // set session state
+        var foundMissingProperty = false;
+        var propertyNames;
+
+        propertyNames = this._classNameToSessionedPropertyNames[className];
+        var i;
+        for (i = 0; i < propertyNames.length; i++) {
+            var name = propertyNames[i];
+            if (!newState.hasOwnProperty(name)) {
+                if (removeMissingDynamicObjects) //&& linkableObject is ILinkableObjectWithNewProperties
+                    foundMissingProperty = true;
+                continue;
+            }
+
+            var property = null;
+            try {
+                property = linkableObject[name];
+            } catch (e) {
+                console.log('SessionManager.setSessionState(): Unable to get property "' + name + '" of class "' + linkableObject.constructor.name + '"', e);
+            }
+
+            if (property == null)
+                continue;
+
+            this.setSessionState(property, newState[name], removeMissingDynamicObjects);
+        }
+
+        // handle properties appearing in session state that do not appear in the linkableObject
+        /*if (linkableObject instanceof ILinkableObjectWithNewProperties)
+				for (name in newState)
+					if (!deprecatedLookup.hasOwnProperty(name))
+						linkableObject.handleMissingSessionStateProperty(newState, name);*/
+
+        // handle properties missing from absolute session state
+        if (foundMissingProperty)
+            propertyNames.forEach(function (name) {
+                if (!newState.hasOwnProperty(name))
+                    linkableObject.handleMissingSessionStateProperty(newState, name);
+            });
+
+        // resume callbacks after setting session state
+        objectCC.resumeCallbacks();
 
     }
 
@@ -302,21 +384,144 @@ if (!this.weavecore)
      * @see #setSessionState()
      */
     p.getSessionState = function (linkableObject) {
-        if (linkableObject === null || linkableObject === undefined) {
+        if (linkableObject === null) {
             console.log("SessionManager.getSessionState(): linkableObject cannot be null.");
+            return null;
+        }
+
+        if (linkableObject === undefined) {
+            console.log("SessionManager.getSessionState(): linkableObject cannot be undefined.");
             return null;
         }
 
         var result = null;
 
         // special cases (explicit session state)
-        if (linkableObject instanceof weavecore.ILinkableObject || linkableObject.getSessionState) {
+        if (linkableObject instanceof weavecore.LinkableVariable) {
             result = linkableObject.getSessionState();
+        } else if (linkableObject instanceof ILinkableCompositeObject) {
+            result = linkableObject.getSessionState();
+        } else {
+            // implicit session state
+            // first pass: get property names
+
+            // cache property names if necessary
+            var className = linkableObject.constructor.name;
+
+            if (!this._classNameToSessionedPropertyNames[className])
+                this._cacheClassInfo(linkableObject, className);
+
+            var propertyNames = this._classNameToSessionedPropertyNames[className];
+            var resultNames = [];
+            var resultProperties = [];
+            var property = null;
+            var i;
+            for (i = 0; i < propertyNames.length; i++) {
+                var name = propertyNames[i];
+
+                try {
+                    property = null; // must set this to null first because accessing the property may fail
+                    property = linkableObject[name];
+                } catch (e) {
+                    console.log('Unable to get property "' + name + '" of class "' + linkableObject.constructor.name + '"');
+                }
+
+                // first pass: set result[name] to the ILinkableObject
+                if (property != null && !this._getSessionStateIgnoreList[property]) {
+                    // skip this property if it should not appear in the session state under the parent.
+                    if (this.childToParentDictionaryMap[property] === undefined || !this.childToParentDictionaryMap[property][linkableObject])
+                        continue;
+                    // avoid infinite recursion in implicit session states
+                    this._getSessionStateIgnoreList[property] = true;
+                    resultNames.push(name);
+                    resultProperties.push(property);
+                } else {
+                    if (debug) {
+                        if (property != null)
+                            console.log("ignoring duplicate object:", name, property);
+                    }
+
+
+                }
+
+            }
+
+            // special case if there are no child objects -- return null
+            if (resultNames.length > 0) {
+                // second pass: get values from property names
+                result = {};
+                for (i = 0; i < resultNames.length; i++) {
+                    var value = this.getSessionState(resultProperties[i]);
+                    property = resultProperties[i];
+                    // do not include objects that have a null implicit session state (no child objects)
+                    if (value === null && !(property instanceof ILinkableVariable) && !(property instanceof ILinkableCompositeObject) && !(property.getSessionState))
+                        continue;
+                    result[resultNames[i]] = value;
+
+                    if (debug)
+                        console.log("getState", sessionedObject.constructor.name, resultNames[i], result[resultNames[i]]);
+                }
+            }
         }
 
-        // currently composite sessioned object sessionstate getting is not added
+        this._getSessionStateIgnoreList[linkableObject] = undefined;
 
         return result;
+    }
+
+    p._cacheClassInfo = function (linkableObject, className) {
+        // linkable property names
+        var propertyNames = Object.getOwnPropertyNames(linkableObject);
+        var sessionedPublicProperties = propertyNames.filter(function (propName) {
+            if (propName.charAt(0) === '_')
+                return false; //Private properties are ignored
+            else
+                return linkableObject[propName] instanceof weavecore.ILinkableObject
+        });
+
+        this._classNameToSessionedPropertyNames[className] = sessionedPublicProperties.sort();
+    }
+
+    /**
+     * This function gets a list of sessioned property names so accessor functions for non-sessioned properties do not have to be called.
+     * @param linkableObject An object containing sessioned properties.
+     * @param filtered If set to true, filters out deprecated, null, and excluded properties.
+     * @return An Array containing the names of the sessioned properties of that object class.
+     */
+    p.getLinkablePropertyNames = function (linkableObject, filtered) {
+        if (filtered === undefined) //default parameter value
+            filtered = false;
+
+        if (linkableObject === null) {
+            console.log("SessionManager.getLinkablePropertyNames(): linkableObject cannot be null.");
+            return [];
+        }
+
+        if (linkableObject === undefined) {
+            console.log("SessionManager.getLinkablePropertyNames(): linkableObject cannot be undefined.");
+            return [];
+        }
+
+        var className = linkableObject.constructor.name;
+        var propertyNames = this._classNameToSessionedPropertyNames[className];
+        if (propertyNames === null || propertyNames === undefined) {
+            this._cacheClassInfo(linkableObject, className);
+            propertyNames = this._classNameToSessionedPropertyNames[className];
+        }
+
+        if (filtered) {
+            var filteredPropNames = propertyNames.filter(function (propName) {
+                var property = linkableObject[propName];
+                if (property === null || property === undefined)
+                    return false;
+                if (this.childToParentDictionaryMap[property] === undefined || !this.childToParentDictionaryMap[property][linkableObject])
+                    return false
+
+                return true;
+            });
+            return filteredPropNames;
+        }
+        return propertyNames;
     }
 
     /**
