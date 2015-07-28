@@ -7,9 +7,11 @@ if (!this.weavecore)
  * @author sanjay1909
  */
 (function () {
+    "use strict";
+
     // constructor
     function DynamicState() {
-
+        throw "DynamicState cannot be instantiated.";
     }
 
     // Static Public Const Properties

@@ -26,10 +26,11 @@ if (!this.weavecore)
  * @author sanbalag
  */
 (function () {
+    "use strict";
+
     //constructor
-
     function StandardLib() {
-
+        throw "StandardLib cannot be instantiated.";
     }
 
     /**
