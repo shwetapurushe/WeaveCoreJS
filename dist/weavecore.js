@@ -1569,6 +1569,7 @@ if (!this.weavecore)
 
     weavecore.StandardLib = StandardLib;
 }());
+
 if (!this.weavecore)
     this.weavecore = {};
 /**
@@ -1727,6 +1728,7 @@ if (!this.weavecore)
     weavecore.ILinkableCompositeObject = ILinkableCompositeObject;
 
 }());
+
 if (!this.weavecore)
     this.weavecore = {};
 /**
@@ -2364,6 +2366,7 @@ if (!this.weavecore)
     weavecore.GroupedCallbackEntry = GroupedCallbackEntry;
 
 }());
+
 if (!this.weavecore)
     this.weavecore = {};
 
@@ -2719,7 +2722,7 @@ if (!this.weavecore)
                 console.log('SessionManager.setSessionState(): Unable to get property "' + name + '" of class "' + linkableObject.constructor.name + '"', e);
             }
 
-            if (property == null)
+            if (property === null)
                 continue;
 
             this.setSessionState(property, newState[name], removeMissingDynamicObjects);
@@ -2796,7 +2799,7 @@ if (!this.weavecore)
                 }
 
                 // first pass: set result[name] to the ILinkableObject
-                if (property != null && !this._getSessionStateIgnoreList[property]) {
+                if (property !== null && !this._getSessionStateIgnoreList[property]) {
                     // skip this property if it should not appear in the session state under the parent.
                     if (this.childToParentMap[property] === undefined || !this.childToParentMap[property][linkableObject])
                         continue;
@@ -2806,7 +2809,7 @@ if (!this.weavecore)
                     resultProperties.push(property);
                 } else {
                     if (debug) {
-                        if (property != null)
+                        if (property !== null)
                             console.log("ignoring duplicate object:", name, property);
                     }
 
@@ -3126,7 +3129,7 @@ if (!this.weavecore)
             return undefined; // no diff
         } else // nested object
         {
-            var diff = undefined; // start with no diff
+            var diff; // start with no diff
 
             // find old properties that changed value
             for (var oldName in oldState) {
@@ -3165,7 +3168,7 @@ if (!this.weavecore)
         // special cases
         if (baseDiff === null || baseDiff === undefined || diffToAdd === null || diffToAdd === undefined || baseType !== diffType || baseType !== 'object') {
             if (diffType === 'object') // not a primitive, so make a copy
-                baseDiff = Object.create(diffToAdd).__proto__; // temp solution need to find better solution as its array it will work fine
+                baseDiff = Object.create(diffToAdd).__proto__; //TODO: temp solution need to find better solution as its array it will work fine
             else
                 baseDiff = diffToAdd;
         } else if (Array.isArray(baseDiff) && Array.isArray(diffToAdd)) {
@@ -3214,13 +3217,13 @@ if (!this.weavecore)
                         if (typeof typedState === 'string' || typedState instanceof String || typedState === null || typedState === undefined)
                             baseLookup[objectName] = typedState; // avoid unnecessary function call overhead
                         else
-                            baseLookup[objectName] = Object.create(typedState).__proto__; // Temp solution for Array Copy
+                            baseLookup[objectName] = Object.create(typedState).__proto__; //TODO: Temp solution for Array Copy
                     } else if (!(typeof typedState === 'string' || typedState instanceof String || typedState === null || typedState === undefined)) // update dynamic state
                     {
                         var className = typedState[weavecore.DynamicState.CLASS_NAME];
                         // if new className is different and not null, start with a fresh typedState diff
                         if (className && className != oldTypedState[weavecore.DynamicState.CLASS_NAME]) {
-                            baseLookup[objectName] = Object.create(typedState).__proto__; // Temp solution for Array Copy;
+                            baseLookup[objectName] = Object.create(typedState).__proto__; //TODO: Temp solution for Array Copy;
                         } else // className hasn't changed, so combine the diffs
                         {
                             oldTypedState[weavecore.DynamicState.SESSION_STATE] = this.combineDiff(oldTypedState[weavecore.DynamicState.SESSION_STATE], typedState[weavecore.DynamicState.SESSION_STATE]);
@@ -3258,6 +3261,7 @@ if (!this.weavecore)
     weavecore.SessionManager = SessionManager;
 
 }());
+
 /*
     Weave (Web-based Analysis and Visualization Environment)
     Copyright (C) 2008-2011 University of Massachusetts Lowell
@@ -3615,6 +3619,7 @@ if (!this.weavecore)
     weavecore.WeaveTreeItem = WeaveTreeItem;
 
 }());
+
 /*
     Weave (Web-based Analysis and Visualization Environment)
     Copyright (C) 2008-2011 University of Massachusetts Lowell
@@ -3722,6 +3727,7 @@ if (!this.weavecore)
 
     weavecore.Dictionary2D = Dictionary2D;
 }());
+
 if (!this.weavecore)
     this.weavecore = {};
 
@@ -3872,7 +3878,7 @@ if (!this.weavecore)
         // two LinkableVariables to share the same object as their session state.
         if (type === 'object') {
             if (!wasCopied) {
-                if (value.constructor === Array) // Temp solution for array copy
+                if (value.constructor === Array) //TODO:find alternate for '__proto__' property as deprecated (Temp solution for array copy)
                     value = Object.create(value).__proto__;
                 else
                     value = Object.create(value);
@@ -3883,7 +3889,7 @@ if (!this.weavecore)
             this._sessionStateExternal = value;
 
             // save internal copy
-            if (value.constructor === Array) // Temp solution for array copy
+            if (value.constructor === Array) // TODO:find alternate for '__proto__' property as deprecated (Temp solution for array copy)
                 this._sessionStateInternal = Object.create(value).__proto__;
             else
                 this._sessionStateInternal = Object.create(value);
@@ -3935,7 +3941,6 @@ if (!this.weavecore)
     weavecore.LinkableVariable = LinkableVariable;
 
 }());
-
 if (!this.weavecore)
     this.weavecore = {};
 
@@ -3991,6 +3996,7 @@ if (!this.weavecore)
     weavecore.LinkableNumber = LinkableNumber;
 
 }());
+
 if (!this.weavecore)
     this.weavecore = {};
 
@@ -4033,6 +4039,7 @@ if (!this.weavecore)
     weavecore.LinkableBoolean = LinkableBoolean;
 
 }());
+
 if (!this.weavecore)
     this.weavecore = {};
 
@@ -4076,6 +4083,7 @@ if (!this.weavecore)
     weavecore.LinkableString = LinkableString;
 
 }());
+
 if (!this.weavecore)
     this.weavecore = {};
 
@@ -4165,6 +4173,7 @@ if (!this.weavecore)
     weavecore.ChildListCallbackInterface = ChildListCallbackInterface;
 
 }());
+
 // namespace
 
 if (!this.weavecore)
@@ -4350,7 +4359,7 @@ if (!this.weavecore)
                 }
                 this._foundTarget = false;
                 if (node instanceof weavecore.LinkableDynamicObject) {
-                    if (this._target != null) {
+                    if (this._target !== null) {
                         // path dependency code will detect changes to this node
                         this.internalSetTarget(null);
                         // must trigger here because _foundtarget is false
@@ -4438,6 +4447,7 @@ if (!this.weavecore)
 			// a.getState(null): "b value"
 		*/
 }());
+
 if (!this.weavecore)
     this.weavecore = {};
 
@@ -4687,7 +4697,7 @@ if (!this.weavecore)
                 // If this name is not associated with an object of the specified type,
                 // associate the name with a new object of the specified type.
                 console.log(className);
-                var classDef = eval('weavecore.' + className); //hardcoded weavecore.
+                var classDef = eval('weavecore.' + className); //TODO:remove hardcoded weavecore with namespace
                 var object = this._nameToObjectMap[name];
                 if (!object || object.constructor !== classDef)
                     this._createAndSaveNewObject.call(this, name, classDef, lockObject);
@@ -4903,7 +4913,7 @@ if (!this.weavecore)
             // third pass: remove objects based on the Boolean flags in remainingObjects.
             var orderedNamesCopy = this._orderedNames.concat();
             for (var j = 0; j < orderedNamesCopy.length; j++) {
-                var objectName = torderedNamesCopy[j];
+                objectName = torderedNamesCopy[j];
                 if (remainingObjects[objectName] !== true) {
                     //trace(LinkableHashMap, "missing value: "+objectName);
                     this.removeObject(objectName);
@@ -4918,6 +4928,7 @@ if (!this.weavecore)
 
     weavecore.LinkableHashMap = LinkableHashMap;
 }());
+
 createjs.Ticker.setFPS(50);
 //createjs.Ticker.
 
@@ -4957,6 +4968,7 @@ Object.defineProperty(this.WeaveAPI, 'TASK_PRIORITY_LOW', {
  });*/
 WeaveAPI.SessionManager = new weavecore.SessionManager();
 WeaveAPI.globalHashMap = new weavecore.LinkableHashMap();
+
 /**
  * This object links to an internal ILinkableObject.
  * The internal object can be either a local one or a global one identified by a global name.
@@ -5185,12 +5197,8 @@ if (!this.weavecore)
                 // if className is not specified, make no change unless removeMissingDynamicObjects is true
                 if (className || removeMissingDynamicObjects)
                     this._setLocalObjectType(className);
-                try {
-                    var classDef = eval("weavecore." + className);
-                } catch (e) {
-                    classDef = eval("weavedata." + className);
-                }
-
+                //TODO:Remove hardcoded NameSpace
+                var classDef = eval("weavecore." + className);
                 if ((!className && this.target) || (classDef && this.target instanceof classDef))
                     WeaveAPI.SessionManager.setSessionState(this.target, sessionState, prevTarget !== this.target || removeMissingDynamicObjects);
             }
@@ -5312,6 +5320,7 @@ if (!this.weavecore)
 
 
 }());
+
 /*
     Weave (Web-based Analysis and Visualization Environment)
     Copyright (C) 2008-2011 University of Massachusetts Lowell
@@ -5469,28 +5478,28 @@ if (!this.weavecore)
 
     }
 
-    var p = StageUtils.prototype;
-    p.getMaxComputationTimePerFrame = function () {
+    var suP = StageUtils.prototype;
+    suP.getMaxComputationTimePerFrame = function () {
         return this.maxComputationTimePerFrame;
     };
 
-    p.setMaxComputationTimePerFrame = function (value) {
+    suP.setMaxComputationTimePerFrame = function (value) {
         // this.eventManager.throttledMouseMoveInterval = value;
         this.maxComputationTimePerFrame = value;
     };
 
-    p.getTaskPriorityTimeAllocation = function (priority) {
+    suP.getTaskPriorityTimeAllocation = function (priority) {
         return this._priorityAllocatedTimes[priority];
     };
 
-    p.setTaskPriorityTimeAllocation = function (priority, milliseconds) {
+    suP.setTaskPriorityTimeAllocation = function (priority, milliseconds) {
         this._priorityAllocatedTimes[priority] = Math.max(milliseconds, 5);
     };
 
     StageUtils._time;
     StageUtils._times = [];
 
-    p.callLater = function (relevantContext, method, parameters) {
+    suP.callLater = function (relevantContext, method, parameters) {
         if (method === null || method === undefined) {
             console.log('StageUtils.callLater(): received null "method" parameter');
             return;
@@ -5503,8 +5512,8 @@ if (!this.weavecore)
         //_stackTraceMap[arguments] = new Error("This is the stack trace from when callLater() was called.").getStackTrace();
     };
 
-    p._handleCallLater = function () {
-        if (this.maxComputationTimePerFrame == 0)
+    suP._handleCallLater = function () {
+        if (this.maxComputationTimePerFrame === 0)
             this.maxComputationTimePerFrame = 100;
 
         var maxComputationTime;
@@ -5581,7 +5590,7 @@ if (!this.weavecore)
             // don't call the function if the relevantContext was disposed.
             if (!WeaveAPI.SessionManager.objectWasDisposed(args[0])) {
                 args2 = args[2];
-                if (args2 != null && args2.length > 0)
+                if (args2 !== null && args2 && args2.length > 0)
                     args[1].apply(null, args2);
                 else
                     args[1].call();
@@ -5671,7 +5680,7 @@ if (!this.weavecore)
                 // TODO: PROFILING: check how long this function takes to execute.
                 // if it takes a long time (> 1000 ms), something's wrong...
                 args2 = args[2];
-                if (args2 != null && args2.length > 0)
+                if (args2 !== null && args2.length > 0)
                     args[1].apply(null, args2);
                 else
                     args[1].call();
@@ -5683,7 +5692,7 @@ if (!this.weavecore)
 
     };
 
-    p.addEventCallback = function (eventType, relevantContext, callback, runCallbackNow) {
+    suP.addEventCallback = function (eventType, relevantContext, callback, runCallbackNow) {
         // set default parameter value
         if (runCallbackNow === null || runCallbackNow === undefined) {
             runCallbackNow = false;
@@ -5743,6 +5752,7 @@ if (!this.weavecore)
 
 
 }());
+
 if (!this.weavecore)
     this.weavecore = {};
 
@@ -5851,6 +5861,9 @@ if (!this.weavecore)
 
 
     }
+
+    SessionStateLog.prototype = new weavecore.LinkableVariable();
+    SessionStateLog.prototype.constructor = SessionStateLog;
 
     var p = SessionStateLog.prototype;
 

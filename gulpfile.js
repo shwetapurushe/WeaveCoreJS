@@ -77,9 +77,9 @@ var path = {
  * Here the source directory is set and all files within it will be piped to the jshint() method for parsing and validation.
  */
 gulp.task('lint', function () {
-    return gulp.src(path.JS)
-        .pipe(plugins.jshint())
-        .pipe(plugins.jshint.reporter('default'));
+    return gulp.src(path.ORDER)
+        .pipe(jshint())
+        .pipe(jshint.reporter('default'));
 });
 
 /*
