@@ -183,7 +183,7 @@ if (!this.weavecore)
                 }
                 this._foundTarget = false;
                 if (node instanceof weavecore.LinkableDynamicObject) {
-                    if (this._target != null) {
+                    if (this._target !== null) {
                         // path dependency code will detect changes to this node
                         this.internalSetTarget(null);
                         // must trigger here because _foundtarget is false

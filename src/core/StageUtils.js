@@ -155,28 +155,28 @@ if (!this.weavecore)
 
     }
 
-    var p = StageUtils.prototype;
-    p.getMaxComputationTimePerFrame = function () {
+    var suP = StageUtils.prototype;
+    suP.getMaxComputationTimePerFrame = function () {
         return this.maxComputationTimePerFrame;
     };
 
-    p.setMaxComputationTimePerFrame = function (value) {
+    suP.setMaxComputationTimePerFrame = function (value) {
         // this.eventManager.throttledMouseMoveInterval = value;
         this.maxComputationTimePerFrame = value;
     };
 
-    p.getTaskPriorityTimeAllocation = function (priority) {
+    suP.getTaskPriorityTimeAllocation = function (priority) {
         return this._priorityAllocatedTimes[priority];
     };
 
-    p.setTaskPriorityTimeAllocation = function (priority, milliseconds) {
+    suP.setTaskPriorityTimeAllocation = function (priority, milliseconds) {
         this._priorityAllocatedTimes[priority] = Math.max(milliseconds, 5);
     };
 
     StageUtils._time;
     StageUtils._times = [];
 
-    p.callLater = function (relevantContext, method, parameters) {
+    suP.callLater = function (relevantContext, method, parameters) {
         if (method === null || method === undefined) {
             console.log('StageUtils.callLater(): received null "method" parameter');
             return;
@@ -189,8 +189,8 @@ if (!this.weavecore)
         //_stackTraceMap[arguments] = new Error("This is the stack trace from when callLater() was called.").getStackTrace();
     };
 
-    p._handleCallLater = function () {
-        if (this.maxComputationTimePerFrame == 0)
+    suP._handleCallLater = function () {
+        if (this.maxComputationTimePerFrame === 0)
             this.maxComputationTimePerFrame = 100;
 
         var maxComputationTime;
@@ -267,7 +267,7 @@ if (!this.weavecore)
             // don't call the function if the relevantContext was disposed.
             if (!WeaveAPI.SessionManager.objectWasDisposed(args[0])) {
                 args2 = args[2];
-                if (args2 != null && args2.length > 0)
+                if (args2 !== null && args2.length > 0)
                     args[1].apply(null, args2);
                 else
                     args[1].call();
@@ -357,7 +357,7 @@ if (!this.weavecore)
                 // TODO: PROFILING: check how long this function takes to execute.
                 // if it takes a long time (> 1000 ms), something's wrong...
                 args2 = args[2];
-                if (args2 != null && args2.length > 0)
+                if (args2 !== null && args2.length > 0)
                     args[1].apply(null, args2);
                 else
                     args[1].call();
@@ -369,7 +369,7 @@ if (!this.weavecore)
 
     };
 
-    p.addEventCallback = function (eventType, relevantContext, callback, runCallbackNow) {
+    suP.addEventCallback = function (eventType, relevantContext, callback, runCallbackNow) {
         // set default parameter value
         if (runCallbackNow === null || runCallbackNow === undefined) {
             runCallbackNow = false;
