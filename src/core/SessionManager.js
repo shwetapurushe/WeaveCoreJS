@@ -799,7 +799,7 @@ if (!this.weavecore)
         // special cases
         if (baseDiff === null || baseDiff === undefined || diffToAdd === null || diffToAdd === undefined || baseType !== diffType || baseType !== 'object') {
             if (diffType === 'object') // not a primitive, so make a copy
-                baseDiff = Object.create(diffToAdd).__proto__; //TODO: temp solution need to find better solution as its array it will work fine
+                baseDiff = Object.getPrototypeOf(Object.create(diffToAdd)).slice(0); //TODO: find better solution for array copy(currently Shallow copy)
             else
                 baseDiff = diffToAdd;
         } else if (Array.isArray(baseDiff) && Array.isArray(diffToAdd)) {
@@ -848,13 +848,13 @@ if (!this.weavecore)
                         if (typeof typedState === 'string' || typedState instanceof String || typedState === null || typedState === undefined)
                             baseLookup[objectName] = typedState; // avoid unnecessary function call overhead
                         else
-                            baseLookup[objectName] = Object.create(typedState).__proto__; //TODO: Temp solution for Array Copy
+                            baseLookup[objectName] = Object.getPrototypeOf(Object.create(typedState)).slice(0); //TODO: Temp solution for Array Copy
                     } else if (!(typeof typedState === 'string' || typedState instanceof String || typedState === null || typedState === undefined)) // update dynamic state
                     {
                         var className = typedState[weavecore.DynamicState.CLASS_NAME];
                         // if new className is different and not null, start with a fresh typedState diff
                         if (className && className != oldTypedState[weavecore.DynamicState.CLASS_NAME]) {
-                            baseLookup[objectName] = Object.create(typedState).__proto__; //TODO: Temp solution for Array Copy;
+                            baseLookup[objectName] = Object.getPrototypeOf(Object.create(typedState)).slice(0); //TODO: Temp solution for Array Copy
                         } else // className hasn't changed, so combine the diffs
                         {
                             oldTypedState[weavecore.DynamicState.SESSION_STATE] = this.combineDiff(oldTypedState[weavecore.DynamicState.SESSION_STATE], typedState[weavecore.DynamicState.SESSION_STATE]);

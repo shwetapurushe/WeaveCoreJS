@@ -148,8 +148,8 @@ if (!this.weavecore)
         // two LinkableVariables to share the same object as their session state.
         if (type === 'object') {
             if (!wasCopied) {
-                if (value.constructor === Array) //TODO:find alternate for '__proto__' property as deprecated (Temp solution for array copy)
-                    value = Object.create(value).__proto__;
+                if (value.constructor === Array) //TODO:Temp solution for array copy - its a shallow copy now
+                    value = Object.getPrototypeOf(Object.create(value)).slice(0);
                 else
                     value = Object.create(value);
             }
@@ -159,8 +159,8 @@ if (!this.weavecore)
             this._sessionStateExternal = value;
 
             // save internal copy
-            if (value.constructor === Array) // TODO:find alternate for '__proto__' property as deprecated (Temp solution for array copy)
-                this._sessionStateInternal = Object.create(value).__proto__;
+            if (value.constructor === Array) // TODO:Temp solution for array copy - its a shallow copy now
+                this._sessionStateInternal = Object.getPrototypeOf(Object.create(value)).slice(0);
             else
                 this._sessionStateInternal = Object.create(value);
 
