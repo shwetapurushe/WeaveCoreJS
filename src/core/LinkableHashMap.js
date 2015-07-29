@@ -247,7 +247,7 @@ if (!this.weavecore)
                 // If this name is not associated with an object of the specified type,
                 // associate the name with a new object of the specified type.
                 console.log(className);
-                var classDef = eval('weavecore.' + className); //hardcoded weavecore.
+                var classDef = eval('weavecore.' + className); //TODO:remove hardcoded weavecore with namespace
                 var object = this._nameToObjectMap[name];
                 if (!object || object.constructor !== classDef)
                     this._createAndSaveNewObject.call(this, name, classDef, lockObject);
@@ -463,7 +463,7 @@ if (!this.weavecore)
             // third pass: remove objects based on the Boolean flags in remainingObjects.
             var orderedNamesCopy = this._orderedNames.concat();
             for (var j = 0; j < orderedNamesCopy.length; j++) {
-                var objectName = torderedNamesCopy[j];
+                objectName = torderedNamesCopy[j];
                 if (remainingObjects[objectName] !== true) {
                     //trace(LinkableHashMap, "missing value: "+objectName);
                     this.removeObject(objectName);
