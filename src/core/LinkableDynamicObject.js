@@ -226,12 +226,8 @@ if (!this.weavecore)
                 // if className is not specified, make no change unless removeMissingDynamicObjects is true
                 if (className || removeMissingDynamicObjects)
                     this._setLocalObjectType(className);
-                try {
-                    var classDef = eval("weavecore." + className);
-                } catch (e) {
-                    classDef = eval("weavedata." + className);
-                }
-
+                //TODO:Remove hardcoded NameSpace
+                var classDef = eval("weavecore." + className);
                 if ((!className && this.target) || (classDef && this.target instanceof classDef))
                     WeaveAPI.SessionManager.setSessionState(this.target, sessionState, prevTarget !== this.target || removeMissingDynamicObjects);
             }
