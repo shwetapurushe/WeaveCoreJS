@@ -353,7 +353,7 @@ if (!this.weavecore)
                 console.log('SessionManager.setSessionState(): Unable to get property "' + name + '" of class "' + linkableObject.constructor.name + '"', e);
             }
 
-            if (property == null)
+            if (property === null)
                 continue;
 
             this.setSessionState(property, newState[name], removeMissingDynamicObjects);
@@ -430,7 +430,7 @@ if (!this.weavecore)
                 }
 
                 // first pass: set result[name] to the ILinkableObject
-                if (property != null && !this._getSessionStateIgnoreList[property]) {
+                if (property !== null && !this._getSessionStateIgnoreList[property]) {
                     // skip this property if it should not appear in the session state under the parent.
                     if (this.childToParentMap[property] === undefined || !this.childToParentMap[property][linkableObject])
                         continue;
@@ -440,7 +440,7 @@ if (!this.weavecore)
                     resultProperties.push(property);
                 } else {
                     if (debug) {
-                        if (property != null)
+                        if (property !== null)
                             console.log("ignoring duplicate object:", name, property);
                     }
 
@@ -760,7 +760,7 @@ if (!this.weavecore)
             return undefined; // no diff
         } else // nested object
         {
-            var diff = undefined; // start with no diff
+            var diff; // start with no diff
 
             // find old properties that changed value
             for (var oldName in oldState) {
@@ -799,7 +799,7 @@ if (!this.weavecore)
         // special cases
         if (baseDiff === null || baseDiff === undefined || diffToAdd === null || diffToAdd === undefined || baseType !== diffType || baseType !== 'object') {
             if (diffType === 'object') // not a primitive, so make a copy
-                baseDiff = Object.create(diffToAdd).__proto__; // temp solution need to find better solution as its array it will work fine
+                baseDiff = Object.create(diffToAdd).__proto__; //TODO: temp solution need to find better solution as its array it will work fine
             else
                 baseDiff = diffToAdd;
         } else if (Array.isArray(baseDiff) && Array.isArray(diffToAdd)) {
@@ -848,13 +848,13 @@ if (!this.weavecore)
                         if (typeof typedState === 'string' || typedState instanceof String || typedState === null || typedState === undefined)
                             baseLookup[objectName] = typedState; // avoid unnecessary function call overhead
                         else
-                            baseLookup[objectName] = Object.create(typedState).__proto__; // Temp solution for Array Copy
+                            baseLookup[objectName] = Object.create(typedState).__proto__; //TODO: Temp solution for Array Copy
                     } else if (!(typeof typedState === 'string' || typedState instanceof String || typedState === null || typedState === undefined)) // update dynamic state
                     {
                         var className = typedState[weavecore.DynamicState.CLASS_NAME];
                         // if new className is different and not null, start with a fresh typedState diff
                         if (className && className != oldTypedState[weavecore.DynamicState.CLASS_NAME]) {
-                            baseLookup[objectName] = Object.create(typedState).__proto__; // Temp solution for Array Copy;
+                            baseLookup[objectName] = Object.create(typedState).__proto__; //TODO: Temp solution for Array Copy;
                         } else // className hasn't changed, so combine the diffs
                         {
                             oldTypedState[weavecore.DynamicState.SESSION_STATE] = this.combineDiff(oldTypedState[weavecore.DynamicState.SESSION_STATE], typedState[weavecore.DynamicState.SESSION_STATE]);
