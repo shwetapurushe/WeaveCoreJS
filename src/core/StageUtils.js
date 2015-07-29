@@ -267,7 +267,7 @@ if (!this.weavecore)
             // don't call the function if the relevantContext was disposed.
             if (!WeaveAPI.SessionManager.objectWasDisposed(args[0])) {
                 args2 = args[2];
-                if (args2 !== null && args2.length > 0)
+                if (args2 !== null && args2 && args2.length > 0)
                     args[1].apply(null, args2);
                 else
                     args[1].call();

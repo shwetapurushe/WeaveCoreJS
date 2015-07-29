@@ -107,6 +107,9 @@ if (!this.weavecore)
 
     }
 
+    SessionStateLog.prototype = new weavecore.LinkableVariable();
+    SessionStateLog.prototype.constructor = SessionStateLog;
+
     var p = SessionStateLog.prototype;
 
 
