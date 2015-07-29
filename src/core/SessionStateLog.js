@@ -38,7 +38,7 @@ if (!this.weavecore)
                 array[i] = new LogEntry(o.id, o.forward, o.backward, o.triggerDelay || defaultTriggerDelay, o.diffDuration);
         }
         return array;
-    }
+    };
 
 
     function getTimer() {
@@ -120,7 +120,7 @@ if (!this.weavecore)
         this._subject = null;
         this._undoHistory = null;
         this._redoHistory = null;
-    }
+    };
 
     /**
      * This function will save any pending diff in session state.
@@ -128,7 +128,7 @@ if (!this.weavecore)
      */
     p.synchronizeNow = function () {
         this._saveDiff.call(this, true);
-    }
+    };
 
 
 
@@ -154,7 +154,7 @@ if (!this.weavecore)
             var forwardDiff = WeaveAPI.SessionManager.computeDiff(this._prevState, state);
             console.log('immediate diff:', forwardDiff);
         }
-    }
+    };
 
     /**
      * This gets called as a grouped callback of the subject.
@@ -174,7 +174,7 @@ if (!this.weavecore)
             var forwardDiff = WeaveAPI.SessionManager.computeDiff(this._prevState, state);
             console.log('grouped diff:', forwardDiff);
         }
-    }
+    };
 
     /**
      * This will save a diff in the history, if there is any.
@@ -258,7 +258,7 @@ if (!this.weavecore)
         this._triggerDelay = -1;
 
         cc.resumeCallbacks.call(cc);
-    }
+    };
 
 
 
@@ -270,7 +270,7 @@ if (!this.weavecore)
         if (isNaN(numberOfSteps))
             numberOfSteps = 1;
         this.applyDiffs.call(this, -numberOfSteps);
-    }
+    };
 
     /**
      * This will redo a number of steps that have been previously undone.
@@ -280,7 +280,7 @@ if (!this.weavecore)
         if (isNaN(numberOfSteps))
             numberOfSteps = 1;
         this.applyDiffs.call(this, numberOfSteps);
-    }
+    };
 
     /**
      * This will clear all undo and redo history.
@@ -305,7 +305,7 @@ if (!this.weavecore)
         }
 
         cc.resumeCallbacks();
-    }
+    };
 
     /**
      * This will apply a number of undo or redo steps.
@@ -378,7 +378,7 @@ if (!this.weavecore)
             var slcc = WeaveAPI.SessionManager.getCallbackCollection(this);
             slcc.triggerCallbacks.call(slcc);
         }
-    }
+    };
 
 
 
@@ -420,7 +420,7 @@ if (!this.weavecore)
 
         cc.resumeCallbacks();
         return state;
-    }
+    };
 
     /**
      * This will load a session state log from an untyped session state object.
@@ -462,7 +462,7 @@ if (!this.weavecore)
             cc.triggerCallbacks("Log: Setsessionstate");
             cc.resumeCallbacks();
         }
-    }
+    };
     weavecore.SessionStateLog = SessionStateLog;
 
 }());

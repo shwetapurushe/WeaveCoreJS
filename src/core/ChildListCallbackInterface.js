@@ -68,7 +68,7 @@ if (!this.weavecore)
         this._lastObjectAdded = objectAdded;
         this._lastNameRemoved = objectRemoved ? name : null;
         this._lastObjectRemoved = objectRemoved;
-    }
+    };
 
     p.runCallbacks = function (name, objectAdded, objectRemoved) {
         // remember previous values
@@ -80,7 +80,7 @@ if (!this.weavecore)
 
         // restore previous values (in case an external JavaScript popup caused us to interrupt something else)
         this._setCallbackVariables.call(this, _name, _added, _removed);
-    }
+    };
 
 
 

@@ -30,7 +30,7 @@ if (!this.weavecore)
         Object.defineProperty(this, '_cc', {
             value: WeaveAPI.SessionManager.registerDisposableChild(this, new weavecore.CallbackCollection()),
             writable: false
-        })
+        });
 
         Object.defineProperty(LinkableDynamicObject, 'ARRAY_CLASS_NAME', {
             value: 'Array'
@@ -43,7 +43,7 @@ if (!this.weavecore)
             get: function () {
                 return this.target;
             }
-        })
+        });
 
         // override public
         Object.defineProperty(this, 'targetPath', {
@@ -154,7 +154,7 @@ if (!this.weavecore)
 
     p.lock = function () {
         this._locked = true;
-    }
+    };
 
     /**
      * @inheritDoc
@@ -169,7 +169,7 @@ if (!this.weavecore)
         var className = obj.constructor.name;
         var sessionState = obj || WeaveAPI.SessionManager.getSessionState(obj);
         return [weavecore.DynamicState.create(null, className, sessionState)];
-    }
+    };
 
     /**
      * @inheritDoc
@@ -239,7 +239,7 @@ if (!this.weavecore)
             // allow callbacks to run once now
             this._cc.resumeCallbacks();
         }
-    }
+    };
 
 
 
@@ -253,7 +253,7 @@ if (!this.weavecore)
             newTarget = null;
 
         weavecore.LinkableWatcher.prototype.internalSetTarget(newTarget);
-    }
+    };
 
 
 
@@ -279,7 +279,7 @@ if (!this.weavecore)
         }
 
         _cc.resumeCallbacks();
-    }
+    };
 
     /**
      * @inheritDoc
@@ -300,7 +300,7 @@ if (!this.weavecore)
         this._cc.resumeCallbacks();
 
         return target;
-    }
+    };
 
     /**
      * @inheritDoc
@@ -321,7 +321,7 @@ if (!this.weavecore)
         }
 
         return this.target;
-    }
+    };
 
     /**
      * @inheritDoc
@@ -335,19 +335,19 @@ if (!this.weavecore)
             WeaveAPI.SessionManager.setSessionState(object, state, true);
         }
         this._cc.resumeCallbacks();
-    }
+    };
 
 
     p.removeObject = function () {
         if (!this._locked)
             weavecore.LinkableWatcher.prototype.target = null;
-    }
+    };
 
     p.dispose = function () {
         // explicitly dispose the CallbackCollection before anything else
         this._cc.dispose();
         weavecore.LinkableWatcher.prototype.dispose();
-    }
+    };
 
     weavecore.LinkableDynamicObject = LinkableDynamicObject;
 

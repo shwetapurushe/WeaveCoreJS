@@ -85,7 +85,7 @@ if (!this.weavecore)
                 result.push(name);
         }
         return result;
-    }
+    };
 
     /**
      * This function returns an ordered list of objects in the hash map.
@@ -103,7 +103,7 @@ if (!this.weavecore)
                 result.push(object);
         }
         return result;
-    }
+    };
 
     /**
      * This function gets the object associated with the specified name.
@@ -112,7 +112,7 @@ if (!this.weavecore)
      */
     p.getObject = function (name) {
         return this._nameToObjectMap[name];
-    }
+    };
 
     /**
      * This function gets the name of the specified object in the hash map.
@@ -121,7 +121,7 @@ if (!this.weavecore)
      */
     p.getName = function (object) {
         return this._objectToNameMap.get(object);
-    }
+    };
 
     /**
      * This will reorder the names returned by getNames().
@@ -164,7 +164,7 @@ if (!this.weavecore)
         // if the name order changed, run child list callbacks
         if (changeDetected)
             this._childListCallbacks.runCallbacks(null, null, null);
-    }
+    };
 
     /**
      * This function creates an object in the hash map if it doesn't already exist.
@@ -179,7 +179,7 @@ if (!this.weavecore)
         var className = classDef ? classDef.name : null;
         var result = this._initObjectByClassName.call(this, name, className, lockObject);
         return classDef ? result : null;
-    }
+    };
 
     /**
      * This function will copy the session state of an ILinkableObject to a new object under the given name in this LinkableHashMap.
@@ -202,7 +202,7 @@ if (!this.weavecore)
         this.resumeCallbacks();
 
         return object;
-    }
+    };
 
     /**
      * This function will rename an object by making a copy and removing the original.
@@ -227,7 +227,7 @@ if (!this.weavecore)
             this.resumeCallbacks();
         }
         return this.getObject(newName);
-    }
+    };
 
     /**
      * If there is an existing object associated with the specified name, it will be kept if it
@@ -261,7 +261,7 @@ if (!this.weavecore)
             this.removeObject(name);
         }
         return this._nameToObjectMap[name];
-    }
+    };
 
     /**
      * (private)
@@ -291,7 +291,7 @@ if (!this.weavecore)
 
         // make sure the callback variables signal that the object was added
         this._childListCallbacks.runCallbacks(name, object, null);
-    }
+    };
 
     /**
      * This function will lock an object in place for a given identifying name.
@@ -301,7 +301,7 @@ if (!this.weavecore)
     p.lockObject = function (name) {
         if (name !== null && name !== undefined && this._nameToObjectMap[name] !== null && this._nameToObjectMap[name] !== undefined)
             this._nameIsLocked[name] = true;
-    }
+    };
 
     /**
      * This function will return true if the specified object was previously locked.
@@ -309,7 +309,7 @@ if (!this.weavecore)
      */
     p.objectIsLocked = function (name) {
         return this._nameIsLocked[name] ? true : false;
-    }
+    };
 
     /**
      * This function removes an object from the hash map.
@@ -335,7 +335,7 @@ if (!this.weavecore)
 
         // dispose the object AFTER the callbacks know that the object was removed
         WeaveAPI.SessionManager.disposeObject(object);
-    }
+    };
 
     /**
      * This function attempts to removes all objects from this LinkableHashMap.
@@ -348,7 +348,7 @@ if (!this.weavecore)
             this.removeObject(orderedNamesCopy[i]);
         }
         this.resumeCallbacks();
-    }
+    };
 
     /**
      * This function removes all objects from this LinkableHashMap.
@@ -368,7 +368,7 @@ if (!this.weavecore)
             this._nameIsLocked[name] = undefined; // make sure removeObject() will carry out its action
             this.removeObject(name);
         }
-    }
+    };
 
 
     p.generateUniqueName = function (baseName) {
@@ -377,7 +377,7 @@ if (!this.weavecore)
         while (this._previousNameMap[name] !== undefined)
             name = baseName + (++count);
         return name;
-    }
+    };
 
     /**
      * Override @see LinkableVaribale
@@ -394,7 +394,7 @@ if (!this.weavecore)
             );
         }
         return result;
-    }
+    };
 
     /**
      * Override @see LinkableVaribale
@@ -474,7 +474,7 @@ if (!this.weavecore)
         this.setNameOrder(newNameOrder);
 
         this.resumeCallbacks();
-    }
+    };
 
     weavecore.LinkableHashMap = LinkableHashMap;
 }());

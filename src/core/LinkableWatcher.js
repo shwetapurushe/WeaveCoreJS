@@ -133,7 +133,7 @@ if (!this.weavecore)
 
         if (this._foundTarget)
             this._handleTargetTrigger();
-    }
+    };
 
 
     p._handleTargetTrigger = function () {
@@ -141,7 +141,7 @@ if (!this.weavecore)
             WeaveAPI.SessionManager.getCallbackCollection(this).triggerCallbacks();
         else
             this._handlePath();
-    }
+    };
 
 
 
@@ -152,7 +152,7 @@ if (!this.weavecore)
             this._target = null;
             WeaveAPI.SessionManager.getCallbackCollection(this).triggerCallbacks();
         }
-    }
+    };
 
     p._handlePath = function () {
         if (!this._targetPath) {
@@ -198,7 +198,7 @@ if (!this.weavecore)
         // we found a desired target if there is no type restriction or the object fits the restriction
         this._foundTarget = !this._typeRestriction || node instanceof this._typeRestriction;
         this.internalSetTarget(node);
-    }
+    };
 
     p._addPathDependency = function (ldo) {
         var sm = WeaveAPI.SessionManager;
@@ -207,7 +207,7 @@ if (!this.weavecore)
             sm.getCallbackCollection(ldo).addImmediateCallback(this, this._handlePathDependencies.bind(this));
             sm.getCallbackCollection(ldo).addDisposeCallback(this, this._handlePathDependencies.bind(this));
         }
-    }
+    };
 
 
     p._handlePathDependencies = function () {
@@ -220,21 +220,21 @@ if (!this.weavecore)
                 return;
             }
         }
-    }
+    };
 
     p._resetPathDependencies = function () {
         var sm = WeaveAPI.SessionManager;
         for (var key of this._pathDependencies.keys())
             sm.getCallbackCollection(key).removeCallback(this._handlePathDependencies);
         this._pathDependencies = new Map();
-    }
+    };
 
 
     p.dispose = function () {
         this._targetPath = null;
         this._target = null;
         // everything else will be cleaned up automatically
-    }
+    };
 
     weavecore.LinkableWatcher = LinkableWatcher;
 

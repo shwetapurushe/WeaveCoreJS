@@ -1565,11 +1565,10 @@ if (!this.weavecore)
         }
 
         return 0;
-    }
+    };
 
     weavecore.StandardLib = StandardLib;
 }());
-
 if (!this.weavecore)
     this.weavecore = {};
 /**
@@ -1723,12 +1722,11 @@ if (!this.weavecore)
      *     As a special case, a null session state will result in no change regardless of the removeMissingDynamicObjects value.
      * @see weave.api.core.DynamicState
      */
-    p.setSessionState = function (newState, removeMissingDynamicObjects) {}
+    p.setSessionState = function (newState, removeMissingDynamicObjects) {};
 
     weavecore.ILinkableCompositeObject = ILinkableCompositeObject;
 
 }());
-
 if (!this.weavecore)
     this.weavecore = {};
 /**
@@ -2265,14 +2263,14 @@ if (!this.weavecore)
         // target using different contexts without having the side effect of losing the callback when one of those contexts is disposed.
         // The entry.trigger function will be removed once all contexts are disposed.
         callbackCollection.addImmediateCallback(null, entry.trigger.bind(entry), triggerCallbackNow);
-    }
+    };
 
     GroupedCallbackEntry.removeGroupedCallback = function (callbackCollection, groupedCallback) {
         // remove the trigger function as a callback
         var entry = GroupedCallbackEntry._entryLookup.get(groupedCallback);
         if (entry)
             callbackCollection.removeCallback(entry.trigger);
-    }
+    };
 
     /**
      * This function gets called once per frame and allows grouped callbacks to run.
@@ -2312,13 +2310,13 @@ if (!this.weavecore)
 
     };
 
-    var p = GroupedCallbackEntry.prototype;
+    var gcP = GroupedCallbackEntry.prototype;
 
     /**
      * Marks the entry to be handled later (unless already triggered this frame).
      * This also takes care of preventing recursion.
      */
-    p.trigger = function () {
+    gcP.trigger = function () {
         // if handling recursive callbacks, call now
         if (GroupedCallbackEntry._handlingRecursiveGroupedCallbacks) {
             this.handleGroupedCallback();
@@ -2336,7 +2334,7 @@ if (!this.weavecore)
     /**
      * Checks the context(s) before calling groupedCallback
      */
-    p.handleGroupedCallback = function () {
+    gcP.handleGroupedCallback = function () {
         if (!this.context)
             return;
 
@@ -2366,7 +2364,6 @@ if (!this.weavecore)
     weavecore.GroupedCallbackEntry = GroupedCallbackEntry;
 
 }());
-
 if (!this.weavecore)
     this.weavecore = {};
 
@@ -2429,12 +2426,12 @@ if (!this.weavecore)
         //set default values for parameters
         if (useGroupedCallback === undefined)
             useGroupedCallback = false;
-        if (!linkableParent instanceof weavecore.ILinkableObject) {
+        if (!(linkableParent instanceof weavecore.ILinkableObject)) {
             console.log("registerLinkableChild(): Parent does not inherit ILinkableObject.");
             return;
         }
 
-        if (!linkableChild instanceof weavecore.ILinkableObject) {
+        if (!(linkableChild instanceof weavecore.ILinkableObject)) {
             console.log("registerLinkableChild(): child does not inherit ILinkableObject.");
             return;
         }
@@ -2466,7 +2463,7 @@ if (!this.weavecore)
         this._treeCallbacks.triggerCallbacks("Session Tree: Child Registered");
 
         return linkableChild;
-    }
+    };
 
     /**
      * This will register a child of a parent and cause the child to be disposed when the parent is disposed.
@@ -2493,7 +2490,7 @@ if (!this.weavecore)
             this.childToParentMap.set(disposableChild, new Map());
         }
         return disposableChild;
-    }
+    };
 
     /**
      * Use this function with care.  This will remove child objects from the session state of a parent and
@@ -2509,7 +2506,7 @@ if (!this.weavecore)
         this.getCallbackCollection(child).removeCallback(this.getCallbackCollection(parent).triggerCallbacks.bind(parent));
 
         this._treeCallbacks.triggerCallbacks("Session Tree: Child un-Registered");
-    }
+    };
 
 
     /**
@@ -2529,7 +2526,7 @@ if (!this.weavecore)
             this.childToParentMap.get(child).set(parent, false);
         if (this.parentToChildMap.get(parent) !== undefined && this.parentToChildMap.get(parent).get(child))
             this.parentToChildMap.get(parent).set(child, false);
-    }
+    };
 
     /**
      * @private
@@ -2544,7 +2541,7 @@ if (!this.weavecore)
             for (var child in this.parentToChildMap.get(parent))
                 result.push(child);
         return result;
-    }
+    };
 
     /**
      * This function gets the owner of a linkable object.  The owner of an object is defined as its first registered parent.
@@ -2554,7 +2551,7 @@ if (!this.weavecore)
      */
     p.getLinkableOwner = function (child) {
         return this.childToOwnerMap.get(child);
-    }
+    };
 
     /**
      * @param root The linkable object to be placed at the root node of the tree.
@@ -2567,7 +2564,7 @@ if (!this.weavecore)
         treeItem.children = SessionManager.prototype._getTreeItemChildren.bind(this);
         treeItem.data = objectTypeFilter;
         return treeItem;
-    }
+    };
 
     p._getTreeItemChildren = function (treeItem) {
         var object = treeItem.source;
@@ -2594,8 +2591,8 @@ if (!this.weavecore)
             }
         } else {
             var deprecatedLookup = null;
-
-            console.log("Linkable dynamic object not yet supported - only Linkablehashmap")
+            //TODO: support for Linkable dynamic object
+            console.log("Linkable dynamic object not yet supported - only Linkablehashmap");
         }
         if (children.length === 0)
             children = null;
@@ -2604,7 +2601,7 @@ if (!this.weavecore)
         if ((children === null || children === undefined) && !(object instanceof objectTypeFilter))
             return null;
         return children;
-    }
+    };
 
     /**
      * Adds a grouped callback that will be triggered when the session state tree changes.
@@ -2612,12 +2609,12 @@ if (!this.weavecore)
     p.addTreeCallback = function (relevantContext, groupedCallback, triggerCallbackNow) {
         if (triggerCallbackNow === undefined) triggerCallbackNow = false;
         this._treeCallbacks.addGroupedCallback(relevantContext, groupedCallback, triggerCallbackNow);
-    }
+    };
 
 
     p.removeTreeCallback = function (groupedCallback) {
         this._treeCallbacks.removeCallback(groupedCallback);
-    }
+    };
 
     /**
      * This function will copy the session state from one sessioned object to another.
@@ -2630,7 +2627,7 @@ if (!this.weavecore)
     p.copySessionState = function (source, destination) {
         var sessionState = this.getSessionState(source);
         this.setSessionState(destination, sessionState, true);
-    }
+    };
 
 
     p._applyDiff = function (base, diff) {
@@ -2641,7 +2638,7 @@ if (!this.weavecore)
             base[key] = this._applyDiff(base[key], diff[key]);
 
         return base;
-    }
+    };
 
     /**
      * Sets the session state of an ILinkableObject.
@@ -2696,8 +2693,6 @@ if (!this.weavecore)
         var objectCC = this.getCallbackCollection(linkableObject);
         objectCC.delayCallbacks();
 
-        var name;
-
         // cache property names if necessary
         var className = (linkableObject.constructor.name);
         if (!this._classNameToSessionedPropertyNames[className])
@@ -2708,8 +2703,8 @@ if (!this.weavecore)
         var propertyNames;
 
         propertyNames = this._classNameToSessionedPropertyNames[className];
-        var i;
-        for (i = 0; i < propertyNames.length; i++) {
+
+        for (var i = 0; i < propertyNames.length; i++) {
             var name = propertyNames[i];
             if (!newState.hasOwnProperty(name)) {
                 if (removeMissingDynamicObjects) //&& linkableObject is ILinkableObjectWithNewProperties
@@ -2746,7 +2741,7 @@ if (!this.weavecore)
         // resume callbacks after setting session state
         objectCC.resumeCallbacks();
 
-    }
+    };
 
     /**
      * Gets the session state of an ILinkableObject.
@@ -2841,7 +2836,7 @@ if (!this.weavecore)
         this._getSessionStateIgnoreList[linkableObject] = undefined;
 
         return result;
-    }
+    };
 
     p._cacheClassInfo = function (linkableObject, className) {
         // linkable property names
@@ -2850,11 +2845,11 @@ if (!this.weavecore)
             if (propName.charAt(0) === '_')
                 return false; //Private properties are ignored
             else
-                return linkableObject[propName] instanceof weavecore.ILinkableObject
+                return linkableObject[propName] instanceof weavecore.ILinkableObject;
         });
 
         this._classNameToSessionedPropertyNames[className] = sessionedPublicProperties.sort();
-    }
+    };
 
     /**
      * This function gets a list of sessioned property names so accessor functions for non-sessioned properties do not have to be called.
@@ -2889,14 +2884,14 @@ if (!this.weavecore)
                 if (property === null || property === undefined)
                     return false;
                 if (this.childToParentMap[property] === undefined || !this.childToParentMap[property][linkableObject])
-                    return false
+                    return false;
 
                 return true;
             });
             return filteredPropNames;
         }
         return propertyNames;
-    }
+    };
 
     /**
      * This function gets the ICallbackCollection associated with an ILinkableObject.
@@ -2920,7 +2915,7 @@ if (!this.weavecore)
         }
 
         return objectCC;
-    }
+    };
 
 
     /**
@@ -2940,7 +2935,7 @@ if (!this.weavecore)
                 return cc.wasDisposed;
         }
         return this._disposedObjectsMap.get(object) !== undefined;
-    }
+    };
 
 
     /**
@@ -3019,7 +3014,7 @@ if (!this.weavecore)
 
             this._treeCallbacks.triggerCallbacks("Session Tree: Object Disposed");
         }
-    }
+    };
 
 
     /**
@@ -3154,7 +3149,7 @@ if (!this.weavecore)
 
             return diff;
         }
-    }
+    };
 
     /**
      * This modifies an existing diff to include an additional diff.
@@ -3254,7 +3249,7 @@ if (!this.weavecore)
         }
 
         return baseDiff;
-    }
+    };
 
     Object.defineProperty(SessionManager, 'DIFF_DELETE', {
         value: "delete"
@@ -3451,7 +3446,7 @@ if (!this.weavecore)
             }
         }
         return param;
-    }
+    };
 
     /**
      * Checks if an object has a single specified property.
@@ -3471,7 +3466,7 @@ if (!this.weavecore)
             found = true; // found the desired property
         }
         return found;
-    }
+    };
 
     /**
      * Gets a String value from a String or Function.
@@ -3493,7 +3488,7 @@ if (!this.weavecore)
             }
         }
         return param;
-    }
+    };
 
     /**
      * Evaluates a function to get an Object or just returns the non-Function Object passed in.
@@ -3513,7 +3508,7 @@ if (!this.weavecore)
             }
         }
         return param;
-    }
+    };
 
     /**
      * First tries calling a function with no parameters.
@@ -3535,7 +3530,7 @@ if (!this.weavecore)
 
         // on ArgumentError, pass in this WeaveTreeItem as the first parameter
         return func.call(this, this);
-    }
+    };
 
     //----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----
 
@@ -3549,7 +3544,7 @@ if (!this.weavecore)
         if (this._source && WeaveAPI.SessionManager.objectWasDisposed(this._source))
             source = null;
         return this._source && this._counter[id] === WeaveAPI.SessionManager.getCallbackCollection(this._source).triggerCounter;
-    }
+    };
 
     /**
      * Retrieves or updates a cached value for a property.
@@ -3569,7 +3564,7 @@ if (!this.weavecore)
             this._cache[id] = newValue;
         }
         return newValue;
-    }
+    };
 
 
     /**
@@ -3613,14 +3608,13 @@ if (!this.weavecore)
      */
     WeaveTreeItem._filterItems = function (item, i, a) {
         return item !== null || item !== undefined;
-    }
+    };
 
 
 
     weavecore.WeaveTreeItem = WeaveTreeItem;
 
 }());
-
 /*
     Weave (Web-based Analysis and Visualization Environment)
     Copyright (C) 2008-2011 University of Massachusetts Lowell
@@ -3651,7 +3645,7 @@ if (!this.weavecore)
  * @author sanjay1909
  */
 
-(function() {
+(function () {
     function Dictionary2D() {
         this.dictionary = new Map();
     }
@@ -3664,7 +3658,7 @@ if (!this.weavecore)
      * @param key2 The second dictionary key.
      * @return The value in the dictionary.
      */
-    p.get = function(key1, key2) {
+    p.get = function (key1, key2) {
         var d2 = this.dictionary.get(key1);
         return d2 ? d2.get(key2) : undefined;
     };
@@ -3675,11 +3669,11 @@ if (!this.weavecore)
      * @param key2 The second dictionary key.
      * @param value The value to put into the dictionary.
      */
-    p.set = function(key1, key2, value) {
+    p.set = function (key1, key2, value) {
         var d2 = this.dictionary.get(key1);
         if (d2 === null || d2 === undefined)
             d2 = new Map();
-        this.dictionary.set(key1, d2)
+        this.dictionary.set(key1, d2);
         d2.set(key2, value);
     };
 
@@ -3687,7 +3681,7 @@ if (!this.weavecore)
      * This removes all values associated with the given primary key.
      * @param key1 The first dictionary key.
      */
-    p.removeAllPrimary = function(key1) {
+    p.removeAllPrimary = function (key1) {
         this.dictionary.delete(key1);
     };
 
@@ -3695,8 +3689,8 @@ if (!this.weavecore)
      * This removes all values associated with the given secondary key.
      * @param key2 The second dictionary key.
      */
-    p.removeAllSecondary = function(key2) {
-        for(var key1 of this.dictionary.keys()){
+    p.removeAllSecondary = function (key2) {
+        for (var key1 of this.dictionary.keys()) {
             this.dictionary.get(key1).delete(key2);
         }
 
@@ -3708,7 +3702,7 @@ if (!this.weavecore)
      * @param key2 The second dictionary key.
      * @return The value that was in the dictionary.
      */
-    p.remove = function(key1, key2) {
+    p.remove = function (key1, key2) {
         var value;
         var d2 = this.dictionary.get(key1);
         if (d2) {
@@ -3717,7 +3711,7 @@ if (!this.weavecore)
         }
 
         // if entries remain in d2, keep it
-        for(var v2 of d2.values())
+        for (var v2 of d2.values())
             return value;
 
         // otherwise, remove it
@@ -3728,7 +3722,6 @@ if (!this.weavecore)
 
     weavecore.Dictionary2D = Dictionary2D;
 }());
-
 if (!this.weavecore)
     this.weavecore = {};
 
@@ -3984,7 +3977,7 @@ if (!this.weavecore)
             else val = Number(val);
         }
         weavecore.LinkableVariable.prototype.setSessionState.call(this, val);
-    }
+    };
 
     p.sessionStateEquals = function (otherSessionState) {
         // We must check for null here because we can't set _sessionStateInternal = NaN in the constructor.
@@ -3993,12 +3986,11 @@ if (!this.weavecore)
         if (isNaN(this._sessionStateInternal) && isNaN(otherSessionState))
             return true;
         return this._sessionStateInternal === otherSessionState;
-    }
+    };
 
     weavecore.LinkableNumber = LinkableNumber;
 
 }());
-
 if (!this.weavecore)
     this.weavecore = {};
 
@@ -4036,12 +4028,11 @@ if (!this.weavecore)
             val = weavecore.ObjectUtil.stringCompare(val, "true", true) === 0;
         }
         weavecore.LinkableVariable.prototype.setSessionState.call(this, val ? true : false);
-    }
+    };
 
     weavecore.LinkableBoolean = LinkableBoolean;
 
 }());
-
 if (!this.weavecore)
     this.weavecore = {};
 
@@ -4080,12 +4071,11 @@ if (!this.weavecore)
         if (val !== null)
             val = String(val);
         weavecore.LinkableVariable.prototype.setSessionState.call(this, val);
-    }
+    };
 
     weavecore.LinkableString = LinkableString;
 
 }());
-
 if (!this.weavecore)
     this.weavecore = {};
 
@@ -4156,7 +4146,7 @@ if (!this.weavecore)
         this._lastObjectAdded = objectAdded;
         this._lastNameRemoved = objectRemoved ? name : null;
         this._lastObjectRemoved = objectRemoved;
-    }
+    };
 
     p.runCallbacks = function (name, objectAdded, objectRemoved) {
         // remember previous values
@@ -4168,14 +4158,13 @@ if (!this.weavecore)
 
         // restore previous values (in case an external JavaScript popup caused us to interrupt something else)
         this._setCallbackVariables.call(this, _name, _added, _removed);
-    }
+    };
 
 
 
     weavecore.ChildListCallbackInterface = ChildListCallbackInterface;
 
 }());
-
 // namespace
 
 if (!this.weavecore)
@@ -4311,7 +4300,7 @@ if (!this.weavecore)
 
         if (this._foundTarget)
             this._handleTargetTrigger();
-    }
+    };
 
 
     p._handleTargetTrigger = function () {
@@ -4319,7 +4308,7 @@ if (!this.weavecore)
             WeaveAPI.SessionManager.getCallbackCollection(this).triggerCallbacks();
         else
             this._handlePath();
-    }
+    };
 
 
 
@@ -4330,7 +4319,7 @@ if (!this.weavecore)
             this._target = null;
             WeaveAPI.SessionManager.getCallbackCollection(this).triggerCallbacks();
         }
-    }
+    };
 
     p._handlePath = function () {
         if (!this._targetPath) {
@@ -4376,7 +4365,7 @@ if (!this.weavecore)
         // we found a desired target if there is no type restriction or the object fits the restriction
         this._foundTarget = !this._typeRestriction || node instanceof this._typeRestriction;
         this.internalSetTarget(node);
-    }
+    };
 
     p._addPathDependency = function (ldo) {
         var sm = WeaveAPI.SessionManager;
@@ -4385,7 +4374,7 @@ if (!this.weavecore)
             sm.getCallbackCollection(ldo).addImmediateCallback(this, this._handlePathDependencies.bind(this));
             sm.getCallbackCollection(ldo).addDisposeCallback(this, this._handlePathDependencies.bind(this));
         }
-    }
+    };
 
 
     p._handlePathDependencies = function () {
@@ -4398,21 +4387,21 @@ if (!this.weavecore)
                 return;
             }
         }
-    }
+    };
 
     p._resetPathDependencies = function () {
         var sm = WeaveAPI.SessionManager;
         for (var key of this._pathDependencies.keys())
             sm.getCallbackCollection(key).removeCallback(this._handlePathDependencies);
         this._pathDependencies = new Map();
-    }
+    };
 
 
     p.dispose = function () {
         this._targetPath = null;
         this._target = null;
         // everything else will be cleaned up automatically
-    }
+    };
 
     weavecore.LinkableWatcher = LinkableWatcher;
 
@@ -4449,7 +4438,6 @@ if (!this.weavecore)
 			// a.getState(null): "b value"
 		*/
 }());
-
 if (!this.weavecore)
     this.weavecore = {};
 
@@ -4537,7 +4525,7 @@ if (!this.weavecore)
                 result.push(name);
         }
         return result;
-    }
+    };
 
     /**
      * This function returns an ordered list of objects in the hash map.
@@ -4555,7 +4543,7 @@ if (!this.weavecore)
                 result.push(object);
         }
         return result;
-    }
+    };
 
     /**
      * This function gets the object associated with the specified name.
@@ -4564,7 +4552,7 @@ if (!this.weavecore)
      */
     p.getObject = function (name) {
         return this._nameToObjectMap[name];
-    }
+    };
 
     /**
      * This function gets the name of the specified object in the hash map.
@@ -4573,7 +4561,7 @@ if (!this.weavecore)
      */
     p.getName = function (object) {
         return this._objectToNameMap.get(object);
-    }
+    };
 
     /**
      * This will reorder the names returned by getNames().
@@ -4616,7 +4604,7 @@ if (!this.weavecore)
         // if the name order changed, run child list callbacks
         if (changeDetected)
             this._childListCallbacks.runCallbacks(null, null, null);
-    }
+    };
 
     /**
      * This function creates an object in the hash map if it doesn't already exist.
@@ -4631,7 +4619,7 @@ if (!this.weavecore)
         var className = classDef ? classDef.name : null;
         var result = this._initObjectByClassName.call(this, name, className, lockObject);
         return classDef ? result : null;
-    }
+    };
 
     /**
      * This function will copy the session state of an ILinkableObject to a new object under the given name in this LinkableHashMap.
@@ -4654,7 +4642,7 @@ if (!this.weavecore)
         this.resumeCallbacks();
 
         return object;
-    }
+    };
 
     /**
      * This function will rename an object by making a copy and removing the original.
@@ -4679,7 +4667,7 @@ if (!this.weavecore)
             this.resumeCallbacks();
         }
         return this.getObject(newName);
-    }
+    };
 
     /**
      * If there is an existing object associated with the specified name, it will be kept if it
@@ -4713,7 +4701,7 @@ if (!this.weavecore)
             this.removeObject(name);
         }
         return this._nameToObjectMap[name];
-    }
+    };
 
     /**
      * (private)
@@ -4743,7 +4731,7 @@ if (!this.weavecore)
 
         // make sure the callback variables signal that the object was added
         this._childListCallbacks.runCallbacks(name, object, null);
-    }
+    };
 
     /**
      * This function will lock an object in place for a given identifying name.
@@ -4753,7 +4741,7 @@ if (!this.weavecore)
     p.lockObject = function (name) {
         if (name !== null && name !== undefined && this._nameToObjectMap[name] !== null && this._nameToObjectMap[name] !== undefined)
             this._nameIsLocked[name] = true;
-    }
+    };
 
     /**
      * This function will return true if the specified object was previously locked.
@@ -4761,7 +4749,7 @@ if (!this.weavecore)
      */
     p.objectIsLocked = function (name) {
         return this._nameIsLocked[name] ? true : false;
-    }
+    };
 
     /**
      * This function removes an object from the hash map.
@@ -4787,7 +4775,7 @@ if (!this.weavecore)
 
         // dispose the object AFTER the callbacks know that the object was removed
         WeaveAPI.SessionManager.disposeObject(object);
-    }
+    };
 
     /**
      * This function attempts to removes all objects from this LinkableHashMap.
@@ -4800,7 +4788,7 @@ if (!this.weavecore)
             this.removeObject(orderedNamesCopy[i]);
         }
         this.resumeCallbacks();
-    }
+    };
 
     /**
      * This function removes all objects from this LinkableHashMap.
@@ -4820,7 +4808,7 @@ if (!this.weavecore)
             this._nameIsLocked[name] = undefined; // make sure removeObject() will carry out its action
             this.removeObject(name);
         }
-    }
+    };
 
 
     p.generateUniqueName = function (baseName) {
@@ -4829,7 +4817,7 @@ if (!this.weavecore)
         while (this._previousNameMap[name] !== undefined)
             name = baseName + (++count);
         return name;
-    }
+    };
 
     /**
      * Override @see LinkableVaribale
@@ -4846,7 +4834,7 @@ if (!this.weavecore)
             );
         }
         return result;
-    }
+    };
 
     /**
      * Override @see LinkableVaribale
@@ -4926,17 +4914,16 @@ if (!this.weavecore)
         this.setNameOrder(newNameOrder);
 
         this.resumeCallbacks();
-    }
+    };
 
     weavecore.LinkableHashMap = LinkableHashMap;
 }());
-
 createjs.Ticker.setFPS(50);
 //createjs.Ticker.
 
 // constructor:
 
-this.WeaveAPI = {}
+this.WeaveAPI = {};
 
 //Object.defineProperty(WeaveAPI, '_sessionManager', {
 // value: new SessionManager()
@@ -5002,7 +4989,7 @@ if (!this.weavecore)
         Object.defineProperty(this, '_cc', {
             value: WeaveAPI.SessionManager.registerDisposableChild(this, new weavecore.CallbackCollection()),
             writable: false
-        })
+        });
 
         Object.defineProperty(LinkableDynamicObject, 'ARRAY_CLASS_NAME', {
             value: 'Array'
@@ -5015,7 +5002,7 @@ if (!this.weavecore)
             get: function () {
                 return this.target;
             }
-        })
+        });
 
         // override public
         Object.defineProperty(this, 'targetPath', {
@@ -5126,7 +5113,7 @@ if (!this.weavecore)
 
     p.lock = function () {
         this._locked = true;
-    }
+    };
 
     /**
      * @inheritDoc
@@ -5141,7 +5128,7 @@ if (!this.weavecore)
         var className = obj.constructor.name;
         var sessionState = obj || WeaveAPI.SessionManager.getSessionState(obj);
         return [weavecore.DynamicState.create(null, className, sessionState)];
-    }
+    };
 
     /**
      * @inheritDoc
@@ -5211,7 +5198,7 @@ if (!this.weavecore)
             // allow callbacks to run once now
             this._cc.resumeCallbacks();
         }
-    }
+    };
 
 
 
@@ -5225,7 +5212,7 @@ if (!this.weavecore)
             newTarget = null;
 
         weavecore.LinkableWatcher.prototype.internalSetTarget(newTarget);
-    }
+    };
 
 
 
@@ -5251,7 +5238,7 @@ if (!this.weavecore)
         }
 
         _cc.resumeCallbacks();
-    }
+    };
 
     /**
      * @inheritDoc
@@ -5272,7 +5259,7 @@ if (!this.weavecore)
         this._cc.resumeCallbacks();
 
         return target;
-    }
+    };
 
     /**
      * @inheritDoc
@@ -5293,7 +5280,7 @@ if (!this.weavecore)
         }
 
         return this.target;
-    }
+    };
 
     /**
      * @inheritDoc
@@ -5307,25 +5294,24 @@ if (!this.weavecore)
             WeaveAPI.SessionManager.setSessionState(object, state, true);
         }
         this._cc.resumeCallbacks();
-    }
+    };
 
 
     p.removeObject = function () {
         if (!this._locked)
             weavecore.LinkableWatcher.prototype.target = null;
-    }
+    };
 
     p.dispose = function () {
         // explicitly dispose the CallbackCollection before anything else
         this._cc.dispose();
         weavecore.LinkableWatcher.prototype.dispose();
-    }
+    };
 
     weavecore.LinkableDynamicObject = LinkableDynamicObject;
 
 
 }());
-
 /*
     Weave (Web-based Analysis and Visualization Environment)
     Copyright (C) 2008-2011 University of Massachusetts Lowell
@@ -5355,16 +5341,16 @@ if (!this.weavecore)
  * @author adufilie
  * @author sanjay1909
  */
-(function() {
+(function () {
 
-      // Internal class constructor
+    // Internal class constructor
 
     Object.defineProperty(EventCallbackCollection, 'eventTypes', {
-            value: ['tick']
-        });
+        value: ['tick']
+    });
 
     function EventCallbackCollection(eventManager, eventType) {
-        weavecore.CallbackCollection.call(this,this.setEvent.bind(this));
+        weavecore.CallbackCollection.call(this, this.setEvent.bind(this));
         this._eventManager = eventManager;
         this._eventType = eventType;
 
@@ -5376,29 +5362,27 @@ if (!this.weavecore)
     var p = EventCallbackCollection.prototype;
 
     /**
-	 * This is the _preCallback
-	 */
-	p.setEvent = function setEvent(event)
-	{
-		this._eventManager.event = event;
-	}
+     * This is the _preCallback
+     */
+    p.setEvent = function setEvent(event) {
+        this._eventManager.event = event;
+    };
 
     /**
-	 * This function remembers the previous event value, runs callbacks using the new event value,
-	 * then restores the previous event value. This is necessary because it is possible for a popup
-	 * browser window to interrupt Flash with requests in the middle of an event.
-	 */
-	p.runEventCallbacks = function (event)
-	{
-		var previousEvent = this._eventManager.event; // remember previous value
-		this._runCallbacksImmediately(event); // make sure event is set before each immediate callback
-		this._preCallback(previousEvent); // restore the previous value
-	}
+     * This function remembers the previous event value, runs callbacks using the new event value,
+     * then restores the previous event value. This is necessary because it is possible for a popup
+     * browser window to interrupt Flash with requests in the middle of an event.
+     */
+    p.runEventCallbacks = function (event) {
+        var previousEvent = this._eventManager.event; // remember previous value
+        this._runCallbacksImmediately(event); // make sure event is set before each immediate callback
+        this._preCallback(previousEvent); // restore the previous value
+    };
 
     /**
      * Call this when the stage is available to set up event listeners.
      */
-    p.listenToStage = function() {
+    p.listenToStage = function () {
         // do not create event listeners for these meta events
         //if (eventType == POINT_CLICK_EVENT || eventType == THROTTLED_MOUSE_MOVE_EVENT)
         //return;
@@ -5414,13 +5398,13 @@ if (!this.weavecore)
         createjs.Ticker.addEventListener(this._eventType, this._tickerListener.bind(this)); // do not use capture phase
 
         // when callbacks are disposed, remove the listeners
-         this.addDisposeCallback(null, function() {
-        //stage.removeEventListener(eventType, captureListener, true);
+        this.addDisposeCallback(null, function () {
+            //stage.removeEventListener(eventType, captureListener, true);
             createjs.Ticker.removeEventListener(this._eventType, this._tickerListener.bind(this));
         });
     };
 
-    p._tickerListener = function(event) {
+    p._tickerListener = function (event) {
         this._eventManager.eventTime = new Date().getTime();
         if (this._eventType === "tick") {
             if (this._eventManager.userActivity > 0 && !this._eventManager.mouseButtonDown)
@@ -5430,293 +5414,297 @@ if (!this.weavecore)
             //this._eventManager.triggeredThrottledMouseThisFrame = false;
         }
         // finally, trigger callbacks for non-mouse-move events
-		if (this._eventType === "tick")// altered temporarily
+        if (this._eventType === "tick") // altered temporarily
             this.runEventCallbacks(event);
 
     };
 
     weavecore.EventCallbackCollection = EventCallbackCollection;
 
-//constructor
-function StageUtils() {
+    //constructor
+    function StageUtils() {
 
-    this.averageFrameTime = 0;
+        this.averageFrameTime = 0;
 
-    Object.defineProperties(this, {
-            eventManager: {value: new EventManager() },
-			frameTimes: { value: [] },
-			_stackTraceMap: { value: new Map() },
-            _taskElapsedTime: { value: new Map() },
-            _taskStartTime: { value: new Map() },
+        Object.defineProperties(this, {
+            eventManager: {
+                value: new EventManager()
+            },
+            frameTimes: {
+                value: []
+            },
+            _stackTraceMap: {
+                value: new Map()
+            },
+            _taskElapsedTime: {
+                value: new Map()
+            },
+            _taskStartTime: {
+                value: new Map()
+            },
 
-		});
-    this._currentTaskStopTime = 0;
+        });
+        this._currentTaskStopTime = 0;
 
-    /**
-     * This is an Array of "callLater queues", each being an Array of function invocations to be done later.
-     * The Arrays get populated by callLater().
-     * There are four nested Arrays corresponding to the four priorities (0, 1, 2, 3) defined by static constants in WeaveAPI.
-     */
-    Object.defineProperties(this, {
-			_priorityCallLaterQueues: { value: [      []        , []  , [], [] ] },
-			_priorityAllocatedTimes:  { value: [Number.MAX_VALUE, 300 ,200, 100] }
-		});
-    this._activePriority = WeaveAPI.TASK_PRIORITY_IMMEDIATE + 1;// task priority that is currently being processed
-    this._activePriorityElapsedTime = 0;
-    this._deactivatedMaxComputationTimePerFrame = 1000;
-    this._nextCallLaterPriority = WeaveAPI.TASK_PRIORITY_IMMEDIATE; // private variable to control the priority of the next callLater() internally
-    this.addEventCallback("tick", null, this._handleCallLater.bind(this));
-    this.maxComputationTimePerFrame = 100;
-    this.maxComputationTimePerFrame_noActivity = 250;
-
-}
-
-var p = StageUtils.prototype;
-p.getMaxComputationTimePerFrame = function(){
-    return this.maxComputationTimePerFrame;
-};
-
-p.setMaxComputationTimePerFrame = function(value){
-   // this.eventManager.throttledMouseMoveInterval = value;
-    this.maxComputationTimePerFrame = value;
-}
-
-p.getTaskPriorityTimeAllocation = function(priority){
-    return this._priorityAllocatedTimes[priority];
-};
-
-p.setTaskPriorityTimeAllocation = function(priority,milliseconds){
-     this._priorityAllocatedTimes[priority] = Math.max(milliseconds,5);
-};
-
-StageUtils._time;
-StageUtils._times = [];
-
-p.callLater = function(relevantContext, method, parameters) {
-    if (method === null || method === undefined) {
-        console.log('StageUtils.callLater(): received null "method" parameter');
-        return;
-    }
-
-    this._priorityCallLaterQueues[this._nextCallLaterPriority].push(arguments);
-    this._nextCallLaterPriority = WeaveAPI.TASK_PRIORITY_IMMEDIATE;
-
-    //if (this.debug_async_stack)
-    //_stackTraceMap[arguments] = new Error("This is the stack trace from when callLater() was called.").getStackTrace();
-};
-
-p._handleCallLater = function() {
-    if (this.maxComputationTimePerFrame == 0)
-        this.maxComputationTimePerFrame = 100;
-
-    var maxComputationTime;
-    if (this.eventManager.useDeactivatedFrameRate)
-        maxComputationTime = this._deactivatedMaxComputationTimePerFrame;
-     else if (!this.eventManager.userActivity)
-        maxComputationTime = this.maxComputationTimePerFrame_noActivity;
-    else
-        maxComputationTime = this.maxComputationTimePerFrame;
-    if (!this.eventManager.event)
-    {
-        console.log("StageUtils.handleCallLater(): _event is null. This should never happen.");
-        return;
-    }
-    if (this.eventManager.event.type === "tick")
-    {
-        //resetDebugTime();
-
-        /*if (debug_fps)
-        {
-            frameTimes.push(previousFrameElapsedTime);
-            if (StandardLib.sum(frameTimes) >= 1000)
-            {
-                averageFrameTime = StandardLib.mean(frameTimes);
-                var fps:Number = StandardLib.roundSignificant(1000 / averageFrameTime, 2);
-                trace(fps,'fps; max computation time',maxComputationTime);
-                frameTimes.length = 0;
+        /**
+         * This is an Array of "callLater queues", each being an Array of function invocations to be done later.
+         * The Arrays get populated by callLater().
+         * There are four nested Arrays corresponding to the four priorities (0, 1, 2, 3) defined by static constants in WeaveAPI.
+         */
+        Object.defineProperties(this, {
+            _priorityCallLaterQueues: {
+                value: [[], [], [], []]
+            },
+            _priorityAllocatedTimes: {
+                value: [Number.MAX_VALUE, 300, 200, 100]
             }
-        }*/
+        });
+        this._activePriority = WeaveAPI.TASK_PRIORITY_IMMEDIATE + 1; // task priority that is currently being processed
+        this._activePriorityElapsedTime = 0;
+        this._deactivatedMaxComputationTimePerFrame = 1000;
+        this._nextCallLaterPriority = WeaveAPI.TASK_PRIORITY_IMMEDIATE; // private variable to control the priority of the next callLater() internally
+        this.addEventCallback("tick", null, this._handleCallLater.bind(this));
+        this.maxComputationTimePerFrame = 100;
+        this.maxComputationTimePerFrame_noActivity = 250;
 
-        if (this.eventManager.previousFrameElapsedTime > 3000)
-            console.log('Previous frame took', this.eventManager.previousFrameElapsedTime, 'ms');
     }
 
-    //if (UIComponentGlobals.callLaterSuspendCount > 0)
-        //return;
+    var p = StageUtils.prototype;
+    p.getMaxComputationTimePerFrame = function () {
+        return this.maxComputationTimePerFrame;
+    };
 
-    // The variables countdown and lastPriority are used to avoid running newly-added tasks immediately.
-    // This avoids wasting time on async tasks that do nothing and return early, adding themselves back to the queue.
+    p.setMaxComputationTimePerFrame = function (value) {
+        // this.eventManager.throttledMouseMoveInterval = value;
+        this.maxComputationTimePerFrame = value;
+    };
 
-    var args;
-    var args2; // this is set to args[2]
-    var stackTrace;
-    var now;
-    var allStop = this.eventManager.currentFrameStartTime + maxComputationTime;
+    p.getTaskPriorityTimeAllocation = function (priority) {
+        return this._priorityAllocatedTimes[priority];
+    };
 
-    this._currentTaskStopTime = allStop; // make sure _iterateTask knows when to stop
+    p.setTaskPriorityTimeAllocation = function (priority, milliseconds) {
+        this._priorityAllocatedTimes[priority] = Math.max(milliseconds, 5);
+    };
 
-    // first run the functions that should be called before anything else.
-    /*if (pauseForGCIfCollectionImminent != null)
-    {
-        var t:int = getTimer();
-        pauseForGCIfCollectionImminent();
-        t = getTimer() - t;
-        if (t > maxComputationTimePerFrame)
-            trace('paused',t,'ms for GC');
-    }*/
-    var queue = this._priorityCallLaterQueues[WeaveAPI.TASK_PRIORITY_IMMEDIATE];
-    var countdown;
-    for (countdown = queue.length; countdown > 0; countdown--)
-    {
-        /*if (debug_callLater)
-            DebugTimer.begin();*/
+    StageUtils._time;
+    StageUtils._times = [];
 
-        now = new Date().getTime();
-        // stop when max computation time is reached for this frame
-        if (now > allStop)
-        {
-            /*if (debug_callLater)
-                DebugTimer.cancel();*/
+    p.callLater = function (relevantContext, method, parameters) {
+        if (method === null || method === undefined) {
+            console.log('StageUtils.callLater(): received null "method" parameter');
             return;
         }
 
-        // args: (relevantContext:Object, method:Function, parameters:Array, priority:uint)
-        args = queue.shift();
-        stackTrace = this._stackTraceMap[args];
+        this._priorityCallLaterQueues[this._nextCallLaterPriority].push(arguments);
+        this._nextCallLaterPriority = WeaveAPI.TASK_PRIORITY_IMMEDIATE;
 
-        // don't call the function if the relevantContext was disposed.
-        if (!WeaveAPI.SessionManager.objectWasDisposed(args[0]))
-        {
-            args2 = args[2];
-            if (args2 != null && args2.length > 0)
-                args[1].apply(null, args2);
-            else
-                args[1].call();
+        //if (this.debug_async_stack)
+        //_stackTraceMap[arguments] = new Error("This is the stack trace from when callLater() was called.").getStackTrace();
+    };
+
+    p._handleCallLater = function () {
+        if (this.maxComputationTimePerFrame == 0)
+            this.maxComputationTimePerFrame = 100;
+
+        var maxComputationTime;
+        if (this.eventManager.useDeactivatedFrameRate)
+            maxComputationTime = this._deactivatedMaxComputationTimePerFrame;
+        else if (!this.eventManager.userActivity)
+            maxComputationTime = this.maxComputationTimePerFrame_noActivity;
+        else
+            maxComputationTime = this.maxComputationTimePerFrame;
+        if (!this.eventManager.event) {
+            console.log("StageUtils.handleCallLater(): _event is null. This should never happen.");
+            return;
+        }
+        if (this.eventManager.event.type === "tick") {
+            //resetDebugTime();
+
+            /*if (debug_fps)
+            {
+                frameTimes.push(previousFrameElapsedTime);
+                if (StandardLib.sum(frameTimes) >= 1000)
+                {
+                    averageFrameTime = StandardLib.mean(frameTimes);
+                    var fps:Number = StandardLib.roundSignificant(1000 / averageFrameTime, 2);
+                    trace(fps,'fps; max computation time',maxComputationTime);
+                    frameTimes.length = 0;
+                }
+            }*/
+
+            if (this.eventManager.previousFrameElapsedTime > 3000)
+                console.log('Previous frame took', this.eventManager.previousFrameElapsedTime, 'ms');
         }
 
-        /*if (debug_callLater)
-            DebugTimer.end(stackTrace);*/
-    }
+        //if (UIComponentGlobals.callLaterSuspendCount > 0)
+        //return;
 
-//			trace('-------');
+        // The variables countdown and lastPriority are used to avoid running newly-added tasks immediately.
+        // This avoids wasting time on async tasks that do nothing and return early, adding themselves back to the queue.
 
-			var minPriority = WeaveAPI.TASK_PRIORITY_IMMEDIATE + 1;
-			var lastPriority = this._activePriority === minPriority ? this._priorityCallLaterQueues.length - 1 : this._activePriority - 1;
-			var pStart = new Date().getTime();
-			var pAlloc = this._priorityAllocatedTimes[this._activePriority];
-			if (this.eventManager.useDeactivatedFrameRate)
-				pAlloc = pAlloc * this._deactivatedMaxComputationTimePerFrame / this.maxComputationTimePerFrame;
-			else if (!this.eventManager.userActivity)
-				pAlloc = pAlloc * this.maxComputationTimePerFrame_noActivity / this.maxComputationTimePerFrame;
-			var pStop = Math.min(allStop, pStart + pAlloc - this._activePriorityElapsedTime); // continue where we left off
-			queue = this._priorityCallLaterQueues[this._activePriority];
-			countdown = queue.length;
-			while (true)
-			{
-				/*if (debug_callLater)
+        var args;
+        var args2; // this is set to args[2]
+        var stackTrace;
+        var now;
+        var allStop = this.eventManager.currentFrameStartTime + maxComputationTime;
+
+        this._currentTaskStopTime = allStop; // make sure _iterateTask knows when to stop
+
+        // first run the functions that should be called before anything else.
+        /*if (pauseForGCIfCollectionImminent != null)
+        {
+            var t:int = getTimer();
+            pauseForGCIfCollectionImminent();
+            t = getTimer() - t;
+            if (t > maxComputationTimePerFrame)
+                trace('paused',t,'ms for GC');
+        }*/
+        var queue = this._priorityCallLaterQueues[WeaveAPI.TASK_PRIORITY_IMMEDIATE];
+        var countdown;
+        for (countdown = queue.length; countdown > 0; countdown--) {
+            /*if (debug_callLater)
+                DebugTimer.begin();*/
+
+            now = new Date().getTime();
+            // stop when max computation time is reached for this frame
+            if (now > allStop) {
+                /*if (debug_callLater)
+                    DebugTimer.cancel();*/
+                return;
+            }
+
+            // args: (relevantContext:Object, method:Function, parameters:Array, priority:uint)
+            args = queue.shift();
+            stackTrace = this._stackTraceMap[args];
+
+            // don't call the function if the relevantContext was disposed.
+            if (!WeaveAPI.SessionManager.objectWasDisposed(args[0])) {
+                args2 = args[2];
+                if (args2 != null && args2.length > 0)
+                    args[1].apply(null, args2);
+                else
+                    args[1].call();
+            }
+
+            /*if (debug_callLater)
+                DebugTimer.end(stackTrace);*/
+        }
+
+        //			trace('-------');
+
+        var minPriority = WeaveAPI.TASK_PRIORITY_IMMEDIATE + 1;
+        var lastPriority = this._activePriority === minPriority ? this._priorityCallLaterQueues.length - 1 : this._activePriority - 1;
+        var pStart = new Date().getTime();
+        var pAlloc = this._priorityAllocatedTimes[this._activePriority];
+        if (this.eventManager.useDeactivatedFrameRate)
+            pAlloc = pAlloc * this._deactivatedMaxComputationTimePerFrame / this.maxComputationTimePerFrame;
+        else if (!this.eventManager.userActivity)
+            pAlloc = pAlloc * this.maxComputationTimePerFrame_noActivity / this.maxComputationTimePerFrame;
+        var pStop = Math.min(allStop, pStart + pAlloc - this._activePriorityElapsedTime); // continue where we left off
+        queue = this._priorityCallLaterQueues[this._activePriority];
+        countdown = queue.length;
+        while (true) {
+            /*if (debug_callLater)
 					DebugTimer.begin();*/
 
-				now = new Date().getTime();
-				if (countdown === 0 || now > pStop)
-				{
-					// add the time we just spent on this priority
-					this._activePriorityElapsedTime += now - pStart;
+            now = new Date().getTime();
+            if (countdown === 0 || now > pStop) {
+                // add the time we just spent on this priority
+                this._activePriorityElapsedTime += now - pStart;
 
-					// if max computation time was reached for this frame or we have visited all priorities, stop now
-					if (now > allStop || this._activePriority === lastPriority)
-					{
-						/*if (debug_callLater)
+                // if max computation time was reached for this frame or we have visited all priorities, stop now
+                if (now > allStop || this._activePriority === lastPriority) {
+                    /*if (debug_callLater)
 							DebugTimer.cancel();
 						if (debug_fps)
 							trace('spent',currentFrameElapsedTime,'ms');*/
-						return;
-					}
+                    return;
+                }
 
-					// see if there are any entries left in the queues (except for the immediate queue)
-					var remaining = 0;
-					for (var i = minPriority; i < this._priorityCallLaterQueues.length; i++)
-						remaining += this._priorityCallLaterQueues[i].length;
-					// stop if no more entries
-					if (remaining === 0)
-					{
-						/*if (debug_callLater)
+                // see if there are any entries left in the queues (except for the immediate queue)
+                var remaining = 0;
+                for (var i = minPriority; i < this._priorityCallLaterQueues.length; i++)
+                    remaining += this._priorityCallLaterQueues[i].length;
+                // stop if no more entries
+                if (remaining === 0) {
+                    /*if (debug_callLater)
 							DebugTimer.cancel();*/
-						break;
-					}
+                    break;
+                }
 
-					// switch to next priority, reset elapsed time
-					this._activePriority++;
-					this._activePriorityElapsedTime = 0;
-					if (this._activePriority === this._priorityCallLaterQueues.length)
-						this._activePriority = minPriority;
-					pStart = now;
-					pAlloc = this._priorityAllocatedTimes[_activePriority];
-					if (this.eventManager.useDeactivatedFrameRate)
-						pAlloc = pAlloc * this._deactivatedMaxComputationTimePerFrame / this.maxComputationTimePerFrame;
-					else if (!this.eventManager.userActivity)
-						pAlloc = pAlloc * this.maxComputationTimePerFrame_noActivity / this.maxComputationTimePerFrame;
-					pStop = Math.min(allStop, pStart + pAlloc);
-					queue = this._priorityCallLaterQueues[this._activePriority];
-					countdown = queue.length;
+                // switch to next priority, reset elapsed time
+                this._activePriority++;
+                this._activePriorityElapsedTime = 0;
+                if (this._activePriority === this._priorityCallLaterQueues.length)
+                    this._activePriority = minPriority;
+                pStart = now;
+                pAlloc = this._priorityAllocatedTimes[_activePriority];
+                if (this.eventManager.useDeactivatedFrameRate)
+                    pAlloc = pAlloc * this._deactivatedMaxComputationTimePerFrame / this.maxComputationTimePerFrame;
+                else if (!this.eventManager.userActivity)
+                    pAlloc = pAlloc * this.maxComputationTimePerFrame_noActivity / this.maxComputationTimePerFrame;
+                pStop = Math.min(allStop, pStart + pAlloc);
+                queue = this._priorityCallLaterQueues[this._activePriority];
+                countdown = queue.length;
 
-					// restart loop to check stopping condition
-					/*if (debug_callLater)
+                // restart loop to check stopping condition
+                /*if (debug_callLater)
 						DebugTimer.cancel();*/
-					continue;
-				}
+                continue;
+            }
 
-				countdown--;
+            countdown--;
 
-//				trace('p',_activePriority,pElapsed,'/',pAlloc);
-				_currentTaskStopTime = pStop; // make sure _iterateTask knows when to stop
+            //				trace('p',_activePriority,pElapsed,'/',pAlloc);
+            _currentTaskStopTime = pStop; // make sure _iterateTask knows when to stop
 
-				// call the next function in the queue
-				// args: (relevantContext:Object, method:Function, parameters:Array, priority:uint)
-				args = queue.shift();
-				stackTrace = this._stackTraceMap[args]; // check this for debugging where the call came from
+            // call the next function in the queue
+            // args: (relevantContext:Object, method:Function, parameters:Array, priority:uint)
+            args = queue.shift();
+            stackTrace = this._stackTraceMap[args]; // check this for debugging where the call came from
 
-//				WeaveAPI.SessionManager.unassignBusyTask(args);
+            //				WeaveAPI.SessionManager.unassignBusyTask(args);
 
-				// don't call the function if the relevantContext was disposed.
-				if (!WeaveAPI.SessionManager.objectWasDisposed(args[0]))
-                {
-					// TODO: PROFILING: check how long this function takes to execute.
-					// if it takes a long time (> 1000 ms), something's wrong...
-					args2 = args[2];
-					if (args2 != null && args2.length > 0)
-						args[1].apply(null, args2);
-					else
-						args[1].call();
-				}
+            // don't call the function if the relevantContext was disposed.
+            if (!WeaveAPI.SessionManager.objectWasDisposed(args[0])) {
+                // TODO: PROFILING: check how long this function takes to execute.
+                // if it takes a long time (> 1000 ms), something's wrong...
+                args2 = args[2];
+                if (args2 != null && args2.length > 0)
+                    args[1].apply(null, args2);
+                else
+                    args[1].call();
+            }
 
-				/*if (debug_callLater)
+            /*if (debug_callLater)
 					DebugTimer.end(stackTrace);*/
-			}
+        }
 
-};
+    };
 
-p.addEventCallback = function(eventType, relevantContext, callback, runCallbackNow) {
-    // set default parameter value
-    if (runCallbackNow === null || runCallbackNow === undefined) {
-        runCallbackNow = false;
-    }
-    var cc = this.eventManager.callbackCollections[eventType];
-    if (cc !== null && cc !== undefined) {
-        cc.addImmediateCallback(relevantContext, callback, runCallbackNow);
-    } else {
-        console.log("(StageUtils) Unsupported event: ", eventType);
-    }
-};
+    p.addEventCallback = function (eventType, relevantContext, callback, runCallbackNow) {
+        // set default parameter value
+        if (runCallbackNow === null || runCallbackNow === undefined) {
+            runCallbackNow = false;
+        }
+        var cc = this.eventManager.callbackCollections[eventType];
+        if (cc !== null && cc !== undefined) {
+            cc.addImmediateCallback(relevantContext, callback, runCallbackNow);
+        } else {
+            console.log("(StageUtils) Unsupported event: ", eventType);
+        }
+    };
 
 
 
-  weavecore.StageUtils = new StageUtils();
+    weavecore.StageUtils = new StageUtils();
 
 
     function EventManager() {
         Object.defineProperty(this, 'callbackCollections', {
-                value: {}
-            });
+            value: {}
+        });
         this.userActivity = 0; // greater than 0 when there was user activity since the last frame.
         this.event = null;
         this.eventTime = 0;
@@ -5728,22 +5716,22 @@ p.addEventCallback = function(eventType, relevantContext, callback, runCallbackN
         this.currentFrameStartTime = new Date().getTime(); // this is the result of getTimer() on the last ENTER_FRAME event.
         this.previousFrameElapsedTime = 0; // this is the amount of time it took to process the previous frame.
         this.pointClicked = false;
-        this.deactivated = true;// true when application is deactivated
+        this.deactivated = true; // true when application is deactivated
         this.useDeactivatedFrameRate = false;
 
         this.triggeredThrottledMouseThisFrame = false; // set to false on enterFrame, set to true on throttled mouse move
-	   this.nextThrottledMouseMoveTime = 0; // time threshold before triggering throttled mouse move again
-	   this.throttledMouseMoveInterval = 100; // time threshold before triggering throttled mouse move again
+        this.nextThrottledMouseMoveTime = 0; // time threshold before triggering throttled mouse move again
+        this.throttledMouseMoveInterval = 100; // time threshold before triggering throttled mouse move again
 
         // create a new callback collection for each type of event
         for (var j = 0; j < EventCallbackCollection.eventTypes.length; j++) {
-            var type = EventCallbackCollection.eventTypes[j]
+            var type = EventCallbackCollection.eventTypes[j];
             this.callbackCollections[type] = new EventCallbackCollection(this, type);
             // this.callbackCollections[type] = WeaveAPI.SessionManager.registerDisposableChild(WeaveAPI.globalHashMap, new EventCallbackCollection(this, type));
         }
 
         //add event listeners
-        for (var eventtype  in this.callbackCollections) {
+        for (var eventtype in this.callbackCollections) {
             this.callbackCollections[eventtype].listenToStage();
         }
         this.event;
@@ -5755,7 +5743,6 @@ p.addEventCallback = function(eventType, relevantContext, callback, runCallbackN
 
 
 }());
-
 if (!this.weavecore)
     this.weavecore = {};
 
@@ -5796,7 +5783,7 @@ if (!this.weavecore)
                 array[i] = new LogEntry(o.id, o.forward, o.backward, o.triggerDelay || defaultTriggerDelay, o.diffDuration);
         }
         return array;
-    }
+    };
 
 
     function getTimer() {
@@ -5878,7 +5865,7 @@ if (!this.weavecore)
         this._subject = null;
         this._undoHistory = null;
         this._redoHistory = null;
-    }
+    };
 
     /**
      * This function will save any pending diff in session state.
@@ -5886,7 +5873,7 @@ if (!this.weavecore)
      */
     p.synchronizeNow = function () {
         this._saveDiff.call(this, true);
-    }
+    };
 
 
 
@@ -5912,7 +5899,7 @@ if (!this.weavecore)
             var forwardDiff = WeaveAPI.SessionManager.computeDiff(this._prevState, state);
             console.log('immediate diff:', forwardDiff);
         }
-    }
+    };
 
     /**
      * This gets called as a grouped callback of the subject.
@@ -5932,7 +5919,7 @@ if (!this.weavecore)
             var forwardDiff = WeaveAPI.SessionManager.computeDiff(this._prevState, state);
             console.log('grouped diff:', forwardDiff);
         }
-    }
+    };
 
     /**
      * This will save a diff in the history, if there is any.
@@ -6016,7 +6003,7 @@ if (!this.weavecore)
         this._triggerDelay = -1;
 
         cc.resumeCallbacks.call(cc);
-    }
+    };
 
 
 
@@ -6028,7 +6015,7 @@ if (!this.weavecore)
         if (isNaN(numberOfSteps))
             numberOfSteps = 1;
         this.applyDiffs.call(this, -numberOfSteps);
-    }
+    };
 
     /**
      * This will redo a number of steps that have been previously undone.
@@ -6038,7 +6025,7 @@ if (!this.weavecore)
         if (isNaN(numberOfSteps))
             numberOfSteps = 1;
         this.applyDiffs.call(this, numberOfSteps);
-    }
+    };
 
     /**
      * This will clear all undo and redo history.
@@ -6063,7 +6050,7 @@ if (!this.weavecore)
         }
 
         cc.resumeCallbacks();
-    }
+    };
 
     /**
      * This will apply a number of undo or redo steps.
@@ -6136,7 +6123,7 @@ if (!this.weavecore)
             var slcc = WeaveAPI.SessionManager.getCallbackCollection(this);
             slcc.triggerCallbacks.call(slcc);
         }
-    }
+    };
 
 
 
@@ -6178,7 +6165,7 @@ if (!this.weavecore)
 
         cc.resumeCallbacks();
         return state;
-    }
+    };
 
     /**
      * This will load a session state log from an untyped session state object.
@@ -6220,7 +6207,7 @@ if (!this.weavecore)
             cc.triggerCallbacks("Log: Setsessionstate");
             cc.resumeCallbacks();
         }
-    }
+    };
     weavecore.SessionStateLog = SessionStateLog;
 
 }());

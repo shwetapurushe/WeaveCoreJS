@@ -37,7 +37,7 @@ if (!this.weavecore)
      *     As a special case, a null session state will result in no change regardless of the removeMissingDynamicObjects value.
      * @see weave.api.core.DynamicState
      */
-    p.setSessionState = function (newState, removeMissingDynamicObjects) {}
+    p.setSessionState = function (newState, removeMissingDynamicObjects) {};
 
     weavecore.ILinkableCompositeObject = ILinkableCompositeObject;
 

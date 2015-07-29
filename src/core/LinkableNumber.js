@@ -39,7 +39,7 @@ if (!this.weavecore)
             else val = Number(val);
         }
         weavecore.LinkableVariable.prototype.setSessionState.call(this, val);
-    }
+    };
 
     p.sessionStateEquals = function (otherSessionState) {
         // We must check for null here because we can't set _sessionStateInternal = NaN in the constructor.
@@ -48,7 +48,7 @@ if (!this.weavecore)
         if (isNaN(this._sessionStateInternal) && isNaN(otherSessionState))
             return true;
         return this._sessionStateInternal === otherSessionState;
-    }
+    };
 
     weavecore.LinkableNumber = LinkableNumber;
 

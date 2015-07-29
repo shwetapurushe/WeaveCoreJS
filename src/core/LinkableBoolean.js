@@ -35,7 +35,7 @@ if (!this.weavecore)
             val = weavecore.ObjectUtil.stringCompare(val, "true", true) === 0;
         }
         weavecore.LinkableVariable.prototype.setSessionState.call(this, val ? true : false);
-    }
+    };
 
     weavecore.LinkableBoolean = LinkableBoolean;
 

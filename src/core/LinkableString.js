@@ -36,7 +36,7 @@ if (!this.weavecore)
         if (val !== null)
             val = String(val);
         weavecore.LinkableVariable.prototype.setSessionState.call(this, val);
-    }
+    };
 
     weavecore.LinkableString = LinkableString;
 

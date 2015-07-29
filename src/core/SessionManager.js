@@ -60,12 +60,12 @@ if (!this.weavecore)
         //set default values for parameters
         if (useGroupedCallback === undefined)
             useGroupedCallback = false;
-        if (!linkableParent instanceof weavecore.ILinkableObject) {
+        if (!(linkableParent instanceof weavecore.ILinkableObject)) {
             console.log("registerLinkableChild(): Parent does not inherit ILinkableObject.");
             return;
         }
 
-        if (!linkableChild instanceof weavecore.ILinkableObject) {
+        if (!(linkableChild instanceof weavecore.ILinkableObject)) {
             console.log("registerLinkableChild(): child does not inherit ILinkableObject.");
             return;
         }
@@ -97,7 +97,7 @@ if (!this.weavecore)
         this._treeCallbacks.triggerCallbacks("Session Tree: Child Registered");
 
         return linkableChild;
-    }
+    };
 
     /**
      * This will register a child of a parent and cause the child to be disposed when the parent is disposed.
@@ -124,7 +124,7 @@ if (!this.weavecore)
             this.childToParentMap.set(disposableChild, new Map());
         }
         return disposableChild;
-    }
+    };
 
     /**
      * Use this function with care.  This will remove child objects from the session state of a parent and
@@ -140,7 +140,7 @@ if (!this.weavecore)
         this.getCallbackCollection(child).removeCallback(this.getCallbackCollection(parent).triggerCallbacks.bind(parent));
 
         this._treeCallbacks.triggerCallbacks("Session Tree: Child un-Registered");
-    }
+    };
 
 
     /**
@@ -160,7 +160,7 @@ if (!this.weavecore)
             this.childToParentMap.get(child).set(parent, false);
         if (this.parentToChildMap.get(parent) !== undefined && this.parentToChildMap.get(parent).get(child))
             this.parentToChildMap.get(parent).set(child, false);
-    }
+    };
 
     /**
      * @private
@@ -175,7 +175,7 @@ if (!this.weavecore)
             for (var child in this.parentToChildMap.get(parent))
                 result.push(child);
         return result;
-    }
+    };
 
     /**
      * This function gets the owner of a linkable object.  The owner of an object is defined as its first registered parent.
@@ -185,7 +185,7 @@ if (!this.weavecore)
      */
     p.getLinkableOwner = function (child) {
         return this.childToOwnerMap.get(child);
-    }
+    };
 
     /**
      * @param root The linkable object to be placed at the root node of the tree.
@@ -198,7 +198,7 @@ if (!this.weavecore)
         treeItem.children = SessionManager.prototype._getTreeItemChildren.bind(this);
         treeItem.data = objectTypeFilter;
         return treeItem;
-    }
+    };
 
     p._getTreeItemChildren = function (treeItem) {
         var object = treeItem.source;
@@ -225,8 +225,8 @@ if (!this.weavecore)
             }
         } else {
             var deprecatedLookup = null;
-
-            console.log("Linkable dynamic object not yet supported - only Linkablehashmap")
+            //TODO: support for Linkable dynamic object
+            console.log("Linkable dynamic object not yet supported - only Linkablehashmap");
         }
         if (children.length === 0)
             children = null;
@@ -235,7 +235,7 @@ if (!this.weavecore)
         if ((children === null || children === undefined) && !(object instanceof objectTypeFilter))
             return null;
         return children;
-    }
+    };
 
     /**
      * Adds a grouped callback that will be triggered when the session state tree changes.
@@ -243,12 +243,12 @@ if (!this.weavecore)
     p.addTreeCallback = function (relevantContext, groupedCallback, triggerCallbackNow) {
         if (triggerCallbackNow === undefined) triggerCallbackNow = false;
         this._treeCallbacks.addGroupedCallback(relevantContext, groupedCallback, triggerCallbackNow);
-    }
+    };
 
 
     p.removeTreeCallback = function (groupedCallback) {
         this._treeCallbacks.removeCallback(groupedCallback);
-    }
+    };
 
     /**
      * This function will copy the session state from one sessioned object to another.
@@ -261,7 +261,7 @@ if (!this.weavecore)
     p.copySessionState = function (source, destination) {
         var sessionState = this.getSessionState(source);
         this.setSessionState(destination, sessionState, true);
-    }
+    };
 
 
     p._applyDiff = function (base, diff) {
@@ -272,7 +272,7 @@ if (!this.weavecore)
             base[key] = this._applyDiff(base[key], diff[key]);
 
         return base;
-    }
+    };
 
     /**
      * Sets the session state of an ILinkableObject.
@@ -327,8 +327,6 @@ if (!this.weavecore)
         var objectCC = this.getCallbackCollection(linkableObject);
         objectCC.delayCallbacks();
 
-        var name;
-
         // cache property names if necessary
         var className = (linkableObject.constructor.name);
         if (!this._classNameToSessionedPropertyNames[className])
@@ -339,8 +337,8 @@ if (!this.weavecore)
         var propertyNames;
 
         propertyNames = this._classNameToSessionedPropertyNames[className];
-        var i;
-        for (i = 0; i < propertyNames.length; i++) {
+
+        for (var i = 0; i < propertyNames.length; i++) {
             var name = propertyNames[i];
             if (!newState.hasOwnProperty(name)) {
                 if (removeMissingDynamicObjects) //&& linkableObject is ILinkableObjectWithNewProperties
@@ -377,7 +375,7 @@ if (!this.weavecore)
         // resume callbacks after setting session state
         objectCC.resumeCallbacks();
 
-    }
+    };
 
     /**
      * Gets the session state of an ILinkableObject.
@@ -472,7 +470,7 @@ if (!this.weavecore)
         this._getSessionStateIgnoreList[linkableObject] = undefined;
 
         return result;
-    }
+    };
 
     p._cacheClassInfo = function (linkableObject, className) {
         // linkable property names
@@ -481,11 +479,11 @@ if (!this.weavecore)
             if (propName.charAt(0) === '_')
                 return false; //Private properties are ignored
             else
-                return linkableObject[propName] instanceof weavecore.ILinkableObject
+                return linkableObject[propName] instanceof weavecore.ILinkableObject;
         });
 
         this._classNameToSessionedPropertyNames[className] = sessionedPublicProperties.sort();
-    }
+    };
 
     /**
      * This function gets a list of sessioned property names so accessor functions for non-sessioned properties do not have to be called.
@@ -520,14 +518,14 @@ if (!this.weavecore)
                 if (property === null || property === undefined)
                     return false;
                 if (this.childToParentMap[property] === undefined || !this.childToParentMap[property][linkableObject])
-                    return false
+                    return false;
 
                 return true;
             });
             return filteredPropNames;
         }
         return propertyNames;
-    }
+    };
 
     /**
      * This function gets the ICallbackCollection associated with an ILinkableObject.
@@ -551,7 +549,7 @@ if (!this.weavecore)
         }
 
         return objectCC;
-    }
+    };
 
 
     /**
@@ -571,7 +569,7 @@ if (!this.weavecore)
                 return cc.wasDisposed;
         }
         return this._disposedObjectsMap.get(object) !== undefined;
-    }
+    };
 
 
     /**
@@ -650,7 +648,7 @@ if (!this.weavecore)
 
             this._treeCallbacks.triggerCallbacks("Session Tree: Object Disposed");
         }
-    }
+    };
 
 
     /**
@@ -785,7 +783,7 @@ if (!this.weavecore)
 
             return diff;
         }
-    }
+    };
 
     /**
      * This modifies an existing diff to include an additional diff.
@@ -885,7 +883,7 @@ if (!this.weavecore)
         }
 
         return baseDiff;
-    }
+    };
 
     Object.defineProperty(SessionManager, 'DIFF_DELETE', {
         value: "delete"

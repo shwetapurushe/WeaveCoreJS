@@ -113,7 +113,7 @@ if (!this.weavecore)
         }
 
         return 0;
-    }
+    };
 
     weavecore.StandardLib = StandardLib;
 }());

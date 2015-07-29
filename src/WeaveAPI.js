@@ -3,7 +3,7 @@ createjs.Ticker.setFPS(50);
 
 // constructor:
 
-this.WeaveAPI = {}
+this.WeaveAPI = {};
 
 //Object.defineProperty(WeaveAPI, '_sessionManager', {
 // value: new SessionManager()

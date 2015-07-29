@@ -534,14 +534,14 @@ if (!this.weavecore)
         // target using different contexts without having the side effect of losing the callback when one of those contexts is disposed.
         // The entry.trigger function will be removed once all contexts are disposed.
         callbackCollection.addImmediateCallback(null, entry.trigger.bind(entry), triggerCallbackNow);
-    }
+    };
 
     GroupedCallbackEntry.removeGroupedCallback = function (callbackCollection, groupedCallback) {
         // remove the trigger function as a callback
         var entry = GroupedCallbackEntry._entryLookup.get(groupedCallback);
         if (entry)
             callbackCollection.removeCallback(entry.trigger);
-    }
+    };
 
     /**
      * This function gets called once per frame and allows grouped callbacks to run.
@@ -581,13 +581,13 @@ if (!this.weavecore)
 
     };
 
-    var p = GroupedCallbackEntry.prototype;
+    var gcP = GroupedCallbackEntry.prototype;
 
     /**
      * Marks the entry to be handled later (unless already triggered this frame).
      * This also takes care of preventing recursion.
      */
-    p.trigger = function () {
+    gcP.trigger = function () {
         // if handling recursive callbacks, call now
         if (GroupedCallbackEntry._handlingRecursiveGroupedCallbacks) {
             this.handleGroupedCallback();
@@ -605,7 +605,7 @@ if (!this.weavecore)
     /**
      * Checks the context(s) before calling groupedCallback
      */
-    p.handleGroupedCallback = function () {
+    gcP.handleGroupedCallback = function () {
         if (!this.context)
             return;
 
