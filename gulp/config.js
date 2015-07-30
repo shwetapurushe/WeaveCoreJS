@@ -1,5 +1,38 @@
 var dest = "./build";
+var outputDocsFolder = dest + "/docs"
 var src = './src';
+var core = src + '/core';
+var primitive = src + '/primitive';
+var pkg = require('../package');
+
+//used both for Source reference and Order reference
+var buildOrder = [
+                    src + '/createjs/events/*.js', // All JS in the libs folder
+                    src + '/createjs/Ticker.js',
+                    src + '/compiler/*.js', // This specific file
+                    core + '/DynamicState.js',
+                    core + '/ILinkableObject.js',
+                    core + '/ILinkableCompositeObject.js',
+                    core + '/CallbackCollection.js',
+                    core + '/SessionManager.js',
+                    primitive + '/WeaveTreeItem.js',
+                    primitive + '/Dictionary2D.js',
+
+                    core + '/LinkableVariable.js',
+                    core + '/LinkableNumber.js',
+                    core + '/LinkableBoolean.js',
+                    core + '/LinkableString.js',
+                    core + '/ChildListCallbackInterface.js',
+                    core + '/LinkableWatcher.js',
+                    core + '/LinkableHashMap.js',
+
+                    src + '/WeaveAPI.js',
+
+                    core + '/LinkableDynamicObject.js',
+                    core + '/StageUtils.js',
+                    core + '/ExternalSessionStateInterface',
+                    core + '/SessionStateLog.js'
+               ];
 
 module.exports = {
     browserSync: {
@@ -43,22 +76,37 @@ module.exports = {
         // A separate bundle will be generated for each
         // bundle config in the list below
         bundleConfigs: [{
-            entries: src + '/javascript/global.coffee',
+            entries: src + '/CallbackCollection.js',
             dest: dest,
             outputName: 'global.js',
             // Additional file extentions to make optional
             extensions: ['.coffee', '.hbs'],
             // list of modules to make require-able externally
-            require: ['jquery', 'backbone/node_modules/underscore']
+            require: []
                 // See https://github.com/greypants/gulp-starter/issues/87 for note about
                 // why this is 'backbone/node_modules/underscore' and not 'underscore'
     }, {
-            entries: src + '/javascript/page.js',
+            entries: src + '/CallbackCollection.js',
             dest: dest,
             outputName: 'page.js',
             // list of externally available modules to exclude from the bundle
-            external: ['jquery', 'underscore']
+            external: []
     }]
+    },
+    concat: {
+        combined: 'weavecore.js',
+        scriptFiles: buildOrder,
+        dest: dest
+    },
+
+    lint: {
+        scriptFiles: buildOrder
+    },
+    yuidoc: {
+        name: pkg.name,
+        version: pkg.version,
+        scriptFiles: buildOrder,
+        docsFolder: outputDocsFolder
     },
     production: {
         cssSrc: dest + '/*.css',

@@ -1729,16 +1729,15 @@ if (!this.weavecore)
 
 }());
 
+//namesapce
 if (!this.weavecore)
     this.weavecore = {};
+
 /**
  * This class manages a list of callback functions.
- *
- * @author adufilie
- * @author sanjay1909
  */
-
 (function () {
+    "use strict";
 
     // Static Public Const Properties
     /**
@@ -1750,7 +1749,9 @@ if (!this.weavecore)
 
     // constructor
     /**
-     * @param preCallback An optional function to call before each immediate callback.
+     * @class CallbackCollection
+     * @param {Function} preCallback An optional function to call before each immediate callback.
+     * @constructor
      * If specified, the preCallback function will be called immediately before running each
      * callback using the parameters passed to _runCallbacksImmediately(). This means if there
      * are five callbacks added, preCallback() gets called five times whenever
@@ -1766,7 +1767,7 @@ if (!this.weavecore)
         //private properties
 
         /**
-         * @interanl
+         * @private
          * @property _linkableObject
          * @type ILinkableObject
          **/
@@ -1860,6 +1861,15 @@ if (!this.weavecore)
         Object.defineProperty(this, 'callbacksAreDelayed', {
             get: function () {
                 return this._delayCount > 0;
+            }
+        });
+
+        /**
+         * This flag becomes true after dispose() is called.
+         */
+        Object.defineProperty(this, 'wasDisposed', {
+            get: function () {
+                return this._wasDisposed;
             }
         });
 
@@ -2082,15 +2092,6 @@ if (!this.weavecore)
     };
 
 
-
-    /**
-     * This flag becomes true after dispose() is called.
-     */
-    Object.defineProperty(this, 'wasDisposed', {
-        get: function () {
-            return this._wasDisposed;
-        }
-    });
 
     /**
      * Adds a callback that will only be called during a scheduled time each frame.  Grouped callbacks use a central trigger list,
@@ -2366,7 +2367,6 @@ if (!this.weavecore)
     weavecore.GroupedCallbackEntry = GroupedCallbackEntry;
 
 }());
-
 if (!this.weavecore)
     this.weavecore = {};
 
@@ -3261,6 +3261,7 @@ if (!this.weavecore)
     weavecore.SessionManager = SessionManager;
 
 }());
+
 /*
     Weave (Web-based Analysis and Visualization Environment)
     Copyright (C) 2008-2011 University of Massachusetts Lowell
@@ -3940,6 +3941,7 @@ if (!this.weavecore)
     weavecore.LinkableVariable = LinkableVariable;
 
 }());
+
 if (!this.weavecore)
     this.weavecore = {};
 

@@ -1,6 +1,7 @@
  var app, deps;
 
- deps = ['ui.slider', 'angularBootstrapNavTree'];
+ // deps = ['ui.slider', 'angularBootstrapNavTree'];
+ deps = ['ui.slider'];
 
  app = angular.module('sliderDemoApp', deps);
 
@@ -9,18 +10,17 @@
 
  test.grandParent = WeaveAPI.globalHashMap.requestObject("grandParent", weavecore.LinkableHashMap, false);
  test.grandParent.addImmediateCallback(WeaveAPI.globalHashMap, function () {
-     console.log("Grandparent callback", test.test.grandParent.)
- })
- test.parent1 = test.grandParent.requestObject("parent1", weavecore.LinkableHashMap, false);
- test.parent2 = test.grandParent.requestObject("parent2", weavecore.LinkableHashMap, false);
+     console.log("Grandparent callback", test.grandParent)
+ });
+ //test.parent1 = test.grandParent.requestObject("parent1", weavecore.LinkableHashMap, false);
+ //test.parent2 = test.grandParent.requestObject("parent2", weavecore.LinkableHashMap, false);
 
  function createNewSession(name) {
-     var oo = test.parent.requestObject(name, weavecore.LinkableNumber, false);
+     var oo = test.grandParent.requestObject(name, weavecore.LinkableNumber, false);
      oo.value = 0;
 
      return oo;
  }
-
  app.controller('sliderDemoCtrl', function ($scope, $log, $timeout) {
      sc = $scope;
 
@@ -51,7 +51,7 @@
 
      $scope.log = new weavecore.SessionStateLog(WeaveAPI.globalHashMap);
      $scope.testVar = createNewSession("testNum") // this will cause issue as in session new object is created, tthe reference is changed
-     $scope.testVar.value = 0;
+         // $scope.testVar.value = 0;
 
      // $scope.log.clearHistory();
 
@@ -79,19 +79,19 @@
 
      }
 
-     var tree;
+     /*var tree;
      $scope.my_tree_handler = function (branch) {
          var _ref;
          $scope.output = "You selected: " + branch.label;
          if ((_ref = branch.data) != null ? _ref.description : void 0) {
              return $scope.output += '(' + branch.data.description + ')';
          }
-     };
+     };*/
 
-     $scope.my_tree = tree = {};
+     // $scope.my_tree = tree = {};
 
-     WeaveAPI.SessionManager.addTreeCallback({}, updateSessionNavigator);
-     updateSessionNavigator();
+     // WeaveAPI.SessionManager.addTreeCallback({}, updateSessionNavigator);
+     // updateSessionNavigator();
 
 
 
