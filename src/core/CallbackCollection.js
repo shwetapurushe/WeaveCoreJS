@@ -132,6 +132,15 @@ if (!this.weavecore)
             }
         });
 
+        /**
+         * This flag becomes true after dispose() is called.
+         */
+        Object.defineProperty(this, 'wasDisposed', {
+            get: function () {
+                return this._wasDisposed;
+            }
+        });
+
     }
 
     CallbackCollection.prototype = new weavecore.ILinkableObject();
@@ -351,15 +360,6 @@ if (!this.weavecore)
     };
 
 
-
-    /**
-     * This flag becomes true after dispose() is called.
-     */
-    Object.defineProperty(this, 'wasDisposed', {
-        get: function () {
-            return this._wasDisposed;
-        }
-    });
 
     /**
      * Adds a callback that will only be called during a scheduled time each frame.  Grouped callbacks use a central trigger list,
