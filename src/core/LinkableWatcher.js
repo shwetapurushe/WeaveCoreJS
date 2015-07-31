@@ -1,23 +1,27 @@
-// namespace
+/**
+ * @module weavecore
+ */
 
+// namespace
 if (!this.weavecore)
     this.weavecore = {};
 
-/**
- * This is used to dynamically attach a set of callbacks to different targets.
- * The callbacks of the LinkableWatcher will be triggered automatically when the
- * target triggers callbacks, changes, becomes null or is disposed.
- * @author adufilie
- */
 (function () {
+    "use strict";
+
+    // constructor:
     /**
-     * Instead of calling this constructor directly, consider using one of the global functions
-     * newLinkableChild() or newDisposableChild() to make sure the watcher will get disposed automatically.
-     * @param typeRestriction Optionally restricts which type of targets this watcher accepts.
-     * @param immediateCallback A function to add as an immediate callback.
-     * @param groupedCallback A function to add as a grouped callback.
-     * @see weave.api.core.newLinkableChild()
-     * @see weave.api.core.newDisposableChild()
+     * This is used to dynamically attach a set of callbacks to different targets.
+     * The callbacks of the LinkableWatcher will be triggered automatically when the
+     * target triggers callbacks, changes, becomes null or is disposed.
+     * Instead of calling this constructor directly, consider using one of the {{#crossLink "SessionManager"}}{{/crossLink}} functions
+     * {{#crossLink "SessionManager/registerLinkableChild:method"}}{{/crossLink}} or  {{#crossLink "SessionManager/registerDisposableChild:method"}}{{/crossLink}} to make sure the watcher will get disposed automatically.
+     * @class LinkableWatcher
+     * @extends ILinkableObject
+     * @constructor
+     * @param {Class} typeRestriction Optionally restricts which type of targets this watcher accepts.
+     * @param {Function} immediateCallback A function to add as an immediate callback.
+     * @param {Function} groupedCallback A function to add as a grouped callback.
      */
     function LinkableWatcher(typeRestriction, immediateCallback, groupedCallback) {
         if (typeRestriction === undefined) typeRestriction = null;

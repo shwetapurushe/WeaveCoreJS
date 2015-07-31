@@ -1,17 +1,22 @@
 /**
- * This object links to an internal ILinkableObject.
- * The internal object can be either a local one or a global one identified by a global name.
- *
- * @author adufilie
- * @author sanjay1909
+ * @module weavecore
  */
-// namespace
 
+//namesapce
 if (!this.weavecore)
     this.weavecore = {};
+
 (function () {
+    "use strict";
+
+    // constructor:
     /**
-     * @param typeRestriction If specified, this will limit the type of objects that can be added to this LinkableHashMap.
+     * This object links to an internal ILinkableObject.
+     * The internal object can be either a local one or a global one identified by a global name.
+     * @class LinkableDynamicObject
+     * @extends LinkableWatcher
+     * @constructor
+     * @param {Class} typeRestriction If specified, this will limit the type of objects that can be added to this LinkableHashMap.
      */
     function LinkableDynamicObject(typeRestriction) {
         if (typeRestriction === undefined) typeRestriction = null;

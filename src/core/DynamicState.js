@@ -1,15 +1,19 @@
+/**
+ * @module weavecore
+ */
+
+//namesapce
 if (!this.weavecore)
     this.weavecore = {};
-/**
- * Dynamic state objects have three properties: objectName, className, sessionState
- *
- * @author adufilie
- * @author sanjay1909
- */
+
 (function () {
     "use strict";
 
     // constructor
+    /**
+     * Utility Class to create Dynamic state objects with three properties: objectName, className, sessionState
+     * @class DynamicState
+     */
     function DynamicState() {
         throw "DynamicState cannot be instantiated.";
     }
@@ -17,6 +21,12 @@ if (!this.weavecore)
     // Static Public Const Properties
     /**
      * The name of the property containing the name assigned to the object when the session state is generated.
+     * @static
+     * @public
+     * @property OBJECT_NAME
+     * @readOnly
+     * @default "objectName"
+     * @type String
      */
     Object.defineProperty(DynamicState, 'OBJECT_NAME', {
         value: "objectName"
@@ -24,6 +34,12 @@ if (!this.weavecore)
 
     /**
      * The name of the property containing the qualified class name of the original object providing the session state.
+     * @static
+     * @public
+     * @property CLASS_NAME
+     * @readOnly
+     * @default "className"
+     * @type String
      */
     Object.defineProperty(DynamicState, 'CLASS_NAME', {
         value: "className"
@@ -31,6 +47,12 @@ if (!this.weavecore)
 
     /**
      * The name of the property containing the session state for an object of the type specified by className.
+     * @static
+     * @public
+     * @property SESSION_STATE
+     * @readOnly
+     * @default "sessionState"
+     * @type String
      */
     Object.defineProperty(DynamicState, 'SESSION_STATE', {
         value: "sessionState"
@@ -39,9 +61,11 @@ if (!this.weavecore)
     //static Public Methods
     /**
      * Creates an Object having three properties: objectName, className, sessionState
-     * @param objectName The name assigned to the object when the session state is generated.
-     * @param className The qualified class name of the original object providing the session state.
-     * @param sessionState The session state for an object of the type specified by className.
+     * @method create
+     * @static
+     * @param {String} objectName The name assigned to the object when the session state is generated.
+     * @param {String} className The qualified class name of the original object providing the session state.
+     * @param {Object} sessionState The session state for an object of the type specified by className.
      */
     DynamicState.create = function (objectName, className, sessionState) {
         var obj = {};
@@ -55,8 +79,10 @@ if (!this.weavecore)
     /**
      * This function can be used to detect dynamic state objects within nested, untyped session state objects.
      * This function will check if the given object has the three properties of a dynamic state object.
-     * @param object An object to check.
-     * @return true if the object has all three properties and no extras.
+     * @method isDynamicState
+     * @static
+     * @param {Object} object An object to check.
+     * @return {Boolean} true if the object has all three properties and no extras.
      */
     DynamicState.isDynamicState = function (object) {
         var matchCount = 0;
@@ -72,7 +98,10 @@ if (!this.weavecore)
     /**
      * This function checks whether or not a session state is an Array containing at least one
      * object that looks like a DynamicState and has no other non-String items.
-     * @return A value of true if the Array looks like a dynamic session state or diff.
+     * @method isDynamicStateArray
+     * @static
+     * @param {Object} state
+     * @return {Boolean} A value of true if the Array looks like a dynamic session state or diff.
      */
     DynamicState.isDynamicStateArray = function (state) {
         if (!Array.isArray(state))
