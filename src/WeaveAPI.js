@@ -1,4 +1,4 @@
-createjs.Ticker.setFPS(50);
+this.createjs.Ticker.setFPS(50);
 //createjs.Ticker.
 
 // constructor:
