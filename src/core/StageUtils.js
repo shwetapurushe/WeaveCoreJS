@@ -81,12 +81,12 @@ if (!this.weavecore)
 
         // If the target is the stage, the capture listener won't be called, so add
         // an additional listener that runs callbacks when the stage is the target.
-        createjs.Ticker.addEventListener(this._eventType, this._tickerListener.bind(this)); // do not use capture phase
+        weavecore.Ticker.addEventListener(this._eventType, this._tickerListener.bind(this)); // do not use capture phase
 
         // when callbacks are disposed, remove the listeners
         this.addDisposeCallback(null, function () {
             //stage.removeEventListener(eventType, captureListener, true);
-            createjs.Ticker.removeEventListener(this._eventType, this._tickerListener.bind(this));
+            weavecore.Ticker.removeEventListener(this._eventType, this._tickerListener.bind(this));
         });
     };
 

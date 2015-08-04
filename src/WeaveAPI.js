@@ -1,4 +1,4 @@
-this.createjs.Ticker.setFPS(50);
+this.weavecore.Ticker.setFPS(50);
 //createjs.Ticker.
 
 // constructor:
