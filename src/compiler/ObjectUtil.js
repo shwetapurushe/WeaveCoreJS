@@ -14,8 +14,11 @@
 */
 
 // namespace
-if (!this.weavecore)
-    this.weavecore = {};
+if (typeof window === 'undefined') {
+    this.weavecore = this.weavecore || {};
+} else {
+    window.weavecore = window.weavecore || {};
+}
 
 /**
  * This provides a set of useful static functions for Object Comparison.

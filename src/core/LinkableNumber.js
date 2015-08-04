@@ -1,5 +1,8 @@
-if (!this.weavecore)
-    this.weavecore = {};
+if (typeof window === 'undefined') {
+    this.weavecore = this.weavecore || {};
+} else {
+    window.weavecore = window.weavecore || {};
+}
 
 /**
  * This is a LinkableVariable which limits its session state to Number values.

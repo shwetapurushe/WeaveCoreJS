@@ -3,8 +3,11 @@
  */
 
 //namesapce
-if (!this.weavecore)
-    this.weavecore = {};
+if (typeof window === 'undefined') {
+    this.weavecore = this.weavecore || {};
+} else {
+    window.weavecore = window.weavecore || {};
+}
 
 (function () {
     "use strict";

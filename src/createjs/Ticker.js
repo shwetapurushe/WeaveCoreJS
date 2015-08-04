@@ -27,11 +27,15 @@
  */
 
 /**
- * @module weavecore
+ * @module CreateJS
  */
 
 // namespace:
-this.weavecore = this.weavecore || {};
+if (typeof window === 'undefined') {
+    this.createjs = this.createjs || {};
+} else {
+    window.createjs = window.createjs || {};
+}
 
 (function () {
     "use strict";
@@ -48,7 +52,7 @@ this.weavecore = this.weavecore || {};
      *
      * <h4>Example</h4>
      *
-     *      weavecore.Ticker.addEventListener("tick", handleTick);
+     *      createjs.Ticker.addEventListener("tick", handleTick);
      *      function handleTick(event) {
      *          // Actions carried out each tick (aka frame)
      *          if (!event.paused) {
@@ -120,7 +124,7 @@ this.weavecore = this.weavecore || {};
      *
      * <h4>Example</h4>
      *
-     *      weavecore.Ticker.addEventListener("tick", handleTick);
+     *      createjs.Ticker.addEventListener("tick", handleTick);
      *      function handleTick(event) {
      *          console.log("Paused:", event.paused, event.delta);
      *      }
@@ -184,12 +188,12 @@ this.weavecore = this.weavecore || {};
      *
      * <h4>Example</h4>
      *
-     *      weavecore.Ticker.addEventListener("tick", handleTick);
-     *      weavecore.Ticker.paused = true;
+     *      createjs.Ticker.addEventListener("tick", handleTick);
+     *      createjs.Ticker.paused = true;
      *      function handleTick(event) {
      *          console.log(event.paused,
-     *          	weavecore.Ticker.getTime(false),
-     *          	weavecore.Ticker.getTime(true));
+     *          	createjs.Ticker.getTime(false),
+     *          	createjs.Ticker.getTime(true));
      *      }
      *
      * @property paused
@@ -207,7 +211,7 @@ this.weavecore = this.weavecore || {};
     Ticker.dispatchEvent = null;
     Ticker.hasEventListener = null;
     Ticker._listeners = null;
-    weavecore.EventDispatcher.initialize(Ticker); // inject EventDispatcher methods.
+    createjs.EventDispatcher.initialize(Ticker); // inject EventDispatcher methods.
     Ticker._addEventListener = Ticker.addEventListener;
     Ticker.addEventListener = function () {
         !Ticker._inited && Ticker.init();
@@ -622,7 +626,7 @@ this.weavecore = this.weavecore || {};
         }
 
         if (Ticker.hasEventListener("tick")) {
-            var event = new weavecore.Event("tick");
+            var event = new createjs.Event("tick");
             var maxDelta = Ticker.maxDelta;
             event.delta = (maxDelta && elapsedTime > maxDelta) ? maxDelta : elapsedTime;
             event.paused = paused;
@@ -653,5 +657,5 @@ this.weavecore = this.weavecore || {};
     };
 
 
-    weavecore.Ticker = Ticker;
+    createjs.Ticker = Ticker;
 }());

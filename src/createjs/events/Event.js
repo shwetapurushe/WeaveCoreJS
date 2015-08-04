@@ -34,12 +34,16 @@
  *
  *      myObject.addEventListener("change", createjs.proxy(myMethod, scope));
  *
- * @module weavecore
- * @main weavecore
+ * @module CreateJS
+ * @main CreateJS
  */
 
 // namespace:
-this.weavecore = this.weavecore || {};
+if (typeof window === 'undefined') {
+    this.createjs = this.createjs || {};
+} else {
+    window.createjs = window.createjs || {};
+}
 
 (function () {
     "use strict";
@@ -260,5 +264,5 @@ this.weavecore = this.weavecore || {};
         return "[Event (type=" + this.type + ")]";
     };
 
-    weavecore.Event = Event;
+    createjs.Event = Event;
 }());

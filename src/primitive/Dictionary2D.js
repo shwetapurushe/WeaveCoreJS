@@ -17,9 +17,11 @@
     along with Weave.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-if (!this.weavecore)
-    this.weavecore = {};
+if (typeof window === 'undefined') {
+    this.weavecore = this.weavecore || {};
+} else {
+    window.weavecore = window.weavecore || {};
+}
 
 /**
  * This is a wrapper for a 2-dimensional Dictionary.

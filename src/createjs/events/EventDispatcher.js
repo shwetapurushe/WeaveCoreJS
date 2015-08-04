@@ -27,11 +27,15 @@
  */
 
 /**
- * @module weavecore
+ * @module CreateJS
  */
 
 // namespace:
-this.weavecore = this.weavecore || {};
+if (typeof window === 'undefined') {
+    this.createjs = this.createjs || {};
+} else {
+    window.createjs = window.createjs || {};
+}
 
 (function () {
     "use strict";
@@ -311,7 +315,7 @@ this.weavecore = this.weavecore || {};
      *      this.dispatchEvent("complete");
      *
      *      // Use an Event instance
-     *      var event = new weavecore.Event("progress");
+     *      var event = new createjs.Event("progress");
      *      this.dispatchEvent(event);
      *
      * @method dispatchEvent
@@ -327,7 +331,7 @@ this.weavecore = this.weavecore || {};
             if (!listeners || !listeners[eventObj]) {
                 return false;
             }
-            eventObj = new weavecore.Event(eventObj);
+            eventObj = new createjs.Event(eventObj);
         } else if (eventObj.target && eventObj.clone) {
             // redispatching an active event object, so clone it:
             eventObj = eventObj.clone();
@@ -440,5 +444,5 @@ this.weavecore = this.weavecore || {};
     };
 
 
-    weavecore.EventDispatcher = EventDispatcher;
+    createjs.EventDispatcher = EventDispatcher;
 }());

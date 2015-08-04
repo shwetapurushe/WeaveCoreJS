@@ -1,5 +1,8 @@
-if (!this.weavecore)
-    this.weavecore = {};
+if (typeof window === 'undefined') {
+    this.weavecore = this.weavecore || {};
+} else {
+    window.weavecore = window.weavecore || {};
+}
 
 /**
  * This is an interface to a composite object with dynamic state, meaning child objects can be dynamically added or removed.
