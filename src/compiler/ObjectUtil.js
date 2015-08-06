@@ -14,20 +14,23 @@
 */
 
 // namespace
-if(!this.weavecore)
-    this.weavecore = {};
+if (typeof window === 'undefined') {
+    this.weavecore = this.weavecore || {};
+} else {
+    window.weavecore = window.weavecore || {};
+}
 
 /**
  * This provides a set of useful static functions for Object Comparison.
  * All Static functions are Ported from  Apache Flex mx.utils.ObjectUtil - ActionScript Code
  * @author sanjay1909
  */
-(function() {
+(function () {
     "use strict";
+
     //constructor
-
     function ObjectUtil() {
-
+        throw "ObjectUtil cannot be instantiated.";
     }
 
     /**
@@ -40,7 +43,7 @@ if(!this.weavecore)
      *  -1 if <code>a</code> is less than <code>b</code>.
      *  1 if <code>a</code> is greater than <code>b</code>.
      */
-    ObjectUtil.numericCompare = function(a, b) {
+    ObjectUtil.numericCompare = function (a, b) {
         if (isNaN(a) && isNaN(b))
             return 0;
 
@@ -72,7 +75,7 @@ if(!this.weavecore)
      *  -1 if <code>a</code> precedes <code>b</code>.
      *  1 if <code>b</code> precedes <code>a</code>.
      */
-    ObjectUtil.stringCompare = function(a, b, caseInsensitive) {
+    ObjectUtil.stringCompare = function (a, b, caseInsensitive) {
         if ((a === null || a === undefined) && (b === null || b === undefined))
             return 0;
 
@@ -114,7 +117,7 @@ if(!this.weavecore)
      *  1 if only <code>a</code> getTime is a NaN;
      *  -1 if only <code>b</code> getTime is a NaN.
      */
-    ObjectUtil.dateCompare = function(a, b) {
+    ObjectUtil.dateCompare = function (a, b) {
         if ((a === null || a === undefined) && (b === null || b === undefined))
             return 0;
 
@@ -146,5 +149,5 @@ if(!this.weavecore)
     };
 
     weavecore.ObjectUtil = ObjectUtil;
-          
+
 }());

@@ -18,8 +18,11 @@
 */
 
 
-if (!this.weavecore)
-    this.weavecore = {};
+if (typeof window === 'undefined') {
+    this.weavecore = this.weavecore || {};
+} else {
+    window.weavecore = window.weavecore || {};
+}
 
 /**
  * Facilitates the creation of dynamic trees.
@@ -186,7 +189,7 @@ if (!this.weavecore)
             }
         }
         return param;
-    }
+    };
 
     /**
      * Checks if an object has a single specified property.
@@ -206,7 +209,7 @@ if (!this.weavecore)
             found = true; // found the desired property
         }
         return found;
-    }
+    };
 
     /**
      * Gets a String value from a String or Function.
@@ -228,7 +231,7 @@ if (!this.weavecore)
             }
         }
         return param;
-    }
+    };
 
     /**
      * Evaluates a function to get an Object or just returns the non-Function Object passed in.
@@ -248,7 +251,7 @@ if (!this.weavecore)
             }
         }
         return param;
-    }
+    };
 
     /**
      * First tries calling a function with no parameters.
@@ -270,7 +273,7 @@ if (!this.weavecore)
 
         // on ArgumentError, pass in this WeaveTreeItem as the first parameter
         return func.call(this, this);
-    }
+    };
 
     //----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----//----
 
@@ -284,7 +287,7 @@ if (!this.weavecore)
         if (this._source && WeaveAPI.SessionManager.objectWasDisposed(this._source))
             source = null;
         return this._source && this._counter[id] === WeaveAPI.SessionManager.getCallbackCollection(this._source).triggerCounter;
-    }
+    };
 
     /**
      * Retrieves or updates a cached value for a property.
@@ -304,7 +307,7 @@ if (!this.weavecore)
             this._cache[id] = newValue;
         }
         return newValue;
-    }
+    };
 
 
     /**
@@ -348,7 +351,7 @@ if (!this.weavecore)
      */
     WeaveTreeItem._filterItems = function (item, i, a) {
         return item !== null || item !== undefined;
-    }
+    };
 
 
 

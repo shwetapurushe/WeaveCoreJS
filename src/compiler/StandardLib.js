@@ -14,8 +14,11 @@
 */
 
 // namespace
-if (!this.weavecore)
-    this.weavecore = {};
+if (typeof window === 'undefined') {
+    this.weavecore = this.weavecore || {};
+} else {
+    window.weavecore = window.weavecore || {};
+}
 
 /**
  * This provides a set of useful static functions.
@@ -26,10 +29,11 @@ if (!this.weavecore)
  * @author sanbalag
  */
 (function () {
+    "use strict";
+
     //constructor
-
     function StandardLib() {
-
+        throw "StandardLib cannot be instantiated.";
     }
 
     /**
@@ -112,7 +116,7 @@ if (!this.weavecore)
         }
 
         return 0;
-    }
+    };
 
     weavecore.StandardLib = StandardLib;
 }());

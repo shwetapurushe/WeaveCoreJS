@@ -1,20 +1,8 @@
-/*
-    Weave (Web-based Analysis and Visualization Environment)
-    Copyright (C) 2008-2011 University of Massachusetts Lowell
-    This file is a part of Weave.
-    Weave is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, Version 3,
-    as published by the Free Software Foundation.
-    Weave is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-    You should have received a copy of the GNU General Public License
-    along with Weave.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-if (!this.weavecore)
-    this.weavecore = {};
+if (typeof window === 'undefined') {
+    this.weavecore = this.weavecore || {};
+} else {
+    window.weavecore = window.weavecore || {};
+}
 
 /**
  * This class saves the session history of an ILinkableObject.
@@ -53,7 +41,7 @@ if (!this.weavecore)
                 array[i] = new LogEntry(o.id, o.forward, o.backward, o.triggerDelay || defaultTriggerDelay, o.diffDuration);
         }
         return array;
-    }
+    };
 
 
     function getTimer() {
@@ -100,7 +88,30 @@ if (!this.weavecore)
             value: true,
             writable: true
         });
+
+        /**
+         * @TODO create an interface for the objects in this Array
+         */
+        Object.defineProperty(this, 'undoHistory', {
+            get: function () {
+                return this._undoHistory;
+            }
+        });
+
+        /**
+         * @TODO create an interface for the objects in this Array
+         */
+        Object.defineProperty(this, 'redoHistory', {
+            get: function () {
+                return this._redoHistory;
+            }
+        });
+
+
     }
+
+    SessionStateLog.prototype = new weavecore.LinkableVariable();
+    SessionStateLog.prototype.constructor = SessionStateLog;
 
     var p = SessionStateLog.prototype;
 
@@ -115,7 +126,7 @@ if (!this.weavecore)
         this._subject = null;
         this._undoHistory = null;
         this._redoHistory = null;
-    }
+    };
 
     /**
      * This function will save any pending diff in session state.
@@ -123,7 +134,7 @@ if (!this.weavecore)
      */
     p.synchronizeNow = function () {
         this._saveDiff.call(this, true);
-    }
+    };
 
 
 
@@ -149,7 +160,7 @@ if (!this.weavecore)
             var forwardDiff = WeaveAPI.SessionManager.computeDiff(this._prevState, state);
             console.log('immediate diff:', forwardDiff);
         }
-    }
+    };
 
     /**
      * This gets called as a grouped callback of the subject.
@@ -169,7 +180,7 @@ if (!this.weavecore)
             var forwardDiff = WeaveAPI.SessionManager.computeDiff(this._prevState, state);
             console.log('grouped diff:', forwardDiff);
         }
-    }
+    };
 
     /**
      * This will save a diff in the history, if there is any.
@@ -253,7 +264,7 @@ if (!this.weavecore)
         this._triggerDelay = -1;
 
         cc.resumeCallbacks.call(cc);
-    }
+    };
 
 
 
@@ -265,7 +276,7 @@ if (!this.weavecore)
         if (isNaN(numberOfSteps))
             numberOfSteps = 1;
         this.applyDiffs.call(this, -numberOfSteps);
-    }
+    };
 
     /**
      * This will redo a number of steps that have been previously undone.
@@ -275,7 +286,7 @@ if (!this.weavecore)
         if (isNaN(numberOfSteps))
             numberOfSteps = 1;
         this.applyDiffs.call(this, numberOfSteps);
-    }
+    };
 
     /**
      * This will clear all undo and redo history.
@@ -290,17 +301,17 @@ if (!this.weavecore)
 
         if (directional <= 0) {
             if (this._undoHistory.length > 0)
-                cc.triggerCallbacks();
+                cc.triggerCallbacks("Log: Clear History Undo > 0");
             this._undoHistory.length = 0;
         }
         if (directional >= 0) {
             if (this._redoHistory.length > 0)
-                cc.triggerCallbacks();
+                cc.triggerCallbacks("Log: Clear History Redo > 0");
             this._redoHistory.length = 0;
         }
 
         cc.resumeCallbacks();
-    }
+    };
 
     /**
      * This will apply a number of undo or redo steps.
@@ -373,21 +384,9 @@ if (!this.weavecore)
             var slcc = WeaveAPI.SessionManager.getCallbackCollection(this);
             slcc.triggerCallbacks.call(slcc);
         }
-    }
+    };
 
-    /**
-     * @TODO create an interface for the objects in this Array
-     */
-    p.__defineGetter__("undoHistory", function () {
-        return this._undoHistory;
-    });
 
-    /**
-     * @TODO create an interface for the objects in this Array
-     */
-    p.__defineGetter__("redoHistory", function () {
-        return this._redoHistory;
-    });
 
     function debugHistory(logEntry) {
         var h = this._undoHistory.concat();
@@ -427,7 +426,7 @@ if (!this.weavecore)
 
         cc.resumeCallbacks();
         return state;
-    }
+    };
 
     /**
      * This will load a session state log from an untyped session state object.
@@ -466,10 +465,10 @@ if (!this.weavecore)
             WeaveAPI.SessionManager.setSessionState(this._subject, this._prevState);
         } finally {
             this.enableLogging.resumeCallbacks();
-            cc.triggerCallbacks();
+            cc.triggerCallbacks("Log: Setsessionstate");
             cc.resumeCallbacks();
         }
-    }
+    };
     weavecore.SessionStateLog = SessionStateLog;
 
 }());

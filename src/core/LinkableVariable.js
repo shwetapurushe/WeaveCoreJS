@@ -1,23 +1,8 @@
-/*
-    Weave (Web-based Analysis and Visualization Environment)
-    Copyright (C) 2008-2011 University of Massachusetts Lowell
-    This file is a part of Weave.
-    Weave is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, Version 3,
-    as published by the Free Software Foundation.
-    Weave is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-    You should have received a copy of the GNU General Public License
-    along with Weave.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-// namespace
-
-if (!this.weavecore)
-    this.weavecore = {};
-
+if (typeof window === 'undefined') {
+    this.weavecore = this.weavecore || {};
+} else {
+    window.weavecore = window.weavecore || {};
+}
 /**
  * LinkableVariable allows callbacks to be added that will be called when the value changes.
  * A LinkableVariable has an optional type restriction on the values it holds.
@@ -78,6 +63,12 @@ if (!this.weavecore)
         this._sessionStateExternal = undefined;
 
         this._locked = false;
+
+        Object.defineProperty(this, 'locked', {
+            get: function () {
+                return this._locked;
+            }
+        });
 
         if (sessionStateType !== Object) {
             this._sessionStateType = sessionStateType;
@@ -159,8 +150,8 @@ if (!this.weavecore)
         // two LinkableVariables to share the same object as their session state.
         if (type === 'object') {
             if (!wasCopied) {
-                if (value.constructor === Array) // Temp solution for array copy
-                    value = Object.create(value).__proto__;
+                if (value.constructor === Array) //TODO:Temp solution for array copy - its a shallow copy now
+                    value = Object.getPrototypeOf(Object.create(value)).slice(0);
                 else
                     value = Object.create(value);
             }
@@ -170,8 +161,8 @@ if (!this.weavecore)
             this._sessionStateExternal = value;
 
             // save internal copy
-            if (value.constructor === Array) // Temp solution for array copy
-                this._sessionStateInternal = Object.create(value).__proto__;
+            if (value.constructor === Array) // TODO:Temp solution for array copy - its a shallow copy now
+                this._sessionStateInternal = Object.getPrototypeOf(Object.create(value)).slice(0);
             else
                 this._sessionStateInternal = Object.create(value);
 
@@ -210,9 +201,9 @@ if (!this.weavecore)
         this._locked = true;
     };
 
-    p.__defineGetter__("locked ", function () {
-        return this._locked;
-    });
+
+
+
 
     p.dispose = function () {
         weavecore.CallbackCollection.prototype.dispose.call(this);

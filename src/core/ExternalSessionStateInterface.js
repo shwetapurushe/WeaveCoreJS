@@ -1,25 +1,8 @@
-/*
-    Weave (Web-based Analysis and Visualization Environment)
-    Copyright (C) 2008-2011 University of Massachusetts Lowell
-
-    This file is a part of Weave.
-
-    Weave is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, Version 3,
-    as published by the Free Software Foundation.
-
-    Weave is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Weave.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-
-if (!this.weavecore)
-    this.weavecore = {};
+if (typeof window === 'undefined') {
+    this.weavecore = this.weavecore || {};
+} else {
+    window.weavecore = window.weavecore || {};
+}
 
 /**
  * A set of static functions intended for use as a JavaScript API.
@@ -36,15 +19,17 @@ if (!this.weavecore)
     function ExternalSessionStateInterface() {
         this._rootObject = WeaveAPI.globalHashMap;
         this._getObjectFromPathOrVariableName_error = null;
+
+        /**
+         * This object maps an expression name to the saved expression function.
+         */
+        Object.defineProperty(this, '_variables', {
+            value: {},
+            writable: false
+        });
     }
 
-    /**
-     * This object maps an expression name to the saved expression function.
-     */
-    Object.defineProperty(this, '_variables', {
-        value: {},
-        writable: false
-    });
+
 
     var p = ExternalSessionStateInterface.prototype;
 
@@ -103,7 +88,7 @@ if (!this.weavecore)
                 return object.getNames();
             if (object instanceof weavecore.LinkableDynamicObject)
                 return [null];
-            return WeaveAPI.SessionManager.getLinkablePropertyNames(object);
+            return WeaveAPI.SessionManager.getLinkablePropertyNames(object, true);
         }
 
         console.log("No ILinkableObject for which to get child names at path {0}", objectPath);
@@ -168,7 +153,7 @@ if (!this.weavecore)
         return false;
     }
 
-    p.removeObject(objectPath) {
+    p.removeObject = function (objectPath) {
         if (!objectPath || !objectPath.length) {
             console.log("Cannot remove root object");
             return false;

@@ -17,9 +17,11 @@
     along with Weave.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-if (!this.weavecore)
-    this.weavecore = {};
+if (typeof window === 'undefined') {
+    this.weavecore = this.weavecore || {};
+} else {
+    window.weavecore = window.weavecore || {};
+}
 
 /**
  * This is a wrapper for a 2-dimensional Dictionary.
@@ -28,7 +30,7 @@ if (!this.weavecore)
  * @author sanjay1909
  */
 
-(function() {
+(function () {
     function Dictionary2D() {
         this.dictionary = new Map();
     }
@@ -41,7 +43,7 @@ if (!this.weavecore)
      * @param key2 The second dictionary key.
      * @return The value in the dictionary.
      */
-    p.get = function(key1, key2) {
+    p.get = function (key1, key2) {
         var d2 = this.dictionary.get(key1);
         return d2 ? d2.get(key2) : undefined;
     };
@@ -52,11 +54,11 @@ if (!this.weavecore)
      * @param key2 The second dictionary key.
      * @param value The value to put into the dictionary.
      */
-    p.set = function(key1, key2, value) {
+    p.set = function (key1, key2, value) {
         var d2 = this.dictionary.get(key1);
         if (d2 === null || d2 === undefined)
             d2 = new Map();
-        this.dictionary.set(key1, d2)
+        this.dictionary.set(key1, d2);
         d2.set(key2, value);
     };
 
@@ -64,7 +66,7 @@ if (!this.weavecore)
      * This removes all values associated with the given primary key.
      * @param key1 The first dictionary key.
      */
-    p.removeAllPrimary = function(key1) {
+    p.removeAllPrimary = function (key1) {
         this.dictionary.delete(key1);
     };
 
@@ -72,8 +74,8 @@ if (!this.weavecore)
      * This removes all values associated with the given secondary key.
      * @param key2 The second dictionary key.
      */
-    p.removeAllSecondary = function(key2) {
-        for(var key1 of this.dictionary.keys()){
+    p.removeAllSecondary = function (key2) {
+        for (var key1 of this.dictionary.keys()) {
             this.dictionary.get(key1).delete(key2);
         }
 
@@ -85,7 +87,7 @@ if (!this.weavecore)
      * @param key2 The second dictionary key.
      * @return The value that was in the dictionary.
      */
-    p.remove = function(key1, key2) {
+    p.remove = function (key1, key2) {
         var value;
         var d2 = this.dictionary.get(key1);
         if (d2) {
@@ -94,7 +96,7 @@ if (!this.weavecore)
         }
 
         // if entries remain in d2, keep it
-        for(var v2 of d2.values())
+        for (var v2 of d2.values())
             return value;
 
         // otherwise, remove it

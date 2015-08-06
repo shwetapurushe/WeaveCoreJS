@@ -16,8 +16,11 @@
     You should have received a copy of the GNU General Public License
     along with Weave.  If not, see <http://www.gnu.org/licenses/>.
 */
-if (!this.weavecore)
-    this.weavecore = {};
+if (typeof window === 'undefined') {
+    this.weavecore = this.weavecore || {};
+} else {
+    window.weavecore = window.weavecore || {};
+}
 
 
 /**
@@ -37,7 +40,7 @@ if (!this.weavecore)
          * This can be used as a buffer prior to calling flushKeys().
          * @see #flushKeys()
          */
-        this.keysRemoved: Array = [];
+        this.keysRemoved = [];
 
         // specify the preCallback function in super() so list callback
         // variables will be set before each change callback.
