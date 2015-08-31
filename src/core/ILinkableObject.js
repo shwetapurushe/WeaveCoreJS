@@ -20,7 +20,18 @@ if (typeof window === 'undefined') {
      * @class ILinkableObject
      * @constructor
      */
-    function ILinkableObject() {}
+    function ILinkableObject() {
+        /**
+         * temporary solution to save the namespace for this class/prototype
+         * @public
+         * @property ns
+         * @readOnly
+         * @type String
+         */
+        Object.defineProperty(this, 'ns', {
+            value: 'weavecore'
+        });
+    }
 
     weavecore.ILinkableObject = ILinkableObject;
 

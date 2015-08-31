@@ -152,6 +152,17 @@ if (typeof window === 'undefined') {
             }
 
         });
+
+        /**
+         * temporary solution to save the namespace for this class/prototype
+         * @public
+         * @property ns
+         * @readOnly
+         * @type String
+         */
+        Object.defineProperty(this, 'ns', {
+            value: 'weavecore'
+        });
     }
 
     LinkableDynamicObject.prototype = new weavecore.LinkableWatcher();
@@ -262,7 +273,8 @@ if (typeof window === 'undefined') {
 
 
     //private
-
+    //to-do
+    // replace weavecore with ns and figure out best way to deal this
     p._setLocalObjectType = function (className) {
         // stop if locked
         if (this._locked)
@@ -272,7 +284,7 @@ if (typeof window === 'undefined') {
 
         this.targetPath = null;
 
-        var classDef = eval('weavecore.' + className);
+        var classDef = eval(className);
         if (classDef instanceof weavecore.ILinkableObject && (this._typeRestriction === null || this._typeRestriction === undefined || classDef instanceof this._typeRestriction)) {
 
             var obj = target;
@@ -293,8 +305,12 @@ if (typeof window === 'undefined') {
     p.requestLocalObject = function (objectType, lockObject) {
         this._cc.delayCallbacks();
 
+        //To-do
+        // this will fail if we minify the weavecore, as constructor name wont be same in minified version
+        // we nee dot get namespace of that object here too
+        // temp solution store  Ns name in the object instance as String
         if (objectType)
-            this._setLocalObjectType(objectType.constructor.name);
+            this._setLocalObjectType(objectType.ns + '.' + objectType.constructor.name);
         else
             this.target = null;
 

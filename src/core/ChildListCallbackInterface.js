@@ -110,6 +110,17 @@ if (typeof window === 'undefined') {
             }
         });
 
+        /**
+         * temporary solution to save the namespace for this class/prototype
+         * @public
+         * @property ns
+         * @readOnly
+         * @type String
+         */
+        Object.defineProperty(this, 'ns', {
+            value: 'weavecore'
+        });
+
     }
 
     ChildListCallbackInterface.prototype = new weavecore.CallbackCollection();

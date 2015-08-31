@@ -142,13 +142,17 @@ if (typeof window === 'undefined') {
         if (useGroupedCallback === undefined)
             useGroupedCallback = false;
         if (!(linkableParent instanceof weavecore.ILinkableObject)) {
-            console.log("registerLinkableChild(): Parent does not inherit ILinkableObject.");
-            return;
+            if (!linkableParent.sessionable) {
+                console.log("registerLinkableChild(): Parent does not inherit ILinkableObject. or sessionablepropery is not true");
+                return;
+            }
         }
 
         if (!(linkableChild instanceof weavecore.ILinkableObject)) {
-            console.log("registerLinkableChild(): child does not inherit ILinkableObject.");
-            return;
+            if (!linkableChild.sessionable) {
+                console.log("registerLinkableChild(): child does not inherit ILinkableObject. or sessionablepropery is not true");
+                return;
+            }
         }
 
         if (callback !== null && callback !== undefined) {
@@ -697,7 +701,7 @@ if (typeof window === 'undefined') {
             return true; // added by sanjay:
         if (object === null) //null means :Object parameter is null i.e Object has no parameters
             return false;
-        if (object instanceof weavecore.ILinkableObject) {
+        if (object instanceof weavecore.ILinkableObject || object.sessionable) {
             var cc = this.getCallbackCollection(object);
             if (cc)
                 return cc.wasDisposed;

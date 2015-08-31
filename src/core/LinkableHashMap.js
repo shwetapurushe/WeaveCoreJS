@@ -137,6 +137,17 @@ if (typeof window === 'undefined') {
                 return this._childListCallbacks;
             }
         });
+
+        /**
+         * temporary solution to save the namespace for this class/prototype
+         * @public
+         * @property ns
+         * @readOnly
+         * @type String
+         */
+        Object.defineProperty(this, 'ns', {
+            value: 'weavecore'
+        });
     }
 
     LinkableHashMap.prototype = new weavecore.CallbackCollection();

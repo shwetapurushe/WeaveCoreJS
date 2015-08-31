@@ -93,6 +93,17 @@ if (typeof window === 'undefined') {
             },
             configurable: true
         });
+
+        /**
+         * temporary solution to save the namespace for this class/prototype
+         * @public
+         * @property ns
+         * @readOnly
+         * @type String
+         */
+        Object.defineProperty(this, 'ns', {
+            value: 'weavecore'
+        });
     }
 
     LinkableWatcher.prototype = new weavecore.ILinkableObject();

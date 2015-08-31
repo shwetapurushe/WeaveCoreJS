@@ -82,6 +82,17 @@ if (typeof window === 'undefined') {
             if (defaultValueTriggersCallbacks && this._triggerCounter > weavecore.CallbackCollection.DEFAULT_TRIGGER_COUNT)
                 weavecore.StageUtils.callLater(this, _defaultValueTrigger.bind(this));
         }
+
+        /**
+         * temporary solution to save the namespace for this class/prototype
+         * @public
+         * @property ns
+         * @readOnly
+         * @type String
+         */
+        Object.defineProperty(this, 'ns', {
+            value: 'weavecore'
+        });
     }
 
     function _defaultValueTrigger() {
