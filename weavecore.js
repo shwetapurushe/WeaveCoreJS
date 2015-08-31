@@ -1782,6 +1782,7 @@ if (typeof window === 'undefined') {
     weavecore.DynamicState = DynamicState;
 
 }());
+
 /**
  * @module weavecore
  */
@@ -1820,6 +1821,7 @@ if (typeof window === 'undefined') {
     weavecore.ILinkableObject = ILinkableObject;
 
 }());
+
 /**
  * @module weavecore
  */
@@ -2623,6 +2625,7 @@ if (typeof window === 'undefined') {
     weavecore.GroupedCallbackEntry = GroupedCallbackEntry;
 
 }());
+
 /**
  * @module weavecore
  */
@@ -3666,6 +3669,7 @@ if (typeof window === 'undefined') {
     weavecore.SessionManager = SessionManager;
 
 }());
+
 /*
     Weave (Web-based Analysis and Visualization Environment)
     Copyright (C) 2008-2011 University of Massachusetts Lowell
@@ -4363,6 +4367,7 @@ if (typeof window === 'undefined') {
     weavecore.LinkableVariable = LinkableVariable;
 
 }());
+
 if (typeof window === 'undefined') {
     this.weavecore = this.weavecore || {};
 } else {
@@ -4431,6 +4436,7 @@ if (typeof window === 'undefined') {
     weavecore.LinkableNumber = LinkableNumber;
 
 }());
+
 if (typeof window === 'undefined') {
     this.weavecore = this.weavecore || {};
 } else {
@@ -4486,6 +4492,7 @@ if (typeof window === 'undefined') {
     weavecore.LinkableBoolean = LinkableBoolean;
 
 }());
+
 if (typeof window === 'undefined') {
     this.weavecore = this.weavecore || {};
 } else {
@@ -4542,6 +4549,7 @@ if (typeof window === 'undefined') {
     weavecore.LinkableString = LinkableString;
 
 }());
+
 /**
  * @module weavecore
  */
@@ -4711,6 +4719,7 @@ if (typeof window === 'undefined') {
     weavecore.ChildListCallbackInterface = ChildListCallbackInterface;
 
 }());
+
 /**
  * @module weavecore
  */
@@ -5002,6 +5011,7 @@ if (typeof window === 'undefined') {
 			// a.getState(null): "b value"
 		*/
 }());
+
 /**
  * @module weavecore
  */
@@ -5596,6 +5606,7 @@ if (typeof window === 'undefined') {
 
     weavecore.LinkableHashMap = LinkableHashMap;
 }());
+
 createjs.Ticker.setFPS(50);
 //createjs.Ticker.
 
@@ -5639,6 +5650,7 @@ Object.defineProperty(WeaveAPI, 'TASK_PRIORITY_LOW', {
  });*/
 WeaveAPI.SessionManager = new weavecore.SessionManager();
 WeaveAPI.globalHashMap = new weavecore.LinkableHashMap();
+
 /**
  * @module weavecore
  */
@@ -6014,6 +6026,7 @@ if (typeof window === 'undefined') {
 
 
 }());
+
 /*
     Weave (Web-based Analysis and Visualization Environment)
     Copyright (C) 2008-2011 University of Massachusetts Lowell
