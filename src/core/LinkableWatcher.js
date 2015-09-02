@@ -12,6 +12,19 @@ if (typeof window === 'undefined') {
 (function () {
     "use strict";
 
+    /**
+     * temporary solution to save the namespace for this class/prototype
+     * @static
+     * @public
+     * @property NS
+     * @default weavecore
+     * @readOnly
+     * @type String
+     */
+    Object.defineProperty(LinkableWatcher, 'NS', {
+        value: 'weavecore'
+    });
+
     // constructor:
     /**
      * This is used to dynamically attach a set of callbacks to different targets.

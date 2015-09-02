@@ -12,6 +12,19 @@ if (typeof window === 'undefined') {
 (function () {
     "use strict";
 
+    /**
+     * temporary solution to save the namespace for this class/prototype
+     * @static
+     * @public
+     * @property NS
+     * @default weavecore
+     * @readOnly
+     * @type String
+     */
+    Object.defineProperty(LinkableHashMap, 'NS', {
+        value: 'weavecore'
+    });
+
     // constructor:
     /**
      * Allows dynamically creating instances of objects inheriting ILinkableObject at runtime.
@@ -267,7 +280,7 @@ if (typeof window === 'undefined') {
      * @return {Object} The object under the requested name of the requested type, or null if an error occurred.
      */
     p.requestObject = function (name, classDef, lockObject) {
-        var className = classDef ? classDef.name : null;
+        var className = classDef ? classDef.ns + '.' + classDef.name : null;
         var result = this._initObjectByClassName.call(this, name, className, lockObject);
         return classDef ? result : null;
     };
@@ -342,7 +355,8 @@ if (typeof window === 'undefined') {
                 // If this name is not associated with an object of the specified type,
                 // associate the name with a new object of the specified type.
                 console.log(className);
-                var classDef = eval('weavecore.' + className); //TODO:remove hardcoded weavecore with namespace
+                var classDef = eval(className);
+                //var classDef = window['weavecore'][className]; //TODO:remove hardcoded weavecore with namespace
                 var object = this._nameToObjectMap[name];
                 if (!object || object.constructor !== classDef)
                     this._createAndSaveNewObject.call(this, name, classDef, lockObject);

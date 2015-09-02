@@ -11,6 +11,18 @@ if (typeof window === 'undefined') {
 
 (function () {
     "use strict";
+    /**
+     * temporary solution to save the namespace for this class/prototype
+     * @static
+     * @public
+     * @property NS
+     * @default weavecore
+     * @readOnly
+     * @type String
+     */
+    Object.defineProperty(ILinkableObject, 'NS', {
+        value: 'weavecore'
+    });
 
     // constructor:
     /**

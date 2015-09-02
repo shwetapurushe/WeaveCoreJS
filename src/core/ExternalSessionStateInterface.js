@@ -16,6 +16,19 @@ if (typeof window === 'undefined') {
  * @author sanjay1909
  */
 (function () {
+    /**
+     * temporary solution to save the namespace for this class/prototype
+     * @static
+     * @public
+     * @property NS
+     * @default weavecore
+     * @readOnly
+     * @type String
+     */
+    Object.defineProperty(ExternalSessionStateInterface, 'NS', {
+        value: 'weavecore'
+    });
+
     function ExternalSessionStateInterface() {
         this._rootObject = WeaveAPI.globalHashMap;
         this._getObjectFromPathOrVariableName_error = null;

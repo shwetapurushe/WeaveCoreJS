@@ -27,6 +27,19 @@ if (typeof window === 'undefined') {
         value: 1
     });
 
+    /**
+     * temporary solution to save the namespace for this class/prototype
+     * @static
+     * @public
+     * @property NS
+     * @default weavecore
+     * @readOnly
+     * @type String
+     */
+    Object.defineProperty(CallbackCollection, 'NS', {
+        value: 'weavecore'
+    });
+
     // constructor:
     /**
      * This class manages a list of callback functions.

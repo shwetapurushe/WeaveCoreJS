@@ -10,6 +10,19 @@ if (typeof window === 'undefined') {
  * @author sanjay1909
  */
 (function () {
+    /**
+     * temporary solution to save the namespace for this class/prototype
+     * @static
+     * @public
+     * @property NS
+     * @default weavecore
+     * @readOnly
+     * @type String
+     */
+    Object.defineProperty(LinkableBoolean, 'NS', {
+        value: 'weavecore'
+    });
+
     function LinkableBoolean(defaultValue, verifier, defaultValueTriggersCallbacks) {
         // set default values for Parameters
         if (verifier === undefined) verifier = null;

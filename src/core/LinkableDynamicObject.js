@@ -12,6 +12,19 @@ if (typeof window === 'undefined') {
 (function () {
     "use strict";
 
+    /**
+     * temporary solution to save the namespace for this class/prototype
+     * @static
+     * @public
+     * @property NS
+     * @default weavecore
+     * @readOnly
+     * @type String
+     */
+    Object.defineProperty(LinkableDynamicObject, 'NS', {
+        value: 'weavecore'
+    });
+
     // constructor:
     /**
      * This object links to an internal ILinkableObject.
@@ -246,7 +259,8 @@ if (typeof window === 'undefined') {
                 if (className || removeMissingDynamicObjects)
                     this._setLocalObjectType(className);
                 //TODO:Remove hardcoded NameSpace
-                var classDef = eval("weavecore." + className);
+                //var classDef = eval("weavecore." + className);
+                var classDef = window[className];
                 if ((!className && this.target) || (classDef && this.target instanceof classDef))
                     WeaveAPI.SessionManager.setSessionState(this.target, sessionState, prevTarget !== this.target || removeMissingDynamicObjects);
             }

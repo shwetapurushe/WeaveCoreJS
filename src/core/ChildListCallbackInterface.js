@@ -12,6 +12,18 @@ if (typeof window === 'undefined') {
 (function () {
     "use strict";
 
+    /**
+ * temporary solution to save the namespace for this class/prototype
+ * @static
+ * @public
+ * @property NS
+ * @default weavecore
+ * @readOnly
+ * @type String
+ */
+Object.defineProperty(ChildListCallbackInterface, 'NS', {
+    value: 'weavecore'
+});
     // constructor:
     /**
      * Private Class for use with {{#crossLink "LinkableHashMap"}}{{/crossLink}}
