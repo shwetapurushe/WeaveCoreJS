@@ -280,7 +280,7 @@ if (typeof window === 'undefined') {
      * @return {Object} The object under the requested name of the requested type, or null if an error occurred.
      */
     p.requestObject = function (name, classDef, lockObject) {
-        var className = classDef ? classDef.ns + '.' + classDef.name : null;
+        var className = classDef ? classDef.NS + '.' + classDef.name : null;
         var result = this._initObjectByClassName.call(this, name, className, lockObject);
         return classDef ? result : null;
     };
@@ -349,7 +349,7 @@ if (typeof window === 'undefined') {
         if (className) {
             // if no name is specified, generate a unique one now.
             if (!name)
-                name = generateUniqueName(className.split("::").pop());
+                name = generateUniqueName(className);
             if (className !== "delete") // to-do Add Support for class Utils - delete is temp solution
             {
                 // If this name is not associated with an object of the specified type,
