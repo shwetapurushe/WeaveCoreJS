@@ -28,16 +28,27 @@ if (typeof window === 'undefined') {
     });
 
     /**
-     * temporary solution to save the namespace for this class/prototype
+     * TO-DO:temporary solution to save the namespace for this class/prototype
      * @static
      * @public
      * @property NS
-     * @default weavecore
      * @readOnly
      * @type String
      */
     Object.defineProperty(CallbackCollection, 'NS', {
         value: 'weavecore'
+    });
+
+    /**
+     * TO-DO:temporary solution to save the CLASS_NAME constructor.name works for window object , but modular based won't work
+     * @static
+     * @public
+     * @property CLASS_NAME
+     * @readOnly
+     * @type String
+     */
+    Object.defineProperty(CallbackCollection, 'CLASS_NAME', {
+        value: 'CallbackCollection'
     });
 
     // constructor:

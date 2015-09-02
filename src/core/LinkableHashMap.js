@@ -25,6 +25,18 @@ if (typeof window === 'undefined') {
         value: 'weavecore'
     });
 
+    /**
+     * TO-DO:temporary solution to save the CLASS_NAME constructor.name works for window object , but modular based won't work
+     * @static
+     * @public
+     * @property CLASS_NAME
+     * @readOnly
+     * @type String
+     */
+    Object.defineProperty(LinkableHashMap, 'CLASS_NAME', {
+        value: 'LinkableHashMap'
+    });
+
     // constructor:
     /**
      * Allows dynamically creating instances of objects inheriting ILinkableObject at runtime.
@@ -280,7 +292,7 @@ if (typeof window === 'undefined') {
      * @return {Object} The object under the requested name of the requested type, or null if an error occurred.
      */
     p.requestObject = function (name, classDef, lockObject) {
-        var className = classDef ? classDef.NS + '.' + classDef.name : null;
+        var className = classDef ? classDef.NS + '.' + (classDef.CLASS_NAME ? classDef.CLASS_NAME : classDef.name) : null;
         var result = this._initObjectByClassName.call(this, name, className, lockObject);
         return classDef ? result : null;
     };

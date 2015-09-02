@@ -25,6 +25,18 @@ if (typeof window === 'undefined') {
         value: 'weavecore'
     });
 
+    /**
+     * TO-DO:temporary solution to save the CLASS_NAME constructor.name works for window object , but modular based won't work
+     * @static
+     * @public
+     * @property CLASS_NAME
+     * @readOnly
+     * @type String
+     */
+    Object.defineProperty(LinkableWatcher, 'CLASS_NAME', {
+        value: 'LinkableWatcher'
+    });
+
     // constructor:
     /**
      * This is used to dynamically attach a set of callbacks to different targets.

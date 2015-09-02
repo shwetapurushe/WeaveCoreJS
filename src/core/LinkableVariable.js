@@ -27,6 +27,18 @@ if (typeof window === 'undefined') {
     });
 
     /**
+     * TO-DO:temporary solution to save the CLASS_NAME constructor.name works for window object , but modular based won't work
+     * @static
+     * @public
+     * @property CLASS_NAME
+     * @readOnly
+     * @type String
+     */
+    Object.defineProperty(LinkableVariable, 'CLASS_NAME', {
+        value: 'LinkableVariable'
+    });
+
+    /**
      * If a defaultValue is specified, callbacks will be triggered in a later frame unless they have already been triggered before then.
      * This behavior is desirable because it allows the initial value to be handled by the same callbacks that handles new values.
      * @param sessionStateType The type of values accepted for this sessioned property.

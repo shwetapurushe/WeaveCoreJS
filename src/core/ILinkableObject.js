@@ -24,6 +24,18 @@ if (typeof window === 'undefined') {
         value: 'weavecore'
     });
 
+    /**
+     * TO-DO:temporary solution to save the CLASS_NAME constructor.name works for window object , but modular based won't work
+     * @static
+     * @public
+     * @property CLASS_NAME
+     * @readOnly
+     * @type String
+     */
+    Object.defineProperty(ILinkableObject, 'CLASS_NAME', {
+        value: 'ILinkableObject'
+    });
+
     // constructor:
     /**
      * An object that implements this empty interface has an associated CallbackCollection and session state,
