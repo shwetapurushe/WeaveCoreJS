@@ -5574,7 +5574,7 @@ if (typeof window === 'undefined') {
         if (className) {
             // if no name is specified, generate a unique one now.
             if (!name)
-                name = generateUniqueName(className);
+                name = this.f(className);
             if (className !== "delete") // to-do Add Support for class Utils - delete is temp solution
             {
                 // If this name is not associated with an object of the specified type,
@@ -5718,7 +5718,7 @@ if (typeof window === 'undefined') {
      * @method generateUniqueName
      * @param {String} baseName The name to start with.  If the name is already in use, an integer will be appended to create a unique name.
      */
-    generateUniqueName = function (baseName) {
+    p.generateUniqueName = function (baseName) {
         var count = 1;
         var name = baseName;
         while (this._previousNameMap[name] !== undefined)
@@ -5831,6 +5831,7 @@ if (typeof window === 'undefined') {
 
     weavecore.LinkableHashMap = LinkableHashMap;
 }());
+
 createjs.Ticker.setFPS(50);
 //createjs.Ticker.
 
