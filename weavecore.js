@@ -1845,6 +1845,7 @@ if (typeof window === 'undefined') {
     weavecore.ILinkableObject = ILinkableObject;
 
 }());
+
 /**
  * @module weavecore
  */
@@ -2672,6 +2673,7 @@ if (typeof window === 'undefined') {
     weavecore.GroupedCallbackEntry = GroupedCallbackEntry;
 
 }());
+
 /**
  * @module weavecore
  */
@@ -4439,6 +4441,7 @@ if (typeof window === 'undefined') {
     weavecore.LinkableVariable = LinkableVariable;
 
 }());
+
 if (typeof window === 'undefined') {
     this.weavecore = this.weavecore || {};
 } else {
@@ -4532,6 +4535,7 @@ if (typeof window === 'undefined') {
     weavecore.LinkableNumber = LinkableNumber;
 
 }());
+
 if (typeof window === 'undefined') {
     this.weavecore = this.weavecore || {};
 } else {
@@ -4613,6 +4617,7 @@ if (typeof window === 'undefined') {
     weavecore.LinkableBoolean = LinkableBoolean;
 
 }());
+
 if (typeof window === 'undefined') {
     this.weavecore = this.weavecore || {};
 } else {
@@ -4694,6 +4699,7 @@ if (typeof window === 'undefined') {
     weavecore.LinkableString = LinkableString;
 
 }());
+
 /**
  * @module weavecore
  */
@@ -4887,6 +4893,7 @@ if (typeof window === 'undefined') {
     weavecore.ChildListCallbackInterface = ChildListCallbackInterface;
 
 }());
+
 /**
  * @module weavecore
  */
@@ -5203,6 +5210,7 @@ if (typeof window === 'undefined') {
 			// a.getState(null): "b value"
 		*/
 }());
+
 /**
  * @module weavecore
  */
@@ -5710,7 +5718,7 @@ if (typeof window === 'undefined') {
      * @method generateUniqueName
      * @param {String} baseName The name to start with.  If the name is already in use, an integer will be appended to create a unique name.
      */
-    p.generateUniqueName = function (baseName) {
+    generateUniqueName = function (baseName) {
         var count = 1;
         var name = baseName;
         while (this._previousNameMap[name] !== undefined)
@@ -6268,6 +6276,7 @@ if (typeof window === 'undefined') {
 
 
 }());
+
 /*
     Weave (Web-based Analysis and Visualization Environment)
     Copyright (C) 2008-2011 University of Massachusetts Lowell

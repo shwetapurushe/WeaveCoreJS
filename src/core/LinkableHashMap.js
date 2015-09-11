@@ -505,7 +505,7 @@ if (typeof window === 'undefined') {
      * @method generateUniqueName
      * @param {String} baseName The name to start with.  If the name is already in use, an integer will be appended to create a unique name.
      */
-    p.generateUniqueName = function (baseName) {
+    generateUniqueName = function (baseName) {
         var count = 1;
         var name = baseName;
         while (this._previousNameMap[name] !== undefined)
