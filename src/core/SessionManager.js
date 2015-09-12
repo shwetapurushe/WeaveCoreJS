@@ -904,7 +904,7 @@ if (typeof window === 'undefined') {
 
             // find old properties that changed value
             for (var oldName in oldState) {
-                diffValue = computeDiff(oldState[oldName], newState[oldName]);
+                diffValue = this.computeDiff(oldState[oldName], newState[oldName]);
                 if (diffValue !== undefined) {
                     if (!diff)
                         diff = {};
