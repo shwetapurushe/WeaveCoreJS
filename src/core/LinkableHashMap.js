@@ -516,7 +516,7 @@ if (typeof window === 'undefined') {
             var object = this._nameToObjectMap[name];
             result[i] = weavecore.DynamicState.create(
                 name,
-                object.constructor.name,
+                object.constructor.NS + '.' + object.constructor.CLASS_NAME,
                 WeaveAPI.SessionManager.getSessionState(object)
             );
         }

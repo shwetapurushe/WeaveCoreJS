@@ -3716,6 +3716,7 @@ if (typeof window === 'undefined') {
     weavecore.SessionManager = SessionManager;
 
 }());
+
 /*
     Weave (Web-based Analysis and Visualization Environment)
     Copyright (C) 2008-2011 University of Massachusetts Lowell
@@ -5670,7 +5671,7 @@ if (typeof window === 'undefined') {
             var object = this._nameToObjectMap[name];
             result[i] = weavecore.DynamicState.create(
                 name,
-                object.constructor.name,
+                object.constructor.NS + '.' + object.constructor.CLASS_NAME,
                 WeaveAPI.SessionManager.getSessionState(object)
             );
         }
@@ -5763,7 +5764,6 @@ if (typeof window === 'undefined') {
 
     weavecore.LinkableHashMap = LinkableHashMap;
 }());
-
 createjs.Ticker.setFPS(50);
 //createjs.Ticker.
 

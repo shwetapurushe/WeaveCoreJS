@@ -98,7 +98,7 @@ if (typeof window === 'undefined') {
     p.getObjectType = function (objectPath) {
         var object = WeaveAPI.SessionManager.getObject(this._rootObject, objectPath);
         if (object)
-            return object.constructor.name;
+            return object.constructor.NS + '.' + object.constructor.CLASS_NAME;
 
         // no warning since getObjectType() may be used to check whether or not an object exists.
         return null;
@@ -133,7 +133,7 @@ if (typeof window === 'undefined') {
 
     p.requestObject = function (objectPath, objectType) {
         // get class definition
-        var classDef = eval('weavecore.' + objectType);
+        var classDef = eval(objectType);
         if (classDef === null || classDef === undefined) {
             console.log("No class definition for {0}", classQName);
             return false;
