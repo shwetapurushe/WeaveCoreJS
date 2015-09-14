@@ -63,6 +63,17 @@ if (typeof window === 'undefined') {
         Object.defineProperty(this, 'ns', {
             value: 'weavecore'
         });
+
+        /**
+         * temporary solution to save the className for this class/prototype
+         * @public
+         * @property className
+         * @readOnly
+         * @type String
+         */
+        Object.defineProperty(this, 'className', {
+            value: 'LinkableString'
+        });
     }
 
     LinkableString.prototype = new weavecore.LinkableVariable();

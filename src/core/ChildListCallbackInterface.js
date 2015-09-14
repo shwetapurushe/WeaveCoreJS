@@ -145,6 +145,17 @@ if (typeof window === 'undefined') {
             value: 'weavecore'
         });
 
+        /**
+         * temporary solution to save the className for this class/prototype
+         * @public
+         * @property className
+         * @readOnly
+         * @type String
+         */
+        Object.defineProperty(this, 'className', {
+            value: 'ChildListCallbackInterface'
+        });
+
     }
 
     ChildListCallbackInterface.prototype = new weavecore.CallbackCollection();
