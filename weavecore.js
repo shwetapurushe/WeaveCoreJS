@@ -1830,27 +1830,7 @@ if (typeof window === 'undefined') {
      * @constructor
      */
     function ILinkableObject() {
-        /**
-         * temporary solution to save the namespace for this class/prototype
-         * @public
-         * @property ns
-         * @readOnly
-         * @type String
-         */
-        Object.defineProperty(this, 'ns', {
-            value: 'weavecore'
-        });
 
-        /**
-         * temporary solution to save the className for this class/prototype
-         * @public
-         * @property className
-         * @readOnly
-         * @type String
-         */
-        Object.defineProperty(this, 'className', {
-            value: 'ILinkableObject'
-        });
     }
 
     weavecore.ILinkableObject = ILinkableObject;
@@ -2063,28 +2043,6 @@ if (typeof window === 'undefined') {
             get: function () {
                 return this._wasDisposed;
             }
-        });
-
-        /**
-         * temporary solution to save the namespace for this class/prototype
-         * @public
-         * @property ns
-         * @readOnly
-         * @type String
-         */
-        Object.defineProperty(this, 'ns', {
-            value: 'weavecore'
-        });
-
-        /**
-         * temporary solution to save the className for this class/prototype
-         * @public
-         * @property className
-         * @readOnly
-         * @type String
-         */
-        Object.defineProperty(this, 'className', {
-            value: 'CallbackCollection'
         });
 
     }
@@ -3151,7 +3109,7 @@ if (typeof window === 'undefined') {
         objectCC.delayCallbacks();
 
         // cache property names if necessary
-        var className = (linkableObject.ns + linkableObject.className);
+        var className = (linkableObject.constructor.NS + '.' + linkableObject.constructor.CLASS_NAME);
         if (!this._classNameToSessionedPropertyNames[className])
             this._cacheClassInfo(linkableObject, className);
 
@@ -3233,7 +3191,7 @@ if (typeof window === 'undefined') {
             // first pass: get property names
             // cache property names if necessary
             //var className = linkableObject.constructor.name; // we can't use constructor.name as minified verisons have different names
-            var className = linkableObject.ns + linkableObject.className;
+            var className = linkableObject.constructor.NS + '.' + linkableObject.constructor.CLASS_NAME;
 
             if (!this._classNameToSessionedPropertyNames[className])
                 this._cacheClassInfo(linkableObject, className);
@@ -3250,7 +3208,7 @@ if (typeof window === 'undefined') {
                     property = null; // must set this to null first because accessing the property may fail
                     property = linkableObject[name];
                 } catch (e) {
-                    console.log('Unable to get property "' + name + '" of class "' + linkableObject.ns + linkableObject.className + '"');
+                    console.log('Unable to get property "' + name + '" of class "' + linkableObject.constructor.NS + '.' + linkableObject.constructor.CLASS_NAME + '"');
                 }
 
                 // first pass: set result[name] to the ILinkableObject
@@ -3337,7 +3295,7 @@ if (typeof window === 'undefined') {
             return [];
         }
 
-        var className = linkableObject.ns + linkableObject.className;
+        var className = linkableObject.constructor.NS + '.' + linkableObject.constructor.CLASS_NAME;
         var propertyNames = this._classNameToSessionedPropertyNames[className];
         if (propertyNames === null || propertyNames === undefined) {
             this._cacheClassInfo(linkableObject, className);
@@ -4319,27 +4277,7 @@ if (typeof window === 'undefined') {
                 weavecore.StageUtils.callLater(this, _defaultValueTrigger.bind(this));
         }
 
-        /**
-         * temporary solution to save the namespace for this class/prototype
-         * @public
-         * @property ns
-         * @readOnly
-         * @type String
-         */
-        Object.defineProperty(this, 'ns', {
-            value: 'weavecore'
-        });
 
-        /**
-         * temporary solution to save the className for this class/prototype
-         * @public
-         * @property className
-         * @readOnly
-         * @type String
-         */
-        Object.defineProperty(this, 'className', {
-            value: 'LinkableVariable'
-        });
     }
 
     function _defaultValueTrigger() {
@@ -4526,27 +4464,7 @@ if (typeof window === 'undefined') {
                 this.setSessionState(val);
             }
         });
-        /**
-         * temporary solution to save the namespace for this class/prototype
-         * @public
-         * @property ns
-         * @readOnly
-         * @type String
-         */
-        Object.defineProperty(this, 'ns', {
-            value: 'weavecore'
-        });
 
-        /**
-         * temporary solution to save the className for this class/prototype
-         * @public
-         * @property className
-         * @readOnly
-         * @type String
-         */
-        Object.defineProperty(this, 'className', {
-            value: 'LinkableNumber'
-        });
     }
 
     LinkableNumber.prototype = new weavecore.LinkableVariable();
@@ -4628,27 +4546,7 @@ if (typeof window === 'undefined') {
                 this.setSessionState(val);
             }
         });
-        /**
-         * temporary solution to save the namespace for this class/prototype
-         * @public
-         * @property ns
-         * @readOnly
-         * @type String
-         */
-        Object.defineProperty(this, 'ns', {
-            value: 'weavecore'
-        });
 
-        /**
-         * temporary solution to save the className for this class/prototype
-         * @public
-         * @property className
-         * @readOnly
-         * @type String
-         */
-        Object.defineProperty(this, 'className', {
-            value: 'LinkableBoolean'
-        });
     }
 
     LinkableBoolean.prototype = new weavecore.LinkableVariable();
@@ -4722,27 +4620,7 @@ if (typeof window === 'undefined') {
                 this.setSessionState(val);
             }
         });
-        /**
-         * temporary solution to save the namespace for this class/prototype
-         * @public
-         * @property ns
-         * @readOnly
-         * @type String
-         */
-        Object.defineProperty(this, 'ns', {
-            value: 'weavecore'
-        });
 
-        /**
-         * temporary solution to save the className for this class/prototype
-         * @public
-         * @property className
-         * @readOnly
-         * @type String
-         */
-        Object.defineProperty(this, 'className', {
-            value: 'LinkableString'
-        });
     }
 
     LinkableString.prototype = new weavecore.LinkableVariable();
@@ -4893,28 +4771,6 @@ if (typeof window === 'undefined') {
             get: function () {
                 return this._lastObjectRemoved;
             }
-        });
-
-        /**
-         * temporary solution to save the namespace for this class/prototype
-         * @public
-         * @property ns
-         * @readOnly
-         * @type String
-         */
-        Object.defineProperty(this, 'ns', {
-            value: 'weavecore'
-        });
-
-        /**
-         * temporary solution to save the className for this class/prototype
-         * @public
-         * @property className
-         * @readOnly
-         * @type String
-         */
-        Object.defineProperty(this, 'className', {
-            value: 'ChildListCallbackInterface'
         });
 
     }
@@ -5084,27 +4940,6 @@ if (typeof window === 'undefined') {
             configurable: true
         });
 
-        /**
-         * temporary solution to save the namespace for this class/prototype
-         * @public
-         * @property ns
-         * @readOnly
-         * @type String
-         */
-        Object.defineProperty(this, 'ns', {
-            value: 'weavecore'
-        });
-
-        /**
-         * temporary solution to save the className for this class/prototype
-         * @public
-         * @property className
-         * @readOnly
-         * @type String
-         */
-        Object.defineProperty(this, 'className', {
-            value: 'LinkableWatcher'
-        });
     }
 
     LinkableWatcher.prototype = new weavecore.ILinkableObject();
@@ -5455,27 +5290,7 @@ if (typeof window === 'undefined') {
             }
         });
 
-        /**
-         * temporary solution to save the namespace for this class/prototype
-         * @public
-         * @property ns
-         * @readOnly
-         * @type String
-         */
-        Object.defineProperty(this, 'ns', {
-            value: 'weavecore'
-        });
 
-        /**
-         * temporary solution to save the className for this class/prototype
-         * @public
-         * @property className
-         * @readOnly
-         * @type String
-         */
-        Object.defineProperty(this, 'className', {
-            value: 'LinkableHashMap'
-        });
     }
 
     LinkableHashMap.prototype = new weavecore.CallbackCollection();
@@ -6145,27 +5960,7 @@ if (typeof window === 'undefined') {
 
         });
 
-        /**
-         * temporary solution to save the namespace for this class/prototype
-         * @public
-         * @property ns
-         * @readOnly
-         * @type String
-         */
-        Object.defineProperty(this, 'ns', {
-            value: 'weavecore'
-        });
 
-        /**
-         * temporary solution to save the className for this class/prototype
-         * @public
-         * @property className
-         * @readOnly
-         * @type String
-         */
-        Object.defineProperty(this, 'className', {
-            value: 'LinkableDynamicObject'
-        });
     }
 
     LinkableDynamicObject.prototype = new weavecore.LinkableWatcher();
@@ -6314,7 +6109,7 @@ if (typeof window === 'undefined') {
         // we nee dot get namespace of that object here too
         // temp solution store  Ns name in the object instance as String
         if (objectType)
-            this._setLocalObjectType(objectType.ns + '.' + objectType.constructor.name);
+            this._setLocalObjectType(objectType.constructor.NS + '.' + objectType.constructor.CLASS_NAME);
         else
             this.target = null;
 
@@ -6917,29 +6712,6 @@ if (typeof window === 'undefined') {
                 return this._redoHistory;
             }
         });
-
-        /**
-         * temporary solution to save the namespace for this class/prototype
-         * @public
-         * @property ns
-         * @readOnly
-         * @type String
-         */
-        Object.defineProperty(this, 'ns', {
-            value: 'weavecore'
-        });
-
-        /**
-         * temporary solution to save the className for this class/prototype
-         * @public
-         * @property className
-         * @readOnly
-         * @type String
-         */
-        Object.defineProperty(this, 'className', {
-            value: 'SessionStateLog'
-        });
-
 
     }
 

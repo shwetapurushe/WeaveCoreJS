@@ -45,27 +45,7 @@ if (typeof window === 'undefined') {
      * @constructor
      */
     function ILinkableObject() {
-        /**
-         * temporary solution to save the namespace for this class/prototype
-         * @public
-         * @property ns
-         * @readOnly
-         * @type String
-         */
-        Object.defineProperty(this, 'ns', {
-            value: 'weavecore'
-        });
 
-        /**
-         * temporary solution to save the className for this class/prototype
-         * @public
-         * @property className
-         * @readOnly
-         * @type String
-         */
-        Object.defineProperty(this, 'className', {
-            value: 'ILinkableObject'
-        });
     }
 
     weavecore.ILinkableObject = ILinkableObject;

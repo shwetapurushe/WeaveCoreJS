@@ -14,28 +14,32 @@ if (typeof window === 'undefined') {
  * @author sanjay1909
  */
 (function () {
-    function ILinkableCompositeObject() {
-        /**
-         * temporary solution to save the namespace for this class/prototype
-         * @public
-         * @property ns
-         * @readOnly
-         * @type String
-         */
-        Object.defineProperty(this, 'ns', {
-            value: 'weavecore'
-        });
 
-        /**
-         * temporary solution to save the className for this class/prototype
-         * @public
-         * @property className
-         * @readOnly
-         * @type String
-         */
-        Object.defineProperty(this, 'className', {
-            value: 'ILinkableCompositeObject'
-        });
+    /**
+     * temporary solution to save the namespace for this class/prototype
+     * @public
+     * @property NS
+     * @readOnly
+     * @type String
+     */
+    Object.defineProperty(ILinkableCompositeObject, 'NS', {
+        value: 'weavecore'
+    });
+
+    /**
+     * temporary solution to save the className for this class/prototype
+     * @public
+     * @property CLASS_NAME
+     * @readOnly
+     * @type String
+     */
+    Object.defineProperty(ILinkableCompositeObject, 'CLASS_NAME', {
+        value: 'ILinkableCompositeObject'
+    });
+
+
+    function ILinkableCompositeObject() {
+
     }
 
 

@@ -455,7 +455,7 @@ if (typeof window === 'undefined') {
         objectCC.delayCallbacks();
 
         // cache property names if necessary
-        var className = (linkableObject.ns + linkableObject.className);
+        var className = (linkableObject.constructor.NS + '.' + linkableObject.constructor.CLASS_NAME);
         if (!this._classNameToSessionedPropertyNames[className])
             this._cacheClassInfo(linkableObject, className);
 
@@ -537,7 +537,7 @@ if (typeof window === 'undefined') {
             // first pass: get property names
             // cache property names if necessary
             //var className = linkableObject.constructor.name; // we can't use constructor.name as minified verisons have different names
-            var className = linkableObject.ns + linkableObject.className;
+            var className = linkableObject.constructor.NS + '.' + linkableObject.constructor.CLASS_NAME;
 
             if (!this._classNameToSessionedPropertyNames[className])
                 this._cacheClassInfo(linkableObject, className);
@@ -554,7 +554,7 @@ if (typeof window === 'undefined') {
                     property = null; // must set this to null first because accessing the property may fail
                     property = linkableObject[name];
                 } catch (e) {
-                    console.log('Unable to get property "' + name + '" of class "' + linkableObject.ns + linkableObject.className + '"');
+                    console.log('Unable to get property "' + name + '" of class "' + linkableObject.constructor.NS + '.' + linkableObject.constructor.CLASS_NAME + '"');
                 }
 
                 // first pass: set result[name] to the ILinkableObject
@@ -641,7 +641,7 @@ if (typeof window === 'undefined') {
             return [];
         }
 
-        var className = linkableObject.ns + linkableObject.className;
+        var className = linkableObject.constructor.NS + '.' + linkableObject.constructor.CLASS_NAME;
         var propertyNames = this._classNameToSessionedPropertyNames[className];
         if (propertyNames === null || propertyNames === undefined) {
             this._cacheClassInfo(linkableObject, className);

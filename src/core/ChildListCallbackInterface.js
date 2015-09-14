@@ -134,28 +134,6 @@ if (typeof window === 'undefined') {
             }
         });
 
-        /**
-         * temporary solution to save the namespace for this class/prototype
-         * @public
-         * @property ns
-         * @readOnly
-         * @type String
-         */
-        Object.defineProperty(this, 'ns', {
-            value: 'weavecore'
-        });
-
-        /**
-         * temporary solution to save the className for this class/prototype
-         * @public
-         * @property className
-         * @readOnly
-         * @type String
-         */
-        Object.defineProperty(this, 'className', {
-            value: 'ChildListCallbackInterface'
-        });
-
     }
 
     ChildListCallbackInterface.prototype = new weavecore.CallbackCollection();

@@ -178,27 +178,7 @@ if (typeof window === 'undefined') {
 
         });
 
-        /**
-         * temporary solution to save the namespace for this class/prototype
-         * @public
-         * @property ns
-         * @readOnly
-         * @type String
-         */
-        Object.defineProperty(this, 'ns', {
-            value: 'weavecore'
-        });
 
-        /**
-         * temporary solution to save the className for this class/prototype
-         * @public
-         * @property className
-         * @readOnly
-         * @type String
-         */
-        Object.defineProperty(this, 'className', {
-            value: 'LinkableDynamicObject'
-        });
     }
 
     LinkableDynamicObject.prototype = new weavecore.LinkableWatcher();
@@ -347,7 +327,7 @@ if (typeof window === 'undefined') {
         // we nee dot get namespace of that object here too
         // temp solution store  Ns name in the object instance as String
         if (objectType)
-            this._setLocalObjectType(objectType.ns + '.' + objectType.constructor.name);
+            this._setLocalObjectType(objectType.constructor.NS + '.' + objectType.constructor.CLASS_NAME);
         else
             this.target = null;
 
