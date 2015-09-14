@@ -337,8 +337,27 @@ if (typeof window === 'undefined') {
             }
         } else {
             var deprecatedLookup = null;
-            //TODO: support for Linkable dynamic object
-            console.log("Linkable dynamic object not yet supported - only Linkablehashmap");
+            if (object instanceof weavecore.LinkableDynamicObject) {
+                //TODO: support for Linkable dynamic object
+                console.log("Linkable dynamic object not yet supported - only Linkablehashmap");
+            } else if (Object) {
+                names = this.getLinkablePropertyNames(object);
+            }
+            names.map(function (name) {
+                if (object instanceof weavecore.LinkableDynamicObject) {
+                    childObject = object.internalObject;
+                }
+                if (!childObject)
+                    continue;
+                if (this._childToParentMap.get(childObject) && this._childToParentMap.get(childObject).get(object)) {
+                    if (ignoreList.get(childObject) !== undefined) {
+                        continue;
+                    }
+                    ignoreList.set(childObject, true);
+                    children.push(this.getSessionStateTree(childObject, name));
+                }
+            }.bind(this))
+
         }
         if (children.length === 0)
             children = null;
@@ -560,7 +579,7 @@ if (typeof window === 'undefined') {
                 // first pass: set result[name] to the ILinkableObject
                 if (property !== null && !this._getSessionStateIgnoreList[property]) {
                     // skip this property if it should not appear in the session state under the parent.
-                    if (this._childToParentMap[property] === undefined || !this._childToParentMap[property][linkableObject])
+                    if (this._childToParentMap.get(property) === undefined || !this._childToParentMap.get(property).get(linkableObject))
                         continue;
                     // avoid infinite recursion in implicit session states
                     this._getSessionStateIgnoreList[property] = true;
@@ -658,7 +677,7 @@ if (typeof window === 'undefined') {
                 var property = linkableObject[propName];
                 if (property === null || property === undefined)
                     return false;
-                if (this._childToParentMap[property] === undefined || !this._childToParentMap[property][linkableObject])
+                if (this._childToParentMap.get(property) === undefined || !this._childToParentMap.get(property).get(linkableObject)
                     return false;
 
                 return true;
