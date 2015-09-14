@@ -613,8 +613,13 @@ if (typeof window === 'undefined') {
         var sessionedPublicProperties = propertyNames.filter(function (propName) {
             if (propName.charAt(0) === '_')
                 return false; //Private properties are ignored
-            else
-                return linkableObject[propName] instanceof weavecore.ILinkableObject;
+            else {
+                var isSessionable = false;
+                if (linkableObject[propName] instanceof weavecore.ILinkableObject || linkableObject[propName].sessionable) {
+                    isSessionable = true
+                }
+            }
+            return isSessionable;
         });
 
         this._classNameToSessionedPropertyNames[className] = sessionedPublicProperties.sort();
