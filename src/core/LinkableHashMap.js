@@ -37,6 +37,19 @@ if (typeof window === 'undefined') {
         value: 'LinkableHashMap'
     });
 
+    /**
+     * TO-DO:temporary solution for checking class in sessionable
+     * @static
+     * @public
+     * @property SESSIONABLE
+     * @readOnly
+     * @type String
+     */
+    Object.defineProperty(LinkableHashMap, 'SESSIONABLE', {
+        value: true
+    });
+
+
     // constructor:
     /**
      * Allows dynamically creating instances of objects inheriting ILinkableObject at runtime.

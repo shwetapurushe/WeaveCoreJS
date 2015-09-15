@@ -36,6 +36,18 @@ if (typeof window === 'undefined') {
         value: 'ILinkableObject'
     });
 
+    /**
+     * TO-DO:temporary solution for checking class in sessionable
+     * @static
+     * @public
+     * @property SESSIONABLE
+     * @readOnly
+     * @type String
+     */
+    Object.defineProperty(ILinkableObject, 'SESSIONABLE', {
+        value: true
+    });
+
     // constructor:
     /**
      * An object that implements this empty interface has an associated CallbackCollection and session state,

@@ -39,6 +39,18 @@ if (typeof window === 'undefined') {
     });
 
     /**
+     * TO-DO:temporary solution for checking class in sessionable
+     * @static
+     * @public
+     * @property SESSIONABLE
+     * @readOnly
+     * @type String
+     */
+    Object.defineProperty(LinkableVariable, 'SESSIONABLE', {
+        value: true
+    });
+
+    /**
      * If a defaultValue is specified, callbacks will be triggered in a later frame unless they have already been triggered before then.
      * This behavior is desirable because it allows the initial value to be handled by the same callbacks that handles new values.
      * @param sessionStateType The type of values accepted for this sessioned property.

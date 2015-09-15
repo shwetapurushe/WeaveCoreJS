@@ -35,6 +35,19 @@ if (typeof window === 'undefined') {
         value: 'LinkableString'
     });
 
+
+    /**
+     * TO-DO:temporary solution for checking class in sessionable
+     * @static
+     * @public
+     * @property SESSIONABLE
+     * @readOnly
+     * @type String
+     */
+    Object.defineProperty(LinkableString, 'SESSIONABLE', {
+        value: true
+    });
+
     function LinkableString(defaultValue, verifier, defaultValueTriggersCallbacks) {
         // set default values for Parameters
 

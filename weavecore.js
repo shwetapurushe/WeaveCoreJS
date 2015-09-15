@@ -1821,6 +1821,18 @@ if (typeof window === 'undefined') {
         value: 'ILinkableObject'
     });
 
+    /**
+     * TO-DO:temporary solution for checking class in sessionable
+     * @static
+     * @public
+     * @property SESSIONABLE
+     * @readOnly
+     * @type String
+     */
+    Object.defineProperty(ILinkableObject, 'SESSIONABLE', {
+        value: true
+    });
+
     // constructor:
     /**
      * An object that implements this empty interface has an associated CallbackCollection and session state,
@@ -1836,7 +1848,6 @@ if (typeof window === 'undefined') {
     weavecore.ILinkableObject = ILinkableObject;
 
 }());
-
 /**
  * @module weavecore
  */
@@ -1888,6 +1899,18 @@ if (typeof window === 'undefined') {
      */
     Object.defineProperty(CallbackCollection, 'CLASS_NAME', {
         value: 'CallbackCollection'
+    });
+
+    /**
+     * TO-DO:temporary solution for checking class in sessionable
+     * @static
+     * @public
+     * @property SESSIONABLE
+     * @readOnly
+     * @type String
+     */
+    Object.defineProperty(CallbackCollection, 'SESSIONABLE', {
+        value: true
     });
 
     // constructor:
@@ -2653,7 +2676,6 @@ if (typeof window === 'undefined') {
     weavecore.GroupedCallbackEntry = GroupedCallbackEntry;
 
 }());
-
 /**
  * @module weavecore
  */
@@ -4229,6 +4251,18 @@ if (typeof window === 'undefined') {
     });
 
     /**
+     * TO-DO:temporary solution for checking class in sessionable
+     * @static
+     * @public
+     * @property SESSIONABLE
+     * @readOnly
+     * @type String
+     */
+    Object.defineProperty(LinkableVariable, 'SESSIONABLE', {
+        value: true
+    });
+
+    /**
      * If a defaultValue is specified, callbacks will be triggered in a later frame unless they have already been triggered before then.
      * This behavior is desirable because it allows the initial value to be handled by the same callbacks that handles new values.
      * @param sessionStateType The type of values accepted for this sessioned property.
@@ -4431,7 +4465,6 @@ if (typeof window === 'undefined') {
     weavecore.LinkableVariable = LinkableVariable;
 
 }());
-
 if (typeof window === 'undefined') {
     this.weavecore = this.weavecore || {};
 } else {
@@ -4467,6 +4500,18 @@ if (typeof window === 'undefined') {
      */
     Object.defineProperty(LinkableNumber, 'CLASS_NAME', {
         value: 'LinkableNumber'
+    });
+
+    /**
+     * TO-DO:temporary solution for checking class in sessionable
+     * @static
+     * @public
+     * @property SESSIONABLE
+     * @readOnly
+     * @type String
+     */
+    Object.defineProperty(LinkableNumber, 'SESSIONABLE', {
+        value: true
     });
 
     function LinkableNumber(defaultValue, verifier, defaultValueTriggersCallbacks) {
@@ -4516,7 +4561,6 @@ if (typeof window === 'undefined') {
     weavecore.LinkableNumber = LinkableNumber;
 
 }());
-
 if (typeof window === 'undefined') {
     this.weavecore = this.weavecore || {};
 } else {
@@ -4555,6 +4599,18 @@ if (typeof window === 'undefined') {
         value: 'LinkableBoolean'
     });
 
+    /**
+     * TO-DO:temporary solution for checking class in sessionable
+     * @static
+     * @public
+     * @property SESSIONABLE
+     * @readOnly
+     * @type String
+     */
+    Object.defineProperty(LinkableBoolean, 'SESSIONABLE', {
+        value: true
+    });
+
     function LinkableBoolean(defaultValue, verifier, defaultValueTriggersCallbacks) {
         // set default values for Parameters
         if (verifier === undefined) verifier = null;
@@ -4589,7 +4645,6 @@ if (typeof window === 'undefined') {
     weavecore.LinkableBoolean = LinkableBoolean;
 
 }());
-
 if (typeof window === 'undefined') {
     this.weavecore = this.weavecore || {};
 } else {
@@ -4627,6 +4682,19 @@ if (typeof window === 'undefined') {
         value: 'LinkableString'
     });
 
+
+    /**
+     * TO-DO:temporary solution for checking class in sessionable
+     * @static
+     * @public
+     * @property SESSIONABLE
+     * @readOnly
+     * @type String
+     */
+    Object.defineProperty(LinkableString, 'SESSIONABLE', {
+        value: true
+    });
+
     function LinkableString(defaultValue, verifier, defaultValueTriggersCallbacks) {
         // set default values for Parameters
 
@@ -4662,7 +4730,6 @@ if (typeof window === 'undefined') {
     weavecore.LinkableString = LinkableString;
 
 }());
-
 /**
  * @module weavecore
  */
@@ -4701,6 +4768,19 @@ if (typeof window === 'undefined') {
     Object.defineProperty(ChildListCallbackInterface, 'CLASS_NAME', {
         value: 'ChildListCallbackInterface'
     });
+
+    /**
+     * TO-DO:temporary solution for checking class in sessionable
+     * @static
+     * @public
+     * @property SESSIONABLE
+     * @readOnly
+     * @type String
+     */
+    Object.defineProperty(ChildListCallbackInterface, 'SESSIONABLE', {
+        value: true
+    });
+
     // constructor:
     /**
      * Private Class for use with {{#crossLink "LinkableHashMap"}}{{/crossLink}}
@@ -4845,7 +4925,6 @@ if (typeof window === 'undefined') {
     weavecore.ChildListCallbackInterface = ChildListCallbackInterface;
 
 }());
-
 /**
  * @module weavecore
  */
@@ -4883,6 +4962,18 @@ if (typeof window === 'undefined') {
      */
     Object.defineProperty(LinkableWatcher, 'CLASS_NAME', {
         value: 'LinkableWatcher'
+    });
+
+    /**
+     * TO-DO:temporary solution for checking class in sessionable
+     * @static
+     * @public
+     * @property SESSIONABLE
+     * @readOnly
+     * @type String
+     */
+    Object.defineProperty(LinkableWatcher, 'SESSIONABLE', {
+        value: true
     });
 
     // constructor:
@@ -5152,7 +5243,6 @@ if (typeof window === 'undefined') {
 			// a.getState(null): "b value"
 		*/
 }());
-
 /**
  * @module weavecore
  */
@@ -5191,6 +5281,19 @@ if (typeof window === 'undefined') {
     Object.defineProperty(LinkableHashMap, 'CLASS_NAME', {
         value: 'LinkableHashMap'
     });
+
+    /**
+     * TO-DO:temporary solution for checking class in sessionable
+     * @static
+     * @public
+     * @property SESSIONABLE
+     * @readOnly
+     * @type String
+     */
+    Object.defineProperty(LinkableHashMap, 'SESSIONABLE', {
+        value: true
+    });
+
 
     // constructor:
     /**
@@ -5775,12 +5878,6 @@ if (typeof window === 'undefined') {
     window.WeaveAPI = window.WeaveAPI || {};
 }
 
-//Object.defineProperty(WeaveAPI, '_sessionManager', {
-// value: new SessionManager()
-//});
-//Object.defineProperty(WeaveAPI, '_stageUtils', {
-//value: new weave.core.StageUtils()
-//});
 
 Object.defineProperty(WeaveAPI, 'TASK_PRIORITY_IMMEDIATE', {
     value: 0
@@ -5798,16 +5895,9 @@ Object.defineProperty(WeaveAPI, 'TASK_PRIORITY_LOW', {
     value: 3
 });
 
-/* WeaveAPI.__defineGetter__("SessionManager", function(){
-     return WeaveAPI._sessionManager;
- });
 
- WeaveAPI.__defineGetter__("StageUtils", function(){
-     return WeaveAPI._stageUtils;
- });*/
 WeaveAPI.SessionManager = new weavecore.SessionManager();
 WeaveAPI.globalHashMap = new weavecore.LinkableHashMap();
-
 /**
  * @module weavecore
  */
@@ -5847,6 +5937,18 @@ if (typeof window === 'undefined') {
         value: 'LinkableDynamicObject'
     });
 
+    /**
+     * TO-DO:temporary solution for checking class in sessionable
+     * @static
+     * @public
+     * @property SESSIONABLE
+     * @readOnly
+     * @type String
+     */
+    Object.defineProperty(LinkableDynamicObject, 'SESSIONABLE', {
+        value: true
+    });
+
     // constructor:
     /**
      * This object links to an internal ILinkableObject.
@@ -5866,7 +5968,7 @@ if (typeof window === 'undefined') {
 
         weavecore.LinkableWatcher.call(this, typeRestriction);
         if (typeRestriction)
-            this._typeRestrictionClassName = typeRestriction.constructor.name;
+            this._typeRestrictionClassName = typeRestriction.NS + '.' + typeRestriction.CLASS_NAME;
 
         // the callback collection for this object
         // private const
@@ -6011,7 +6113,7 @@ if (typeof window === 'undefined') {
         if (!obj)
             return [];
 
-        var className = obj.constructor.name;
+        var className = obj.constructor.NS + obj.constructor.CLASS_NAME;
         var sessionState = obj || WeaveAPI.SessionManager.getSessionState(obj);
         return [weavecore.DynamicState.create(null, className, sessionState)];
     };
@@ -6112,7 +6214,7 @@ if (typeof window === 'undefined') {
         this.targetPath = null;
 
         var classDef = eval(className);
-        if (classDef instanceof weavecore.ILinkableObject && (this._typeRestriction === null || this._typeRestriction === undefined || classDef instanceof this._typeRestriction)) {
+        if ((classDef.prototype instanceof weavecore.ILinkableObject || classDef.SESSIONABLE) && (this._typeRestriction === null || this._typeRestriction === undefined || classDef === this._typeRestriction)) {
 
             var obj = target;
             if (!obj || obj.constructor !== classDef)
@@ -6200,7 +6302,6 @@ if (typeof window === 'undefined') {
 
 
 }());
-
 /*
     Weave (Web-based Analysis and Visualization Environment)
     Copyright (C) 2008-2011 University of Massachusetts Lowell

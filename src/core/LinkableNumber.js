@@ -35,6 +35,18 @@ if (typeof window === 'undefined') {
         value: 'LinkableNumber'
     });
 
+    /**
+     * TO-DO:temporary solution for checking class in sessionable
+     * @static
+     * @public
+     * @property SESSIONABLE
+     * @readOnly
+     * @type String
+     */
+    Object.defineProperty(LinkableNumber, 'SESSIONABLE', {
+        value: true
+    });
+
     function LinkableNumber(defaultValue, verifier, defaultValueTriggersCallbacks) {
         // set default values for Parameters
         if (defaultValue === undefined) defaultValue = NaN;

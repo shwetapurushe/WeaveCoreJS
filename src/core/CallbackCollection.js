@@ -51,6 +51,18 @@ if (typeof window === 'undefined') {
         value: 'CallbackCollection'
     });
 
+    /**
+     * TO-DO:temporary solution for checking class in sessionable
+     * @static
+     * @public
+     * @property SESSIONABLE
+     * @readOnly
+     * @type String
+     */
+    Object.defineProperty(CallbackCollection, 'SESSIONABLE', {
+        value: true
+    });
+
     // constructor:
     /**
      * This class manages a list of callback functions.

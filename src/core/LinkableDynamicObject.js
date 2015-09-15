@@ -37,6 +37,18 @@ if (typeof window === 'undefined') {
         value: 'LinkableDynamicObject'
     });
 
+    /**
+     * TO-DO:temporary solution for checking class in sessionable
+     * @static
+     * @public
+     * @property SESSIONABLE
+     * @readOnly
+     * @type String
+     */
+    Object.defineProperty(LinkableDynamicObject, 'SESSIONABLE', {
+        value: true
+    });
+
     // constructor:
     /**
      * This object links to an internal ILinkableObject.
@@ -56,7 +68,7 @@ if (typeof window === 'undefined') {
 
         weavecore.LinkableWatcher.call(this, typeRestriction);
         if (typeRestriction)
-            this._typeRestrictionClassName = typeRestriction.constructor.name;
+            this._typeRestrictionClassName = typeRestriction.NS + '.' + typeRestriction.CLASS_NAME;
 
         // the callback collection for this object
         // private const
@@ -201,7 +213,7 @@ if (typeof window === 'undefined') {
         if (!obj)
             return [];
 
-        var className = obj.constructor.name;
+        var className = obj.constructor.NS + obj.constructor.CLASS_NAME;
         var sessionState = obj || WeaveAPI.SessionManager.getSessionState(obj);
         return [weavecore.DynamicState.create(null, className, sessionState)];
     };
@@ -302,7 +314,7 @@ if (typeof window === 'undefined') {
         this.targetPath = null;
 
         var classDef = eval(className);
-        if (classDef instanceof weavecore.ILinkableObject && (this._typeRestriction === null || this._typeRestriction === undefined || classDef instanceof this._typeRestriction)) {
+        if ((classDef.prototype instanceof weavecore.ILinkableObject || classDef.SESSIONABLE) && (this._typeRestriction === null || this._typeRestriction === undefined || classDef === this._typeRestriction)) {
 
             var obj = target;
             if (!obj || obj.constructor !== classDef)

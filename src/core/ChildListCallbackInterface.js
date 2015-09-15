@@ -36,6 +36,19 @@ if (typeof window === 'undefined') {
     Object.defineProperty(ChildListCallbackInterface, 'CLASS_NAME', {
         value: 'ChildListCallbackInterface'
     });
+
+    /**
+     * TO-DO:temporary solution for checking class in sessionable
+     * @static
+     * @public
+     * @property SESSIONABLE
+     * @readOnly
+     * @type String
+     */
+    Object.defineProperty(ChildListCallbackInterface, 'SESSIONABLE', {
+        value: true
+    });
+
     // constructor:
     /**
      * Private Class for use with {{#crossLink "LinkableHashMap"}}{{/crossLink}}

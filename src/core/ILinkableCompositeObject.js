@@ -37,6 +37,18 @@ if (typeof window === 'undefined') {
         value: 'ILinkableCompositeObject'
     });
 
+    /**
+     * TO-DO:temporary solution for checking class in sessionable
+     * @static
+     * @public
+     * @property SESSIONABLE
+     * @readOnly
+     * @type String
+     */
+    Object.defineProperty(ILinkableCompositeObject, 'SESSIONABLE', {
+        value: true
+    });
+
 
     function ILinkableCompositeObject() {
 
