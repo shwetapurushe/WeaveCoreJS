@@ -61,6 +61,8 @@
 
                 <li><a href="../classes/LinkableHashMap.html">LinkableHashMap</a></li>
 
+                <li><a href="../classes/LinkablePromise.html">LinkablePromise</a></li>
+
                 <li><a href="../classes/LinkableWatcher.html">LinkableWatcher</a></li>
 
                 <li><a href="../classes/SessionManager.html">SessionManager</a></li>
@@ -312,6 +314,8 @@ if (typeof window === &#x27;undefined&#x27;) {
                     value = Object.create(value);
             }
 
+            weavecore.DynamicState.alterSessionStateToBypassDiff(value);
+
 
             // save external copy, accessible via getSessionState()
             this._sessionStateExternal = value;
@@ -341,8 +345,15 @@ if (typeof window === &#x27;undefined&#x27;) {
         if (this._primitiveType)
             return this._sessionStateInternal === otherSessionState;
 
-        return weavecore.StandardLib.compare(this._sessionStateInternal, otherSessionState) === 0;
+        return weavecore.StandardLib.compare(this._sessionStateInternal, otherSessionState, objectCompare.bind(this)) === 0;
     };
+
+    function objectCompare(a, b) {
+        if (weavecore.DynamicState.isDynamicState(a, true) &amp;&amp; weavecore.DynamicState.isDynamicState(b, true) &amp;&amp; a[weavecore.DynamicState.CLASS_NAME] === b[weavecore.DynamicState.CLASS_NAME] &amp;&amp; a[weavecore.DynamicState.OBJECT_NAME] === b[weavecore.DynamicState.OBJECT_NAME]) {
+            return weavecore.StandardLib.compare(a[weavecore.DynamicState.SESSION_STATE], b[weavecore.DynamicState.SESSION_STATE], objectCompare);
+        }
+
+    }
 
 
     /**
@@ -369,6 +380,7 @@ if (typeof window === &#x27;undefined&#x27;) {
     weavecore.LinkableVariable = LinkableVariable;
 
 }());
+
     </pre>
 </div>
 

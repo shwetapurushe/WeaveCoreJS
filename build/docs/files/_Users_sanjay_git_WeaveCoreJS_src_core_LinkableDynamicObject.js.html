@@ -61,6 +61,8 @@
 
                 <li><a href="../classes/LinkableHashMap.html">LinkableHashMap</a></li>
 
+                <li><a href="../classes/LinkablePromise.html">LinkablePromise</a></li>
+
                 <li><a href="../classes/LinkableWatcher.html">LinkableWatcher</a></li>
 
                 <li><a href="../classes/SessionManager.html">SessionManager</a></li>
@@ -358,7 +360,7 @@ if (typeof window === &#x27;undefined&#x27;) {
             }
 
             // if it&#x27;s not a dynamic state array, treat it as a path
-            if (!weavecore.DynamicState.isDynamicStateArray(newState)) {
+            if (!weavecore.DynamicState.isDynamicStateArray(newState, true)) {
                 this.targetPath = newState;
                 return;
             }
@@ -518,6 +520,7 @@ if (typeof window === &#x27;undefined&#x27;) {
 
 
 }());
+
     </pre>
 </div>
 
