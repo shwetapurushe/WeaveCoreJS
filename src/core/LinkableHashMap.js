@@ -555,6 +555,8 @@ if (typeof window === 'undefined') {
 
         // first pass: make sure the types match and sessioned properties are instantiated.
         var i;
+        var delayed = [];
+        var callbacks;
         var objectName;
         var className;
         var typedState;
@@ -562,6 +564,13 @@ if (typeof window === 'undefined') {
         var newObjects = {}; // maps an objectName to a value of true if the object is newly created as a result of setting the session state
         var newNameOrder = []; // the order the object names appear in the vector
         if (newStateArray !== null && newStateArray !== undefined) {
+            // first pass: delay callbacks of all children
+            for (var m = 0; m < this._orderedNames.length; m++) {
+                objectName = this._orderedNames[m]
+                callbacks = WeaveAPI.SessionManager.getCallbackCollection(this._nameToObjectMap[objectName]);
+                delayed.push(callbacks)
+                callbacks.delayCallbacks();
+            }
             // initialize all the objects before setting their session states because they may refer to each other.
             for (i = 0; i < newStateArray.length; i++) {
                 typedState = newStateArray[i];
@@ -579,7 +588,16 @@ if (typeof window === 'undefined') {
                 if (this._nameToObjectMap[objectName] !== this._initObjectByClassName.call(this, objectName, className))
                     newObjects[objectName] = true;
             }
-            // second pass: copy the session state for each property that is defined.
+
+            // next pass: delay callbacks of all children (again, because there may be new children)
+            for (var n = 0; n < this._orderedNames.length; n++) {
+                objectName = this._orderedNames[n]
+                callbacks = WeaveAPI.SessionManager.getCallbackCollection(this._nameToObjectMap[objectName]);
+                delayed.push(callbacks)
+                callbacks.delayCallbacks();
+            }
+
+            // next pass: copy the session state for each property that is defined.
             // Also remember the ordered list of names that appear in the session state.
             for (i = 0; i < newStateArray.length; i++) {
                 typedState = newStateArray[i];
@@ -619,6 +637,12 @@ if (typeof window === 'undefined') {
         }
         // update name order AFTER objects have been added and removed.
         this.setNameOrder(newNameOrder);
+
+        for (var k = 0; k < delayed.length; k++) {
+            callbacks = delayed[k]
+            if (!WeaveAPI.SessionManager.objectWasDisposed(callbacks))
+                callbacks.resumeCallbacks();
+        }
 
         this.resumeCallbacks();
     };

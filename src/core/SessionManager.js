@@ -411,7 +411,7 @@ if (typeof window === 'undefined') {
      * @param {Object} diff
      */
     p._applyDiff = function (base, diff) {
-        if (base === null || base === undefined || typeof (base) !== 'object')
+        if (base === null || base === undefined || typeof (base) !== 'object' || diff === null || diff === undefined || typeof (diff) !== 'object')
             return diff;
 
         for (var key in diff)
