@@ -25,6 +25,7 @@ module.exports = function (grunt) {
                     'src/core/ChildListCallbackInterface.js',
                     'src/core/LinkableWatcher.js',
                     'src/core/LinkableHashMap.js',
+                    'src/core/LinkablePromise.js',
 
                     'src/data/keysetCallbackInterface',
 
@@ -34,10 +35,6 @@ module.exports = function (grunt) {
                     'src/core/StageUtils.js',
                     'src/core/ExternalSessionStateInterface',
                     'src/core/SessionStateLog.js',
-
-
-
-
                ],
                 dest: 'weavecore.js',
             }

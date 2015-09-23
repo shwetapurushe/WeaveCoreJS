@@ -25,6 +25,7 @@ var buildOrder = [
                     core + '/ChildListCallbackInterface.js',
                     core + '/LinkableWatcher.js',
                     core + '/LinkableHashMap.js',
+                    core + '/LinkablePromise.js',
 
                     src + '/WeaveAPI.js',
 

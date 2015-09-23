@@ -317,6 +317,9 @@ if (typeof window === 'undefined') {
         this.delayCallbacks(); // make sure callbacks only trigger once
         var classDef = objectToCopy.constructor; //ClassUtils.getClassDefinition(className);
         var sessionState = WeaveAPI.SessionManager.getSessionState(objectToCopy);
+        //  if the name refers to the same object, remove the existing object so it can be replaced with a new one.
+        if (name === this.getName(objectToCopy))
+            this.removeObject(name);
         var object = requestObject(name, classDef, false);
         if (object !== null && object !== undefined)
             WeaveAPI.SessionManager.setSessionState(object, sessionState);
