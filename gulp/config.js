@@ -36,6 +36,7 @@ var buildOrder = [
                ];
 
 module.exports = {
+    context: __dirname,
     browserSync: {
         server: {
             // Serve up our build folder
