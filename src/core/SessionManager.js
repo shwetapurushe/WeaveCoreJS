@@ -112,6 +112,80 @@ if (typeof window === 'undefined') {
             value: new Map()
         });
 
+
+        /**
+         * @private
+         * @readOnly
+         * @property _dTaskStackTrace
+         * @type Map
+         */
+        Object.defineProperty(this, "_dTaskStackTrace", {
+            value: new Map()
+        });
+
+        /**
+         * @private
+         * @readOnly
+         * @property _d2dOwnerTask
+         * @type weavecore.Dictionary2D
+         */
+        Object.defineProperty(this, "_d2dOwnerTask", {
+            value: new weavecore.Dictionary2D()
+        });
+
+        /**
+         * @private
+         * @readOnly
+         * @property _d2dTaskOwner
+         * @type weavecore.Dictionary2D
+         */
+        Object.defineProperty(this, "_d2dTaskOwner", {
+            value: new weavecore.Dictionary2D()
+        });
+
+        /**
+         * ILinkableObject -> Boolean
+         * @private
+         * @readOnly
+         * @property _dBusyTraversal
+         * @type Map
+         */
+        Object.defineProperty(this, "_dBusyTraversal", {
+            value: new Map()
+        });
+
+        /**
+         * @private
+         * @readOnly
+         * @property _aBusyTraversal
+         * @type Array
+         */
+        Object.defineProperty(this, "_aBusyTraversal", {
+            value: []
+        });
+
+        /**
+         * ILinkableObject -> int
+         * @private
+         * @readOnly
+         * @property _dUnbusyTriggerCounts
+         * @type Map
+         */
+        Object.defineProperty(this, "_dUnbusyTriggerCounts", {
+            value: new Map()
+        });
+
+        /**
+         * ILinkableObject -> String
+         * @private
+         * @readOnly
+         * @property _dUnbusyStackTraces
+         * @type Map
+         */
+        Object.defineProperty(this, "_dUnbusyStackTraces", {
+            value: new Map()
+        });
+
     }
 
     var p = SessionManager.prototype;
@@ -681,6 +755,57 @@ if (typeof window === 'undefined') {
         }
         return propertyNames;
     };
+
+    p.linkableObjectIsBusy = function (linkableObject) {
+        var busy = false;
+
+        this._aBusyTraversal[this._aBusyTraversal.length] = linkableObject; // push
+        this._dBusyTraversal.set(linkableObject, true);
+
+        outerLoop: for (var i = 0; i < this._aBusyTraversal.length; i++) {
+            linkableObject = this._aBusyTraversal[i];
+
+            if (linkableObject.isBusy) {
+                if (linkableObject.isBusy()) {
+                    busy = true;
+                    break;
+                }
+                // do not check children
+                continue;
+            }
+
+            // if the object is assigned a task, it's busy
+            for (var task in _d2dOwnerTask.dictionary.get(linkableObject)) {
+                if (this.debugBusyTasks) {
+                    var stackTrace = this._dTaskStackTrace.get(task);
+                    console.log(stackTrace);
+                }
+                busy = true;
+                break outerLoop;
+            }
+
+            // see if children are busy
+            var dChild = this._parentToChildMap.get(linkableObject);
+            for (var child in dChild) {
+                // queue all the children that haven't been queued yet
+                if (!this._dBusyTraversal.get(child)) {
+                    this._aBusyTraversal[this._aBusyTraversal.length] = child; // push
+                    this._dBusyTraversal.set(child, true);
+                }
+            }
+        }
+
+        // reset traversal dictionary for next time
+        for (var i = 0; i < this._aBusyTraversal.length; i++) {
+            var linkableObject = this._aBusyTraversal[i];
+            this._dBusyTraversal.set(linkableObject, false);
+        }
+
+        this._aBusyTraversal.length = 0;
+
+        return busy;
+
+    }
 
     /**
      * This function gets the CallbackCollection associated with an ILinkableObject.
