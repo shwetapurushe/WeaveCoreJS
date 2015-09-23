@@ -61,6 +61,19 @@ if (typeof window === 'undefined') {
         value: "sessionState"
     });
 
+    /**
+     * The name of the property used to make isDynamicState() return false in order to bypass special diff logic for dynamic state arrays.
+     * @static
+     * @public
+     * @property BYPASS_DIFF
+     * @readOnly
+     * @default "bypassDiff"
+     * @type String
+     */
+    Object.defineProperty(DynamicState, 'BYPASS_DIFF ', {
+        value: "bypassDiff"
+    });
+
     //static Public Methods
     /**
      * Creates an Object having three properties: objectName, className, sessionState
@@ -87,11 +100,14 @@ if (typeof window === 'undefined') {
      * @param {Object} object An object to check.
      * @return {Boolean} true if the object has all three properties and no extras.
      */
-    DynamicState.isDynamicState = function (object) {
+    DynamicState.isDynamicState = function (object, handleBypassDiff) {
+        handleBypassDiff = (handleBypassDiff === undefined ? false : handleBypassDiff);
         var matchCount = 0;
         for (var name in object) {
             if (name === DynamicState.OBJECT_NAME || name === DynamicState.CLASS_NAME || name === DynamicState.SESSION_STATE)
                 matchCount++;
+            else if (handleBypassDiff && name === DynamicState.BYPASS_DIFF)
+                continue;
             else
                 return false;
         }
@@ -106,7 +122,8 @@ if (typeof window === 'undefined') {
      * @param {Object} state
      * @return {Boolean} A value of true if the Array looks like a dynamic session state or diff.
      */
-    DynamicState.isDynamicStateArray = function (state) {
+    DynamicState.isDynamicStateArray = function (state, handleBypassDiff) {
+        handleBypassDiff = (handleBypassDiff === undefined ? false : handleBypassDiff);
         if (!Array.isArray(state))
             return false;
         var result = false;
@@ -114,12 +131,30 @@ if (typeof window === 'undefined') {
             var item = state[i];
             if (typeof item == 'string' || item instanceof String)
                 continue; // dynamic state diffs can contain String values.
-            if (DynamicState.isDynamicState(item))
+            if (DynamicState.isDynamicState(item, handleBypassDiff))
                 result = true;
             else
                 return false;
         }
         return result;
+    };
+
+    /**
+     * Alters a session state object to bypass special diff logic for dynamic state arrays.
+     * It does so by adding the "bypassDiff" property to any part for which isDynamicState(part) returns true.
+     * @method alterSessionStateToBypassDiff
+     * @static
+     * @param {Object} state
+     * @return {Boolean} A value of true if the Array looks like a dynamic session state or diff.
+     */
+    DynamicState.alterSessionStateToBypassDiff = function (object) {
+        if (DynamicState.isDynamicState(object)) {
+            object[DynamicState.BYPASS_DIFF] = true;
+            object = object[DynamicState.SESSION_STATE];
+        }
+        for (var name in object)
+            DynamicState.alterSessionStateToBypassDiff(object[name]);
+
     };
 
     weavecore.DynamicState = DynamicState;

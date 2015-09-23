@@ -242,7 +242,7 @@ if (typeof window === 'undefined') {
             }
 
             // if it's not a dynamic state array, treat it as a path
-            if (!weavecore.DynamicState.isDynamicStateArray(newState)) {
+            if (!weavecore.DynamicState.isDynamicStateArray(newState, true)) {
                 this.targetPath = newState;
                 return;
             }

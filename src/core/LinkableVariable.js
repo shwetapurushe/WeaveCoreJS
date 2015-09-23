@@ -196,6 +196,8 @@ if (typeof window === 'undefined') {
                     value = Object.create(value);
             }
 
+            weavecore.DynamicState.alterSessionStateToBypassDiff(value);
+
 
             // save external copy, accessible via getSessionState()
             this._sessionStateExternal = value;
@@ -225,8 +227,15 @@ if (typeof window === 'undefined') {
         if (this._primitiveType)
             return this._sessionStateInternal === otherSessionState;
 
-        return weavecore.StandardLib.compare(this._sessionStateInternal, otherSessionState) === 0;
+        return weavecore.StandardLib.compare(this._sessionStateInternal, otherSessionState, objectCompare.bind(this)) === 0;
     };
+
+    function objectCompare(a, b) {
+        if (weavecore.DynamicState.isDynamicState(a, true) && weavecore.DynamicState.isDynamicState(b, true) && a[weavecore.DynamicState.CLASS_NAME] === b[weavecore.DynamicState.CLASS_NAME] && a[weavecore.DynamicState.OBJECT_NAME] === b[weavecore.DynamicState.OBJECT_NAME]) {
+            return weavecore.StandardLib.compare(a[weavecore.DynamicState.SESSION_STATE], b[weavecore.DynamicState.SESSION_STATE], objectCompare);
+        }
+
+    }
 
 
     /**

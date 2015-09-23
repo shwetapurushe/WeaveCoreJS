@@ -565,7 +565,7 @@ if (typeof window === 'undefined') {
             // initialize all the objects before setting their session states because they may refer to each other.
             for (i = 0; i < newStateArray.length; i++) {
                 typedState = newStateArray[i];
-                if (!weavecore.DynamicState.isDynamicState(typedState))
+                if (!weavecore.DynamicState.isDynamicState(typedState, true))
                     continue;
                 objectName = typedState[weavecore.DynamicState.OBJECT_NAME];
                 className = typedState[weavecore.DynamicState.CLASS_NAME];
@@ -591,7 +591,7 @@ if (typeof window === 'undefined') {
                     continue;
                 }
 
-                if (!weavecore.DynamicState.isDynamicState(typedState))
+                if (!weavecore.DynamicState.isDynamicState(typedState, true))
                     continue;
                 objectName = typedState[weavecore.DynamicState.OBJECT_NAME];
                 if (objectName === null || objectName === undefined)
