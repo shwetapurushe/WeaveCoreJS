@@ -81,7 +81,7 @@ if (typeof window === 'undefined') {
         this._savePending = false; // true when a diff should be computed
 
         Object.defineProperty(SessionStateLog, 'debug', {
-            value: true,
+            value: false,
             writable: true
         });
         Object.defineProperty(SessionStateLog, 'enableHistoryRewrite', {
