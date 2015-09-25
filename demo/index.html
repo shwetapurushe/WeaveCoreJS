@@ -7,8 +7,10 @@
     <title>AngularUI - Slider demo</title>
     <link rel="stylesheet" href="bower_components/jquery-ui/themes/smoothness/jquery-ui.css">
     <link rel="stylesheet" href="labelledSlider/jquery.ui.labeledslider.css">
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="bower_components/angular-bootstrap-nav-tree/dist/abn_tree.css">
+    <link rel="stylesheet" href="css/slider.css"/>
+    <link rel="stylesheet" href="css/styles.css"/>
 
     <style>
         .point {
@@ -64,25 +66,39 @@
     <script type="text/javascript" src="js/app.js"></script>
 </head>
 
-<body ng-controller="sliderDemoCtrl">
-    <div ui-slider="labeledslider.options" min="0" max="{{log._undoHistory.length + log._redoHistory.length}}" step="1" tick="1" ng-model="sliderPosition"></div>
-    <br/>
-    <br/>
+<body ng-controller="sliderDemoCtrl as dC">
+<div class= "slider">
+    <h3>
+        This demo showcases the 'sessioning' ability of WeaveCoreJS.</h3>
+    <h3>All the changed values of the number are recorded in a 'session'.</h3>
+    <h3> And this session can be replayed using the slider.
+    </h3><br/>
 
+    <h4> Try the following :</h4>
+    <ol>
+        <li>Play with the numeric stepper which changes the sessioned number. </li>
+        <li>Trying moving the slider (undo, redo) knob back and forth ,one step at a time, and observe the sessioned number.</li>
+    </ol>
+
+    <br/>
+    Sessioned Number :
     <div>
-        Sessioned Number :
-        <input type="text" ng-model="testVar.value" />
+        <input style = "width:250px; display:inline-block"class = "form-control" type="text" ng-model="dC.testVar.value" />
+        <button style = "display:inline-block" class= "btn btn-default" ng-click="dC.increment()">
+            <span class ="glyphicon glyphicon-chevron-up"></span></button>
+        <button style = "display:inline-block" class= "btn btn-default" ng-click="dC.decrement()">
+            <span class ="glyphicon glyphicon-chevron-down"></span></button>
     </div>
+    <div >
+        <br/>
+        <div ui-slider="dC.labeledslider.options" min="0" max="{{dC.log._undoHistory.length + dC.log._redoHistory.length}}" step="1" tick="1" ng-model="dC.sliderPosition"></div>
 
-    <!--<div style="width:250px;margin-left:5px;background:whitesmoke;border:1px solid lightgray;border-radius:5px;">
-        <abn-tree tree-data="my_data" tree-control="my_tree" on-select="my_tree_handler(branch)" expand-level="1"></abn-tree>
-    </div>-->
+    </div>
+</div>
 
-
-
-
-
-
+<!--<div style="width:250px;margin-left:5px;background:whitesmoke;border:1px solid lightgray;border-radius:5px;">
+    <abn-tree tree-data="my_data" tree-control="my_tree" on-select="my_tree_handler(branch)" expand-level="1"></abn-tree>
+</div>-->
 </body>
 
 </html>
