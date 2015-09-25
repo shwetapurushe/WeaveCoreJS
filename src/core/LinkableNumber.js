@@ -73,6 +73,13 @@ if (typeof window === 'undefined') {
 
     var p = LinkableNumber.prototype;
 
+    // override is important to avoid sending undefiend value
+    // getSessionState usally called from Sessionmanager, main purpose is to create log entries..
+    p.getSessionState = function () {
+        // this make sure Number(undefined) will return NaN.
+        return Number(this._sessionStateExternal)
+
+    };
 
     p.setSessionState = function (val) {
         if (typeof (val) != "number") {
