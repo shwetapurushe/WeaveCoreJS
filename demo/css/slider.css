@@ -5,3 +5,11 @@
     height: 8px;
     top: 16px;
 }
+.slider {
+    width: 90%;
+    height: 2%;
+    margin: 15px 15px 15px 15px;
+}
+h3{
+    color: #866baa;
+}
