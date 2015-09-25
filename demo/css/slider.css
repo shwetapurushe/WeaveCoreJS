@@ -6,10 +6,18 @@
     top: 16px;
 }
 .slider {
-    width: 90%;
+    width: 70%;
     height: 2%;
-    margin: 15px 15px 15px 15px;
+    margin: 0 10% 0 10%
 }
 h3{
     color: #866baa;
+}
+.ln{
+    width:100px;
+    display:inline-block;
+    font-weight: bold;
+    font-size: 18px;
+    color: #12b614;
+    padding-left:40px
 }
