@@ -1,13 +1,17 @@
 # WeaveCoreJS
 
-This library is ported from Weave AS3 version. Its a dataLayer for builfing web application. I provides support for session state storage too
-Documentaion for how a variable can be sessioned for Session history will be updated soon
+This library is ported from Weave AS3 version. 
+Its a data Architecure Framework for builfing web application. 
+Along with Data architecture it facilitates logging of states.
 
-This library uses (Map) and (For - of) from E6
+Documentaion : How to use and best practices will be added soon
 
-
-Demo Link: http://sanjay1909.github.io/WeaveCoreJS/
+Demo Links: http://sanjay1909.github.io/WeaveCoreJS/
 
 Documentation Link: http://sanjay1909.github.io/WeaveCoreJS/build/docs/ (Under Progress)
 Its my experimentation with Yuidoc, only few of the files were formatted to match yuidoc style.
+
+Showcase:
+As~Me: Personal Data Visualization
+ReactJS(UI Layer) + weaveCoreJS(data Layer)  = http://as-me.github.io/dashboard/demo.html#charts
 
